@@ -1,321 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Privy — Weekly Stripe Report</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f6f9;color:#1a1d23;font-size:14px}
-header{background:#1a1d23;color:#fff;padding:18px 32px;display:flex;align-items:center}
-.logo{font-size:20px;font-weight:700;letter-spacing:-0.5px}
+header{background:#1a1d23;color:#fff;padding:18px 32px}
+.logo{font-size:20px;font-weight:700;letter-spacing:-.5px}
 .subtitle{font-size:13px;color:#8a8f9c;margin-top:2px}
 .tabs{background:#fff;border-bottom:1px solid #e2e6ed;padding:0 24px;display:flex;gap:2px;overflow-x:auto}
-.tab-btn{padding:12px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#6b7280;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+.tab-btn{padding:12px 15px;border:none;background:none;cursor:pointer;font-size:13px;color:#6b7280;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
 .tab-btn:hover{color:#1a1d23}
 .tab-btn.active{color:#635bff;border-bottom-color:#635bff;font-weight:600}
 .content{padding:24px 32px;max-width:1200px;margin:0 auto}
-.section-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7280;margin:28px 0 12px}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:10px;margin-bottom:10px}
+.sec-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9ca3af;margin:28px 0 12px;padding-bottom:6px;border-bottom:1px solid #e5e7eb}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:14px}
 .kpi{background:#fff;border:1px solid #e2e6ed;border-radius:10px;padding:14px 16px}
 .kpi-label{font-size:11px;color:#9ca3af;margin-bottom:5px;line-height:1.3}
-.kpi-value{font-size:21px;font-weight:700;color:#1a1d23;line-height:1.1}
+.kpi-value{font-size:20px;font-weight:700;color:#1a1d23;line-height:1.1}
 .kpi-wow{font-size:11px;margin-top:4px}
-.kpi-wow.up{color:#16a34a}
-.kpi-wow.down{color:#dc2626}
-.kpi-wow.neutral{color:#9ca3af}
+.kpi-wow.up{color:#16a34a}.kpi-wow.down{color:#dc2626}.kpi-wow.flat{color:#9ca3af}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .chart-card{background:#fff;border:1px solid #e2e6ed;border-radius:10px;padding:18px;margin-bottom:14px}
 .chart-title{font-size:12px;font-weight:700;color:#374151;margin-bottom:2px}
 .chart-sub{font-size:11px;color:#9ca3af;margin-bottom:12px}
 .chart-wrap{position:relative}
-.mix-bar-wrap{height:14px;border-radius:7px;overflow:hidden;display:flex;margin:10px 0 6px}
+.mix-bar-wrap{height:14px;border-radius:7px;overflow:hidden;display:flex;margin:8px 0 6px}
 .mix-bar-m{background:#635bff;height:100%}
 .mix-bar-a{background:#00b8d4;height:100%}
-.mix-legend{display:flex;gap:16px;font-size:12px;color:#6b7280}
-.mix-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
-.plan-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
-.plan-table th{text-align:left;color:#9ca3af;font-weight:600;padding:4px 6px;border-bottom:1px solid #f0f0f0}
-.plan-table td{padding:5px 6px;border-bottom:1px solid #f9f9f9;color:#374151}
+.mix-legend{display:flex;gap:16px;font-size:12px;color:#6b7280;margin-bottom:10px}
+.mix-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
 .warning{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 14px;margin-bottom:16px;color:#9a3412;font-size:12px}
 .note-box{background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:10px 14px;margin:20px 0;font-size:12px;color:#075985}
 footer{text-align:center;color:#9ca3af;font-size:11px;padding:20px 32px 40px}
 a{color:#635bff;text-decoration:none}
-a:hover{text-decoration:underline}
 @media(max-width:700px){.two-col{grid-template-columns:1fr}.content{padding:16px}}
 </style>
 </head>
 <body>
-<header>
-  <div><div class="logo">Privy</div><div class="subtitle">Weekly Stripe Report</div></div>
-</header>
-<div class="tabs"><button class="tab-btn " onclick="showTab(0)" id="tab-0">Apr 20-26</button>
-<button class="tab-btn " onclick="showTab(1)" id="tab-1">May 11 - May 17</button>
-<button class="tab-btn " onclick="showTab(2)" id="tab-2">Apr 13-19</button>
-<button class="tab-btn " onclick="showTab(3)" id="tab-3">Apr 27 - May 3</button>
-<button class="tab-btn " onclick="showTab(4)" id="tab-4">Apr 7-13</button>
-<button class="tab-btn active" onclick="showTab(5)" id="tab-5">May 4 - May 10</button>
+<header><div class="logo">Privy</div><div class="subtitle">Weekly Stripe Report</div></header>
+<div class="tabs"><button class="tab-btn " onclick="showTab(0)">Apr 7-13</button>
+<button class="tab-btn " onclick="showTab(1)">Apr 13-19</button>
+<button class="tab-btn " onclick="showTab(2)">Apr 20-26</button>
+<button class="tab-btn " onclick="showTab(3)">Apr 27 - May 3</button>
+<button class="tab-btn " onclick="showTab(4)">May 4 - May 10</button>
+<button class="tab-btn active" onclick="showTab(5)">May 11 - May 17</button>
 </div>
-<div class="content" id="content"></div>
-<footer>Auto-generated May 19, 2026 at 01:19 PM&nbsp;|&nbsp;<a href="https://bensonjuarez-creator.github.io/privy-dashboard">https://bensonjuarez-creator.github.io/privy-dashboard</a></footer>
-
+<div class="content" id="app"></div>
+<footer>Auto-generated May 19, 2026 at 01:51 PM&nbsp;|&nbsp;<a href="https://bensonjuarez-creator.github.io/privy-dashboard">https://bensonjuarez-creator.github.io/privy-dashboard</a></footer>
 <script>
-const WEEKS = [{"label": "Apr 20-26", "totalRevenue": 25378.98, "recurringRev": 20485.6, "newSubRev": 4855.0, "monthlyPlanRev": 13453.98, "annualPlanRev": 11925.0, "mrr": 105695.525, "mrrMonthly": 50711.61, "mrrAnnual": 54983.91499999996, "avgMrr": 68.5889195327709, "annualizedMrr": 1268346.3, "committedArr": null, "arrGap": null, "activeSubs": 1541.0, "newSubs": 15.0, "newSubMrr": 1441.333333333333, "monthlySubsCount": 564.0, "monthlySubsPct": null, "annualSubsCount": 977.0, "annualSubsPct": null, "cancellations": 31.0, "monthlyCancels": null, "annualCancels": null, "churnRate": 2.01, "churnedMrr": null, "churnedArr": null, "failedUnique": 66.0, "atRisk": 27544.6, "failedAttempts": 120.0, "avgAttempts": 1.818181818181818, "disputes": 0.0, "disputed": 0.0, "avgLtv": null, "monthlyLtv": 4469.605983184626, "annualLtv": 645.594680238538}, {"label": "May 11 - May 17", "totalRevenue": 38583.8, "recurringRev": 22769.8, "newSubRev": 15814.0, "monthlyPlanRev": 11679.0, "annualPlanRev": 26904.8, "mrr": 104346.9416666666, "mrrMonthly": 50705.61, "mrrAnnual": 53641.33166666663, "avgMrr": 68.37938510266488, "annualizedMrr": 1252163.299999999, "committedArr": 643695.9799999995, "arrGap": -608467.3199999998, "activeSubs": 1526.0, "newSubs": 26.0, "newSubMrr": 2758.833333333333, "monthlySubsCount": 552.0, "monthlySubsPct": 36.17300131061599, "annualSubsCount": 948.0, "annualSubsPct": 62.123197903014415, "cancellations": 28.0, "monthlyCancels": 13.0, "annualCancels": 8.0, "churnRate": 1.834862385321101, "churnedMrr": 1651.083333333333, "churnedArr": 6853.0, "failedUnique": 49.0, "atRisk": 18237.2, "failedAttempts": 124.0, "avgAttempts": 2.53, "disputes": 0.0, "disputed": 0.0, "avgLtv": 5377.019834558994, "monthlyLtv": 3992.289527591974, "annualLtv": 6761.750141526015}, {"label": "Apr 13-19", "totalRevenue": 20983.93, "recurringRev": 16289.56, "newSubRev": null, "monthlyPlanRev": null, "annualPlanRev": null, "mrr": 105732.5249999994, "mrrMonthly": 50748.61, "mrrAnnual": null, "avgMrr": 68.56843385213969, "annualizedMrr": 1268790.299999993, "committedArr": null, "arrGap": null, "activeSubs": 1542.0, "newSubs": 12.0, "newSubMrr": 1230.666666666667, "monthlySubsCount": null, "monthlySubsPct": null, "annualSubsCount": 977.0, "annualSubsPct": null, "cancellations": null, "monthlyCancels": null, "annualCancels": null, "churnRate": 1.17, "churnedMrr": null, "churnedArr": null, "failedUnique": 50.0, "atRisk": 19873.0, "failedAttempts": 119.0, "avgAttempts": 2.38, "disputes": 0.0, "disputed": null, "avgLtv": null, "monthlyLtv": null, "annualLtv": null}, {"label": "Apr 27 - May 3", "totalRevenue": 29193.0, "recurringRev": 26393.0, "newSubRev": 2800.0, "monthlyPlanRev": 13002.0, "annualPlanRev": 16191.0, "mrr": 105695.5249999994, "mrrMonthly": 50711.61, "mrrAnnual": 54983.91500000044, "avgMrr": 68.58891953277053, "annualizedMrr": 1268346.299999993, "committedArr": null, "arrGap": null, "activeSubs": 1541.0, "newSubs": 8.0, "newSubMrr": 1093.166666666667, "monthlySubsCount": 564.0, "monthlySubsPct": null, "annualSubsCount": 977.0, "annualSubsPct": null, "cancellations": 32.0, "monthlyCancels": null, "annualCancels": null, "churnRate": 2.08, "churnedMrr": null, "churnedArr": null, "failedUnique": 12.0, "atRisk": 4311.0, "failedAttempts": null, "avgAttempts": null, "disputes": 0.0, "disputed": 0.0, "avgLtv": null, "monthlyLtv": 4329.930796210107, "annualLtv": 625.419846481089}, {"label": "Apr 7-13", "totalRevenue": 23128.16, "recurringRev": 14938.16, "newSubRev": null, "monthlyPlanRev": null, "annualPlanRev": null, "mrr": 105732.525, "mrrMonthly": 50748.61, "mrrAnnual": 54983.915, "avgMrr": null, "annualizedMrr": 1268790.3, "committedArr": null, "arrGap": null, "activeSubs": 1542.0, "newSubs": 15.0, "newSubMrr": 1584.33333333333, "monthlySubsCount": 565.0, "monthlySubsPct": null, "annualSubsCount": null, "annualSubsPct": null, "cancellations": 35.0, "monthlyCancels": 13.0, "annualCancels": 22.0, "churnRate": 2.27, "churnedMrr": null, "churnedArr": null, "failedUnique": null, "atRisk": null, "failedAttempts": null, "avgAttempts": null, "disputes": null, "disputed": null, "avgLtv": null, "monthlyLtv": 3993.56, "annualLtv": 576.754353146853}, {"label": "May 4 - May 10", "totalRevenue": 32347.86, "recurringRev": 22280.8, "newSubRev": 10040.0, "monthlyPlanRev": null, "annualPlanRev": null, "mrr": 105998.025, "mrrMonthly": 51785.61, "mrrAnnual": 54212.41499999996, "avgMrr": 69.68969428007887, "annualizedMrr": null, "committedArr": null, "arrGap": null, "activeSubs": 1521.0, "newSubs": 15.0, "newSubMrr": null, "monthlySubsCount": 565.0, "monthlySubsPct": null, "annualSubsCount": 956.0, "annualSubsPct": null, "cancellations": 25.0, "monthlyCancels": 12.0, "annualCancels": null, "churnRate": 1.6400000000000001, "churnedMrr": 1742.242357001972, "churnedArr": null, "failedUnique": null, "atRisk": 16606.13, "failedAttempts": 105.0, "avgAttempts": 2.1, "disputes": 0.0, "disputed": 0.0, "avgLtv": null, "monthlyLtv": null, "annualLtv": 4226.893316301896}];
-const KPI_ROWS = [{"label": "Apr 20-26", "missing": ["Annual Cancellations", "Annual Subs Pct", "Avg LTV", "Churned ARR", "Churned MRR", "Monthly Cancellations", "Monthly Subs Pct"], "kpis": {"Total Revenue": {"value": "$25,379", "wow": "\u25b2 20.9%"}, "Recurring Revenue": {"value": "$20,486", "wow": ""}, "New Sub Revenue": {"value": "$4,855", "wow": ""}, "Monthly Plan Revenue": {"value": "$13,454", "wow": ""}, "Annual Plan Revenue": {"value": "$11,925", "wow": ""}, "Current MRR": {"value": "$105,696", "wow": ""}, "MRR Monthly Plans": {"value": "$50,712", "wow": ""}, "MRR Annual Plans": {"value": "$54,984", "wow": ""}, "Avg MRR Per Sub": {"value": "$68.59", "wow": ""}, "Annualized MRR": {"value": "$1.27M", "wow": ""}, "Committed ARR": {"value": "\u2014", "wow": ""}, "ARR Gap": {"value": "\u2014", "wow": ""}, "Active Subs": {"value": "1,541", "wow": ""}, "New Subs": {"value": "15", "wow": "\u25b2 3"}, "New Sub MRR Added": {"value": "$1,441", "wow": ""}, "Monthly Subs Count": {"value": "564", "wow": ""}, "Monthly Subs Pct": {"value": "\u2014", "wow": ""}, "Annual Subs Count": {"value": "977", "wow": ""}, "Annual Subs Pct": {"value": "\u2014", "wow": ""}, "Total Cancellations": {"value": "31", "wow": ""}, "Monthly Cancellations": {"value": "\u2014", "wow": ""}, "Annual Cancellations": {"value": "\u2014", "wow": ""}, "Weekly Churn Rate": {"value": "2.01%", "wow": "\u25b2 0.84pp"}, "Churned MRR": {"value": "\u2014", "wow": ""}, "Churned ARR": {"value": "\u2014", "wow": ""}, "Failed Subs Unique": {"value": "66", "wow": "\u25b2 16"}, "At Risk Amount": {"value": "$27,545", "wow": "\u25b2 $7,671.60"}, "Total Failed Attempts": {"value": "120", "wow": ""}, "Avg Attempts Per Sub": {"value": "1.818181818181818", "wow": ""}, "Total Disputes": {"value": "0", "wow": ""}, "Disputed Amount": {"value": "$0.00", "wow": "\u25bc $525.00"}, "Dispute Win Loss": {"value": "\u2014", "wow": ""}, "Avg LTV": {"value": "\u2014", "wow": ""}, "Monthly LTV": {"value": "$4,470", "wow": "\u25bc 41.9%"}, "Annual LTV": {"value": "$645.59", "wow": "\u25bc 41.9%"}}}, {"label": "May 11 - May 17", "missing": [], "kpis": {"Total Revenue": {"value": "$38,584", "wow": "\u25b2 23.8%"}, "Recurring Revenue": {"value": "$22,770", "wow": "\u25b2 7.4%"}, "New Sub Revenue": {"value": "$15,814", "wow": "\u25b2 59.0%"}, "Monthly Plan Revenue": {"value": "$11,679", "wow": "\u25b2 6.6%"}, "Annual Plan Revenue": {"value": "$26,905", "wow": "\u25b2 33.2%"}, "Current MRR": {"value": "$104,347", "wow": "\u25bc 1.6%"}, "MRR Monthly Plans": {"value": "$50,706", "wow": "\u25bc 2.1%"}, "MRR Annual Plans": {"value": "$53,641", "wow": "\u25bc 1.1%"}, "Avg MRR Per Sub": {"value": "$68.38", "wow": "\u25bc $1.31"}, "Annualized MRR": {"value": "$1.25M", "wow": "\u25bc 1.6%"}, "Committed ARR": {"value": "$643,696", "wow": "\u25bc 1.1%"}, "ARR Gap": {"value": "$-608,467", "wow": "\u25b2 2.1%"}, "Active Subs": {"value": "1,526", "wow": "\u25b2 5"}, "New Subs": {"value": "26", "wow": "\u25b2 12"}, "New Sub MRR Added": {"value": "$2,759", "wow": "\u25b2 108.9%"}, "Monthly Subs Count": {"value": "552", "wow": "\u25bc 13"}, "Monthly Subs Pct": {"value": "36.17%", "wow": ""}, "Annual Subs Count": {"value": "948", "wow": "\u25bc 8"}, "Annual Subs Pct": {"value": "62.12%", "wow": ""}, "Total Cancellations": {"value": "28", "wow": "\u25b2 4"}, "Monthly Cancellations": {"value": "13", "wow": "\u25b2 1"}, "Annual Cancellations": {"value": "8", "wow": "\u25bc 4"}, "Weekly Churn Rate": {"value": "1.83%", "wow": "\u25b2 0.26pp"}, "Churned MRR": {"value": "$1,651", "wow": "\u25bc $70.50"}, "Churned ARR": {"value": "$6,853", "wow": "\u25bc $1806.00"}, "Failed Subs Unique": {"value": "49", "wow": ""}, "At Risk Amount": {"value": "$18,237", "wow": "\u25b2 10.3%"}, "Total Failed Attempts": {"value": "124", "wow": "\u25b2 19"}, "Avg Attempts Per Sub": {"value": "2.53", "wow": "\u25b2 0.39"}, "Total Disputes": {"value": "0", "wow": "\u25bc 1"}, "Disputed Amount": {"value": "$0.00", "wow": "\u25bc $931.00"}, "Dispute Win Loss": {"value": "n/a (MCP limit)", "wow": ""}, "Avg LTV": {"value": "$5,377", "wow": ""}, "Monthly LTV": {"value": "$3,992", "wow": "\u25bc 7.5%"}, "Annual LTV": {"value": "$6,762", "wow": "\u25b2 49.4%"}}}, {"label": "Apr 13-19", "missing": ["Annual Cancellations", "Annual Plan Revenue", "Annual Subs Pct", "Avg LTV", "Churned ARR", "Churned MRR", "Monthly Cancellations", "Monthly Plan Revenue", "Monthly Subs Pct", "New Sub Revenue"], "kpis": {"Total Revenue": {"value": "$20,984", "wow": ""}, "Recurring Revenue": {"value": "$16,290", "wow": ""}, "New Sub Revenue": {"value": "\u2014", "wow": ""}, "Monthly Plan Revenue": {"value": "\u2014", "wow": ""}, "Annual Plan Revenue": {"value": "\u2014", "wow": ""}, "Current MRR": {"value": "$105,733", "wow": ""}, "MRR Monthly Plans": {"value": "$50,749", "wow": ""}, "MRR Annual Plans": {"value": "\u2014", "wow": ""}, "Avg MRR Per Sub": {"value": "$68.57", "wow": ""}, "Annualized MRR": {"value": "$1.27M", "wow": ""}, "Committed ARR": {"value": "\u2014", "wow": ""}, "ARR Gap": {"value": "\u2014", "wow": ""}, "Active Subs": {"value": "1,542", "wow": ""}, "New Subs": {"value": "12", "wow": "\u25bc 7"}, "New Sub MRR Added": {"value": "$1,231", "wow": ""}, "Monthly Subs Count": {"value": "\u2014", "wow": ""}, "Monthly Subs Pct": {"value": "\u2014", "wow": ""}, "Annual Subs Count": {"value": "977", "wow": ""}, "Annual Subs Pct": {"value": "\u2014", "wow": ""}, "Total Cancellations": {"value": "\u2014", "wow": ""}, "Monthly Cancellations": {"value": "\u2014", "wow": ""}, "Annual Cancellations": {"value": "\u2014", "wow": ""}, "Weekly Churn Rate": {"value": "1.17%", "wow": "\u25bc 1.17pp"}, "Churned MRR": {"value": "\u2014", "wow": ""}, "Churned ARR": {"value": "\u2014", "wow": ""}, "Failed Subs Unique": {"value": "50", "wow": "\u25b2 7"}, "At Risk Amount": {"value": "$19,873", "wow": "\u25bc $933.82"}, "Total Failed Attempts": {"value": "119", "wow": "\u25b2 52"}, "Avg Attempts Per Sub": {"value": "2.38", "wow": "\u25b2 52.7%"}, "Total Disputes": {"value": "0", "wow": ""}, "Disputed Amount": {"value": "\u2014", "wow": ""}, "Dispute Win Loss": {"value": "\u2014", "wow": ""}, "Avg LTV": {"value": "\u2014", "wow": ""}, "Monthly LTV": {"value": "\u2014", "wow": ""}, "Annual LTV": {"value": "\u2014", "wow": ""}}}, {"label": "Apr 27 - May 3", "missing": ["Annual Cancellations", "Annual Subs Pct", "Avg Attempts Per Sub", "Avg LTV", "Churned ARR", "Churned MRR", "Monthly Cancellations", "Monthly Subs Pct"], "kpis": {"Total Revenue": {"value": "$29,193", "wow": "\u25b2 15.0%"}, "Recurring Revenue": {"value": "$26,393", "wow": ""}, "New Sub Revenue": {"value": "$2,800", "wow": ""}, "Monthly Plan Revenue": {"value": "$13,002", "wow": ""}, "Annual Plan Revenue": {"value": "$16,191", "wow": ""}, "Current MRR": {"value": "$105,696", "wow": ""}, "MRR Monthly Plans": {"value": "$50,712", "wow": ""}, "MRR Annual Plans": {"value": "$54,984", "wow": ""}, "Avg MRR Per Sub": {"value": "$68.59", "wow": ""}, "Annualized MRR": {"value": "$1.27M", "wow": ""}, "Committed ARR": {"value": "\u2014", "wow": ""}, "ARR Gap": {"value": "\u2014", "wow": ""}, "Active Subs": {"value": "1,541", "wow": ""}, "New Subs": {"value": "8", "wow": "\u25bc 7"}, "New Sub MRR Added": {"value": "$1,093", "wow": ""}, "Monthly Subs Count": {"value": "564", "wow": ""}, "Monthly Subs Pct": {"value": "\u2014", "wow": ""}, "Annual Subs Count": {"value": "977", "wow": ""}, "Annual Subs Pct": {"value": "\u2014", "wow": ""}, "Total Cancellations": {"value": "32", "wow": ""}, "Monthly Cancellations": {"value": "\u2014", "wow": ""}, "Annual Cancellations": {"value": "\u2014", "wow": ""}, "Weekly Churn Rate": {"value": "2.08%", "wow": "\u25b2 0.06pp"}, "Churned MRR": {"value": "\u2014", "wow": ""}, "Churned ARR": {"value": "\u2014", "wow": ""}, "Failed Subs Unique": {"value": "12", "wow": "\u25bc 54"}, "At Risk Amount": {"value": "$4,311", "wow": "\u25bc $23,233.60"}, "Total Failed Attempts": {"value": ">=100 (cap)", "wow": ""}, "Avg Attempts Per Sub": {"value": "\u2014", "wow": ""}, "Total Disputes": {"value": "0", "wow": ""}, "Disputed Amount": {"value": "$0.00", "wow": ""}, "Dispute Win Loss": {"value": "\u2014", "wow": ""}, "Avg LTV": {"value": "\u2014", "wow": ""}, "Monthly LTV": {"value": "$4,330", "wow": "\u25bc 3.1%"}, "Annual LTV": {"value": "$625.42", "wow": "\u25bc 3.1%"}}}, {"label": "Apr 7-13", "missing": ["Annual Plan Revenue", "Annual Subs Pct", "At Risk Amount", "Avg Attempts Per Sub", "Avg LTV", "Dispute Win Loss", "Failed Subs Unique", "Monthly Plan Revenue", "Monthly Subs Pct", "New Sub Revenue"], "kpis": {"Total Revenue": {"value": "$23,128", "wow": ""}, "Recurring Revenue": {"value": "$14,938", "wow": ""}, "New Sub Revenue": {"value": "\u2014", "wow": ""}, "Monthly Plan Revenue": {"value": "\u2014", "wow": ""}, "Annual Plan Revenue": {"value": "\u2014", "wow": ""}, "Current MRR": {"value": "$105,733", "wow": ""}, "MRR Monthly Plans": {"value": "$50,749", "wow": ""}, "MRR Annual Plans": {"value": "$54,984", "wow": ""}, "Avg MRR Per Sub": {"value": "\u2014", "wow": ""}, "Annualized MRR": {"value": "$1.27M", "wow": ""}, "Committed ARR": {"value": "\u2014", "wow": ""}, "ARR Gap": {"value": "\u2014", "wow": ""}, "Active Subs": {"value": "1,542", "wow": ""}, "New Subs": {"value": "15", "wow": "\u25b2 7"}, "New Sub MRR Added": {"value": "$1,584", "wow": ""}, "Monthly Subs Count": {"value": "565", "wow": ""}, "Monthly Subs Pct": {"value": "\u2014", "wow": ""}, "Annual Subs Count": {"value": "\u2014", "wow": ""}, "Annual Subs Pct": {"value": "\u2014", "wow": ""}, "Total Cancellations": {"value": "35", "wow": ""}, "Monthly Cancellations": {"value": "13", "wow": "\u25bc 4"}, "Annual Cancellations": {"value": "22", "wow": "\u25b2 9"}, "Weekly Churn Rate": {"value": "2.27%", "wow": ""}, "Churned MRR": {"value": "\u2014", "wow": ""}, "Churned ARR": {"value": "\u2014", "wow": ""}, "Failed Subs Unique": {"value": "\u2014", "wow": ""}, "At Risk Amount": {"value": "\u2014", "wow": ""}, "Total Failed Attempts": {"value": "\u2014", "wow": ""}, "Avg Attempts Per Sub": {"value": "\u2014", "wow": ""}, "Total Disputes": {"value": "\u2014", "wow": ""}, "Disputed Amount": {"value": "\u2014", "wow": ""}, "Dispute Win Loss": {"value": "\u2014", "wow": ""}, "Avg LTV": {"value": "\u2014", "wow": ""}, "Monthly LTV": {"value": "$3,994", "wow": "\u25b2 30.8%"}, "Annual LTV": {"value": "$576.75", "wow": "\u25bc 40.9%"}}}, {"label": "May 4 - May 10", "missing": ["Annual Subs Pct", "Avg LTV", "Monthly Subs Pct"], "kpis": {"Total Revenue": {"value": "$32,348", "wow": "\u25b2 10.8%"}, "Recurring Revenue": {"value": "$22,281", "wow": ""}, "New Sub Revenue": {"value": "$10,040", "wow": ""}, "Monthly Plan Revenue": {"value": "\u2014", "wow": ""}, "Annual Plan Revenue": {"value": "\u2014", "wow": ""}, "Current MRR": {"value": "$105,998", "wow": ""}, "MRR Monthly Plans": {"value": "$51,786", "wow": "\u25b2 2.1%"}, "MRR Annual Plans": {"value": "$54,212", "wow": "\u25bc 1.4%"}, "Avg MRR Per Sub": {"value": "$69.69", "wow": "\u25b2 1.6%"}, "Annualized MRR": {"value": "\u2014", "wow": ""}, "Committed ARR": {"value": "\u2014", "wow": ""}, "ARR Gap": {"value": "\u2014", "wow": ""}, "Active Subs": {"value": "1,521", "wow": "\u25bc 20"}, "New Subs": {"value": "15", "wow": "\u25b2 7"}, "New Sub MRR Added": {"value": "\u2014", "wow": ""}, "Monthly Subs Count": {"value": "565", "wow": ""}, "Monthly Subs Pct": {"value": "\u2014", "wow": ""}, "Annual Subs Count": {"value": "956", "wow": ""}, "Annual Subs Pct": {"value": "\u2014", "wow": ""}, "Total Cancellations": {"value": "25", "wow": ""}, "Monthly Cancellations": {"value": "12", "wow": ""}, "Annual Cancellations": {"value": "\u2014", "wow": ""}, "Weekly Churn Rate": {"value": "1.64%", "wow": "\u25bc 0.43pp"}, "Churned MRR": {"value": "$1,742", "wow": ""}, "Churned ARR": {"value": "\u2014", "wow": ""}, "Failed Subs Unique": {"value": "\u2014", "wow": ""}, "At Risk Amount": {"value": "$16,606", "wow": "\u25b2 $2,574.56"}, "Total Failed Attempts": {"value": "105", "wow": "\u25b2 27"}, "Avg Attempts Per Sub": {"value": "2.1", "wow": "\u25b2 0.37"}, "Total Disputes": {"value": "0", "wow": ""}, "Disputed Amount": {"value": "$0.00", "wow": "\u25bc $642.00"}, "Dispute Win Loss": {"value": "\u2014", "wow": ""}, "Avg LTV": {"value": "\u2014", "wow": ""}, "Monthly LTV": {"value": "\u2014", "wow": ""}, "Annual LTV": {"value": "$4,227", "wow": "\u25b2 35.9%"}}}];
-const SCHEMA_ORDER = [
-  ["Revenue",[
-    ["Total Revenue","Total revenue collected","dollar"],
-    ["Recurring Revenue","Recurring revenue","dollar"],
-    ["New Sub Revenue","New sub revenue","dollar"],
-    ["Monthly Plan Revenue","Monthly plan revenue","dollar"],
-    ["Annual Plan Revenue","Annual plan revenue","dollar"],
-    ["Current MRR","Current MRR","dollar"],
-    ["MRR Monthly Plans","MRR — monthly plans","dollar"],
-    ["MRR Annual Plans","MRR — annual plans (÷12)","dollar"],
-    ["Avg MRR Per Sub","Avg MRR / subscriber","dollar"],
-    ["Annualized MRR","Annualized MRR","dollar"],
-    ["Committed ARR","Committed ARR","dollar"],
-    ["ARR Gap","ARR gap","dollar"]
-  ]],
-  ["Subscriptions & MRR",[
-    ["Active Subs","Active subscriptions","integer"],
-    ["New Subs","New subscriptions","integer"],
-    ["New Sub MRR Added","New sub MRR added","dollar"],
-    ["Avg MRR Per Sub","Avg MRR / subscriber","dollar"],
-    ["Monthly Subs Count","Monthly subs","integer"],
-    ["Monthly Subs Pct","Monthly subs %","percent"],
-    ["Annual Subs Count","Annual subs","integer"],
-    ["Annual Subs Pct","Annual subs %","percent"]
-  ]],
-  ["Cancellations & Churn",[
-    ["Total Cancellations","Total cancellations","integer"],
-    ["Monthly Cancellations","Monthly cancellations","integer"],
-    ["Annual Cancellations","Annual cancellations","integer"],
-    ["Weekly Churn Rate","Weekly churn rate","percent"],
-    ["Churned MRR","Churned MRR","dollar"],
-    ["Churned ARR","Churned ARR","dollar"]
-  ]],
-  ["Failed Payments",[
-    ["Failed Subs Unique","Unique subs w/ failed pmts","integer"],
-    ["At Risk Amount","$ at risk (unique subs)","dollar"],
-    ["Total Failed Attempts","Total failed attempts","text"],
-    ["Avg Attempts Per Sub","Avg attempts / failed sub","text"]
-  ]],
-  ["Disputes",[
-    ["Total Disputes","Total disputes","integer"],
-    ["Disputed Amount","$ disputed","dollar"],
-    ["Dispute Win Loss","Win/Loss breakdown","text"]
-  ]],
-  ["Lifetime Value",[
-    ["Avg LTV","Avg LTV","dollar"],
-    ["Monthly LTV","Monthly LTV","dollar"],
-    ["Annual LTV","Annual LTV","dollar"]
-  ]]
-];
+const CHART_WEEKS = [{"label": "Apr 7-13", "totalRevenue": 23128.16, "newSubRev": null, "mrr": 105732.525, "annualizedMrr": 1268790.3, "committedArr": null, "newSubs": 15.0, "cancellations": 35.0, "churnRate": 2.27, "atRisk": null, "monthlyPlanRev": null, "annualPlanRev": null, "monthlySubsPct": 36.64072632944228, "annualSubsPct": null}, {"label": "Apr 13-19", "totalRevenue": 20983.93, "newSubRev": null, "mrr": 105732.5249999994, "annualizedMrr": 1268790.299999993, "committedArr": null, "newSubs": 12.0, "cancellations": null, "churnRate": 1.17, "atRisk": 19873.0, "monthlyPlanRev": null, "annualPlanRev": null, "monthlySubsPct": null, "annualSubsPct": 63.35927367055771}, {"label": "Apr 20-26", "totalRevenue": 25378.98, "newSubRev": 4855.0, "mrr": 105695.525, "annualizedMrr": 1268346.3, "committedArr": null, "newSubs": 15.0, "cancellations": 31.0, "churnRate": 2.01, "atRisk": 27544.6, "monthlyPlanRev": 13453.98, "annualPlanRev": 11925.0, "monthlySubsPct": 36.59961064243997, "annualSubsPct": 63.40038935756003}, {"label": "Apr 27 - May 3", "totalRevenue": 29193.0, "newSubRev": 2800.0, "mrr": 105695.5249999994, "annualizedMrr": 1268346.299999993, "committedArr": null, "newSubs": 8.0, "cancellations": 32.0, "churnRate": 2.08, "atRisk": 4311.0, "monthlyPlanRev": 13002.0, "annualPlanRev": 16191.0, "monthlySubsPct": 36.59961064243997, "annualSubsPct": 63.40038935756003}, {"label": "May 4 - May 10", "totalRevenue": 32347.86, "newSubRev": 10040.0, "mrr": 105998.025, "annualizedMrr": null, "committedArr": null, "newSubs": 15.0, "cancellations": 25.0, "churnRate": 1.6400000000000001, "atRisk": 16606.13, "monthlyPlanRev": null, "annualPlanRev": null, "monthlySubsPct": 37.14661406969099, "annualSubsPct": 62.853385930309}, {"label": "May 11 - May 17", "totalRevenue": 38583.8, "newSubRev": 15814.0, "mrr": 104346.9416666666, "annualizedMrr": 1252163.299999999, "committedArr": 643695.9799999995, "newSubs": 26.0, "cancellations": 28.0, "churnRate": 1.834862385321101, "atRisk": 18237.2, "monthlyPlanRev": 11679.0, "annualPlanRev": 26904.8, "monthlySubsPct": 36.17300131061599, "annualSubsPct": 62.123197903014415}];
+const KPI_WEEKS   = [{"label": "Apr 7-13", "missing": ["Annual Plan Revenue", "Annual Subs Pct", "At Risk Amount", "Avg Attempts Per Sub", "Dispute Win Loss", "Failed Subs Unique", "Monthly Plan Revenue", "New Sub Revenue"], "kpis": {"Total Revenue": {"v": "$23,128", "w": ""}, "Recurring Revenue": {"v": "$14,938", "w": ""}, "New Sub Revenue": {"v": "\u2014", "w": ""}, "Monthly Plan Revenue": {"v": "\u2014", "w": ""}, "Annual Plan Revenue": {"v": "\u2014", "w": ""}, "Current MRR": {"v": "$105,733", "w": ""}, "MRR Monthly Plans": {"v": "$50,749", "w": ""}, "MRR Annual Plans": {"v": "$54,984", "w": ""}, "Avg MRR Per Sub": {"v": "\u2014", "w": ""}, "Annualized MRR": {"v": "$1.27M", "w": ""}, "Committed ARR": {"v": "\u2014", "w": ""}, "ARR Gap": {"v": "\u2014", "w": ""}, "Active Subs": {"v": "1,542", "w": ""}, "New Subs": {"v": "15", "w": "\u25b2 7"}, "New Sub MRR Added": {"v": "$1,584", "w": ""}, "Monthly Subs Count": {"v": "565", "w": ""}, "Monthly Subs Pct": {"v": "36.64%", "w": ""}, "Annual Subs Count": {"v": "\u2014", "w": ""}, "Annual Subs Pct": {"v": "\u2014", "w": ""}, "Total Cancellations": {"v": "35", "w": ""}, "Monthly Cancellations": {"v": "13", "w": "\u25bc 4"}, "Annual Cancellations": {"v": "22", "w": "\u25b2 9"}, "Weekly Churn Rate": {"v": "2.27%", "w": ""}, "Churned MRR": {"v": "\u2014", "w": ""}, "Churned ARR": {"v": "\u2014", "w": ""}, "Failed Subs Unique": {"v": "\u2014", "w": ""}, "At Risk Amount": {"v": "\u2014", "w": ""}, "Total Failed Attempts": {"v": "\u2014", "w": ""}, "Avg Attempts Per Sub": {"v": "\u2014", "w": ""}, "Total Disputes": {"v": "\u2014", "w": ""}, "Disputed Amount": {"v": "\u2014", "w": ""}, "Dispute Win Loss": {"v": "\u2014", "w": ""}, "Avg LTV": {"v": "$2,285", "w": ""}, "Monthly LTV": {"v": "$3,994", "w": "\u25b2 30.8%"}, "Annual LTV": {"v": "$576.75", "w": "\u25bc 40.9%"}}}, {"label": "Apr 13-19", "missing": ["Annual Cancellations", "Annual Plan Revenue", "Avg LTV", "Churned ARR", "Churned MRR", "Monthly Cancellations", "Monthly Plan Revenue", "Monthly Subs Pct", "New Sub Revenue"], "kpis": {"Total Revenue": {"v": "$20,984", "w": ""}, "Recurring Revenue": {"v": "$16,290", "w": ""}, "New Sub Revenue": {"v": "\u2014", "w": ""}, "Monthly Plan Revenue": {"v": "\u2014", "w": ""}, "Annual Plan Revenue": {"v": "\u2014", "w": ""}, "Current MRR": {"v": "$105,733", "w": ""}, "MRR Monthly Plans": {"v": "$50,749", "w": ""}, "MRR Annual Plans": {"v": "\u2014", "w": ""}, "Avg MRR Per Sub": {"v": "$68.57", "w": ""}, "Annualized MRR": {"v": "$1.27M", "w": ""}, "Committed ARR": {"v": "\u2014", "w": ""}, "ARR Gap": {"v": "\u2014", "w": ""}, "Active Subs": {"v": "1,542", "w": ""}, "New Subs": {"v": "12", "w": "\u25bc 7"}, "New Sub MRR Added": {"v": "$1,231", "w": ""}, "Monthly Subs Count": {"v": "\u2014", "w": ""}, "Monthly Subs Pct": {"v": "\u2014", "w": ""}, "Annual Subs Count": {"v": "977", "w": ""}, "Annual Subs Pct": {"v": "63.36%", "w": ""}, "Total Cancellations": {"v": "\u2014", "w": ""}, "Monthly Cancellations": {"v": "\u2014", "w": ""}, "Annual Cancellations": {"v": "\u2014", "w": ""}, "Weekly Churn Rate": {"v": "1.17%", "w": "\u25bc 1.17pp"}, "Churned MRR": {"v": "\u2014", "w": ""}, "Churned ARR": {"v": "\u2014", "w": ""}, "Failed Subs Unique": {"v": "50", "w": "\u25b2 7"}, "At Risk Amount": {"v": "$19,873", "w": "\u25bc $933.82"}, "Total Failed Attempts": {"v": "119", "w": "\u25b2 52"}, "Avg Attempts Per Sub": {"v": "2.38", "w": "\u25b2 52.7%"}, "Total Disputes": {"v": "0", "w": ""}, "Disputed Amount": {"v": "\u2014", "w": ""}, "Dispute Win Loss": {"v": "\u2014", "w": ""}, "Avg LTV": {"v": "\u2014", "w": ""}, "Monthly LTV": {"v": "\u2014", "w": ""}, "Annual LTV": {"v": "\u2014", "w": ""}}}, {"label": "Apr 20-26", "missing": ["Annual Cancellations", "Churned ARR", "Churned MRR", "Monthly Cancellations"], "kpis": {"Total Revenue": {"v": "$25,379", "w": "\u25b2 20.9%"}, "Recurring Revenue": {"v": "$20,486", "w": ""}, "New Sub Revenue": {"v": "$4,855", "w": ""}, "Monthly Plan Revenue": {"v": "$13,454", "w": ""}, "Annual Plan Revenue": {"v": "$11,925", "w": ""}, "Current MRR": {"v": "$105,696", "w": ""}, "MRR Monthly Plans": {"v": "$50,712", "w": ""}, "MRR Annual Plans": {"v": "$54,984", "w": ""}, "Avg MRR Per Sub": {"v": "$68.59", "w": ""}, "Annualized MRR": {"v": "$1.27M", "w": ""}, "Committed ARR": {"v": "\u2014", "w": ""}, "ARR Gap": {"v": "\u2014", "w": ""}, "Active Subs": {"v": "1,541", "w": ""}, "New Subs": {"v": "15", "w": "\u25b2 3"}, "New Sub MRR Added": {"v": "$1,441", "w": ""}, "Monthly Subs Count": {"v": "564", "w": ""}, "Monthly Subs Pct": {"v": "36.60%", "w": ""}, "Annual Subs Count": {"v": "977", "w": ""}, "Annual Subs Pct": {"v": "63.40%", "w": "\u25b2 0.04pp"}, "Total Cancellations": {"v": "31", "w": ""}, "Monthly Cancellations": {"v": "\u2014", "w": ""}, "Annual Cancellations": {"v": "\u2014", "w": ""}, "Weekly Churn Rate": {"v": "2.01%", "w": "\u25b2 0.84pp"}, "Churned MRR": {"v": "\u2014", "w": ""}, "Churned ARR": {"v": "\u2014", "w": ""}, "Failed Subs Unique": {"v": "66", "w": "\u25b2 16"}, "At Risk Amount": {"v": "$27,545", "w": "\u25b2 $7,671.60"}, "Total Failed Attempts": {"v": "120", "w": ""}, "Avg Attempts Per Sub": {"v": "1.818181818181818", "w": ""}, "Total Disputes": {"v": "0", "w": ""}, "Disputed Amount": {"v": "$0.00", "w": "\u25bc $525.00"}, "Dispute Win Loss": {"v": "\u2014", "w": ""}, "Avg LTV": {"v": "$2,558", "w": ""}, "Monthly LTV": {"v": "$4,470", "w": "\u25bc 41.9%"}, "Annual LTV": {"v": "$645.59", "w": "\u25bc 41.9%"}}}, {"label": "Apr 27 - May 3", "missing": ["Annual Cancellations", "Avg Attempts Per Sub", "Churned ARR", "Churned MRR", "Monthly Cancellations"], "kpis": {"Total Revenue": {"v": "$29,193", "w": "\u25b2 15.0%"}, "Recurring Revenue": {"v": "$26,393", "w": ""}, "New Sub Revenue": {"v": "$2,800", "w": ""}, "Monthly Plan Revenue": {"v": "$13,002", "w": ""}, "Annual Plan Revenue": {"v": "$16,191", "w": ""}, "Current MRR": {"v": "$105,696", "w": ""}, "MRR Monthly Plans": {"v": "$50,712", "w": ""}, "MRR Annual Plans": {"v": "$54,984", "w": ""}, "Avg MRR Per Sub": {"v": "$68.59", "w": ""}, "Annualized MRR": {"v": "$1.27M", "w": ""}, "Committed ARR": {"v": "\u2014", "w": ""}, "ARR Gap": {"v": "\u2014", "w": ""}, "Active Subs": {"v": "1,541", "w": ""}, "New Subs": {"v": "8", "w": "\u25bc 7"}, "New Sub MRR Added": {"v": "$1,093", "w": ""}, "Monthly Subs Count": {"v": "564", "w": ""}, "Monthly Subs Pct": {"v": "36.60%", "w": ""}, "Annual Subs Count": {"v": "977", "w": ""}, "Annual Subs Pct": {"v": "63.40%", "w": ""}, "Total Cancellations": {"v": "32", "w": ""}, "Monthly Cancellations": {"v": "\u2014", "w": ""}, "Annual Cancellations": {"v": "\u2014", "w": ""}, "Weekly Churn Rate": {"v": "2.08%", "w": "\u25b2 0.06pp"}, "Churned MRR": {"v": "\u2014", "w": ""}, "Churned ARR": {"v": "\u2014", "w": ""}, "Failed Subs Unique": {"v": "12", "w": "\u25bc 54"}, "At Risk Amount": {"v": "$4,311", "w": "\u25bc $23,233.60"}, "Total Failed Attempts": {"v": ">=100 (cap)", "w": ""}, "Avg Attempts Per Sub": {"v": "\u2014", "w": ""}, "Total Disputes": {"v": "0", "w": ""}, "Disputed Amount": {"v": "$0.00", "w": ""}, "Dispute Win Loss": {"v": "\u2014", "w": ""}, "Avg LTV": {"v": "$2,478", "w": "\u25bc 3.1%"}, "Monthly LTV": {"v": "$4,330", "w": "\u25bc 3.1%"}, "Annual LTV": {"v": "$625.42", "w": "\u25bc 3.1%"}}}, {"label": "May 4 - May 10", "missing": ["Avg LTV"], "kpis": {"Total Revenue": {"v": "$32,348", "w": "\u25b2 10.8%"}, "Recurring Revenue": {"v": "$22,281", "w": ""}, "New Sub Revenue": {"v": "$10,040", "w": ""}, "Monthly Plan Revenue": {"v": "\u2014", "w": ""}, "Annual Plan Revenue": {"v": "\u2014", "w": ""}, "Current MRR": {"v": "$105,998", "w": ""}, "MRR Monthly Plans": {"v": "$51,786", "w": "\u25b2 2.1%"}, "MRR Annual Plans": {"v": "$54,212", "w": "\u25bc 1.4%"}, "Avg MRR Per Sub": {"v": "$69.69", "w": "\u25b2 1.6%"}, "Annualized MRR": {"v": "\u2014", "w": ""}, "Committed ARR": {"v": "\u2014", "w": ""}, "ARR Gap": {"v": "\u2014", "w": ""}, "Active Subs": {"v": "1,521", "w": "\u25bc 20"}, "New Subs": {"v": "15", "w": "\u25b2 7"}, "New Sub MRR Added": {"v": "\u2014", "w": ""}, "Monthly Subs Count": {"v": "565", "w": ""}, "Monthly Subs Pct": {"v": "37.15%", "w": "\u25b2 0.55pp"}, "Annual Subs Count": {"v": "956", "w": ""}, "Annual Subs Pct": {"v": "62.85%", "w": "\u25bc 0.55pp"}, "Total Cancellations": {"v": "25", "w": ""}, "Monthly Cancellations": {"v": "12", "w": ""}, "Annual Cancellations": {"v": "\u2014", "w": ""}, "Weekly Churn Rate": {"v": "1.64%", "w": "\u25bc 0.43pp"}, "Churned MRR": {"v": "$1,742", "w": ""}, "Churned ARR": {"v": "\u2014", "w": ""}, "Failed Subs Unique": {"v": "\u2014", "w": ""}, "At Risk Amount": {"v": "$16,606", "w": "\u25b2 $2,574.56"}, "Total Failed Attempts": {"v": "105", "w": "\u25b2 27"}, "Avg Attempts Per Sub": {"v": "2.1", "w": "\u25b2 0.37"}, "Total Disputes": {"v": "0", "w": ""}, "Disputed Amount": {"v": "$0.00", "w": "\u25bc $642.00"}, "Dispute Win Loss": {"v": "\u2014", "w": ""}, "Avg LTV": {"v": "\u2014", "w": ""}, "Monthly LTV": {"v": "\u2014", "w": ""}, "Annual LTV": {"v": "$4,227", "w": "\u25b2 35.9%"}}}, {"label": "May 11 - May 17", "missing": [], "kpis": {"Total Revenue": {"v": "$38,584", "w": "\u25b2 23.8%"}, "Recurring Revenue": {"v": "$22,770", "w": "\u25b2 7.4%"}, "New Sub Revenue": {"v": "$15,814", "w": "\u25b2 59.0%"}, "Monthly Plan Revenue": {"v": "$11,679", "w": "\u25b2 6.6%"}, "Annual Plan Revenue": {"v": "$26,905", "w": "\u25b2 33.2%"}, "Current MRR": {"v": "$104,347", "w": "\u25bc 1.6%"}, "MRR Monthly Plans": {"v": "$50,706", "w": "\u25bc 2.1%"}, "MRR Annual Plans": {"v": "$53,641", "w": "\u25bc 1.1%"}, "Avg MRR Per Sub": {"v": "$68.38", "w": "\u25bc $1.31"}, "Annualized MRR": {"v": "$1.25M", "w": "\u25bc 1.6%"}, "Committed ARR": {"v": "$643,696", "w": "\u25bc 1.1%"}, "ARR Gap": {"v": "$-608,467", "w": "\u25b2 2.1%"}, "Active Subs": {"v": "1,526", "w": "\u25b2 5"}, "New Subs": {"v": "26", "w": "\u25b2 12"}, "New Sub MRR Added": {"v": "$2,759", "w": "\u25b2 108.9%"}, "Monthly Subs Count": {"v": "552", "w": "\u25bc 13"}, "Monthly Subs Pct": {"v": "36.17%", "w": "\u25bc 0.97pp"}, "Annual Subs Count": {"v": "948", "w": "\u25bc 8"}, "Annual Subs Pct": {"v": "62.12%", "w": "\u25bc 0.73pp"}, "Total Cancellations": {"v": "28", "w": "\u25b2 4"}, "Monthly Cancellations": {"v": "13", "w": "\u25b2 1"}, "Annual Cancellations": {"v": "8", "w": "\u25bc 4"}, "Weekly Churn Rate": {"v": "1.83%", "w": "\u25b2 0.26pp"}, "Churned MRR": {"v": "$1,651", "w": "\u25bc $70.50"}, "Churned ARR": {"v": "$6,853", "w": "\u25bc $1806.00"}, "Failed Subs Unique": {"v": "49", "w": ""}, "At Risk Amount": {"v": "$18,237", "w": "\u25b2 10.3%"}, "Total Failed Attempts": {"v": "124", "w": "\u25b2 19"}, "Avg Attempts Per Sub": {"v": "2.53", "w": "\u25b2 0.39"}, "Total Disputes": {"v": "0", "w": "\u25bc 1"}, "Disputed Amount": {"v": "$0.00", "w": "\u25bc $931.00"}, "Dispute Win Loss": {"v": "n/a (MCP limit)", "w": ""}, "Avg LTV": {"v": "$5,377", "w": ""}, "Monthly LTV": {"v": "$3,992", "w": "\u25bc 7.5%"}, "Annual LTV": {"v": "$6,762", "w": "\u25b2 49.4%"}}}];
+const SCHEMA      = [{"id": "revenue", "title": "Revenue", "keys": [["Total Revenue", "Total revenue collected", "dollar"], ["Recurring Revenue", "Recurring revenue", "dollar"], ["New Sub Revenue", "New sub revenue", "dollar"], ["Monthly Plan Revenue", "Monthly plan revenue", "dollar"], ["Annual Plan Revenue", "Annual plan revenue", "dollar"], ["Current MRR", "Current MRR", "dollar"], ["MRR Monthly Plans", "MRR \u2014 monthly plans", "dollar"], ["MRR Annual Plans", "MRR \u2014 annual plans (\u00f712)", "dollar"], ["Avg MRR Per Sub", "Avg MRR / subscriber", "dollar"], ["Annualized MRR", "Annualized MRR", "dollar"], ["Committed ARR", "Committed ARR", "dollar"], ["ARR Gap", "ARR gap", "dollar"]]}, {"id": "subscriptions", "title": "Subscriptions & MRR", "keys": [["Active Subs", "Active subscriptions", "integer"], ["New Subs", "New subscriptions", "integer"], ["New Sub MRR Added", "New sub MRR added", "dollar"], ["Avg MRR Per Sub", "Avg MRR / subscriber", "dollar"], ["Monthly Subs Count", "Monthly subs", "integer"], ["Monthly Subs Pct", "Monthly subs %", "percent"], ["Annual Subs Count", "Annual subs", "integer"], ["Annual Subs Pct", "Annual subs %", "percent"]]}, {"id": "churn", "title": "Cancellations & Churn", "keys": [["Total Cancellations", "Total cancellations", "integer"], ["Monthly Cancellations", "Monthly cancellations", "integer"], ["Annual Cancellations", "Annual cancellations", "integer"], ["Weekly Churn Rate", "Weekly churn rate", "percent"], ["Churned MRR", "Churned MRR", "dollar"], ["Churned ARR", "Churned ARR", "dollar"]]}, {"id": "failed_payments", "title": "Failed Payments", "keys": [["Failed Subs Unique", "Unique subs w/ failed pmts", "integer"], ["At Risk Amount", "$ at risk (unique subs)", "dollar"], ["Total Failed Attempts", "Total failed attempts", "text"], ["Avg Attempts Per Sub", "Avg attempts / failed sub", "text"]]}, {"id": "disputes", "title": "Disputes", "keys": [["Total Disputes", "Total disputes", "integer"], ["Disputed Amount", "$ disputed", "dollar"], ["Dispute Win Loss", "Win/Loss breakdown", "text"]]}, {"id": "ltv", "title": "Lifetime Value", "keys": [["Avg LTV", "Avg LTV", "dollar"], ["Monthly LTV", "Monthly LTV", "dollar"], ["Annual LTV", "Annual LTV", "dollar"]]}];
+const LABELS      = CHART_WEEKS.map(w=>w.label);
 
-const labels = WEEKS.map(w=>w.label);
-let currentIdx = WEEKS.length - 1;
-const chartObjs = {};
+let currentIdx = CHART_WEEKS.length - 1;
+const _charts  = {};
 
-const fmtD = v => v==null ? "—" : (Math.abs(v)>=1000000 ? "$"+(v/1000000).toFixed(2)+"M" : "$"+Math.round(v).toLocaleString());
-const fmtN = v => v==null ? "—" : Math.round(v).toLocaleString();
-const fmtPct = v => v==null ? "—" : v.toFixed(2)+"%";
-const fmtAuto = (v,fmt) => fmt==="dollar"?fmtD(v):fmt==="percent"?fmtPct(v):fmt==="integer"?fmtN(v):v==null?"—":String(v);
+const C = {
+  purple:"#635bff", teal:"#00b8d4", green:"#16a34a",
+  red:"#f43f5e", amber:"#f59e0b", blue:"#2563eb"
+};
 
-function barDataset(key, color) {
-  return {
-    data: WEEKS.map(w=>w[key]),
-    backgroundColor: color,
-    borderRadius: 4,
-    borderSkipped: false,
-  };
-}
+const fmtD   = v => v==null?"—":(Math.abs(v)>=1e6?"$"+(v/1e6).toFixed(2)+"M":"$"+Math.round(v).toLocaleString());
+const fmtN   = v => v==null?"—":Math.round(v).toLocaleString();
+const fmtPct = v => v==null?"—":v.toFixed(2)+"%";
+const fmtA   = (v,f) => f==="dollar"?fmtD(v):f==="percent"?fmtPct(v):f==="integer"?fmtN(v):(v==null?"—":String(v));
 
-function lineDataset(key, color) {
-  return {
-    data: WEEKS.map(w=>w[key]),
-    borderColor: color,
-    backgroundColor: color+"22",
-    borderWidth: 2,
-    pointRadius: 4,
-    tension: 0.3,
-    fill: true,
-    spanGaps: true,
-  };
-}
-
-function chartOpts(fmt, title) {
-  return {
-    responsive:true, maintainAspectRatio:false,
-    plugins:{
-      legend:{display:false},
-      tooltip:{callbacks:{label:c=>fmtAuto(c.parsed.y,fmt)}}
-    },
-    scales:{
-      x:{ticks:{font:{size:10},maxRotation:30},grid:{display:false}},
-      y:{ticks:{font:{size:10},callback:v=>fmtAuto(v,fmt)},grid:{color:"#f0f0f0"}}
-    }
-  };
-}
-
-function makeChart(id, type, datasets, fmt) {
+function mkChart(id, type, datasets, fmt, opts={}) {
   const ctx = document.getElementById(id);
   if (!ctx) return;
-  if (chartObjs[id]) chartObjs[id].destroy();
-  chartObjs[id] = new Chart(ctx, {
-    type, data:{labels, datasets},
-    options: chartOpts(fmt)
+  if (_charts[id]) _charts[id].destroy();
+  _charts[id] = new Chart(ctx, {
+    type,
+    data: { labels: LABELS, datasets },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend: opts.legend || {display:false},
+        tooltip:{callbacks:{label:c=>fmtA(c.parsed.y,fmt)}}
+      },
+      scales: type==="doughnut"?{}:{
+        x:{ticks:{font:{size:10},maxRotation:35},grid:{display:false}},
+        y:{ticks:{font:{size:10},callback:v=>fmtA(v,fmt)},grid:{color:"#f4f4f4"}}
+      },
+      ...opts
+    }
   });
 }
 
-function makePieChart(id, dataArr, labelsArr, colors) {
+function bar(key, color) {
+  return {data:CHART_WEEKS.map(w=>w[key]),backgroundColor:color,borderRadius:5,borderSkipped:false};
+}
+function line(key, color) {
+  return {data:CHART_WEEKS.map(w=>w[key]),borderColor:color,backgroundColor:color+"18",
+           borderWidth:2,pointRadius:4,tension:.3,fill:true,spanGaps:true};
+}
+
+function mkDoughnut(id, data, labels, colors) {
   const ctx = document.getElementById(id);
   if (!ctx) return;
-  if (chartObjs[id]) chartObjs[id].destroy();
-  chartObjs[id] = new Chart(ctx, {
+  if (_charts[id]) _charts[id].destroy();
+  _charts[id] = new Chart(ctx, {
     type:"doughnut",
-    data:{labels:labelsArr, datasets:[{data:dataArr,backgroundColor:colors,borderWidth:2}]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:"bottom",labels:{font:{size:11}}}}
-    }
+    data:{labels, datasets:[{data,backgroundColor:colors,borderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:"bottom",labels:{font:{size:11}}}}}
   });
 }
 
 function renderCharts(idx) {
-  const w = WEEKS[idx];
-  // Revenue bar
-  makeChart("revChart","bar",[barDataset("totalRevenue","#635bff")],"dollar");
-  makeChart("newSubRevChart","bar",[barDataset("newSubRev","#00b8d4")],"dollar");
-  makeChart("newSubCountChart","bar",[barDataset("newSubs","#635bff")],"integer");
-  makeChart("churnChart","bar",[barDataset("cancellations","#f43f5e")],"integer");
-  makeChart("atRiskChart","bar",[barDataset("atRisk","#f59e0b")],"dollar");
-  makeChart("mrrChart","line",[lineDataset("mrr","#635bff"),lineDataset("annualizedMrr","#00b8d4"),lineDataset("committedArr","#16a34a")],"dollar");
+  const w = CHART_WEEKS[idx];
+  mkChart("c-rev",   "bar",  [bar("totalRevenue",C.purple)],             "dollar");
+  mkChart("c-nsrev", "bar",  [bar("newSubRev",C.teal)],                  "dollar");
+  mkChart("c-nsubs", "bar",  [bar("newSubs",C.purple)],                  "integer");
+  mkChart("c-cxl",   "bar",  [bar("cancellations",C.red)],               "integer");
+  mkChart("c-risk",  "bar",  [bar("atRisk",C.amber)],                    "dollar");
+  mkChart("c-mrr",   "line", [line("mrr",C.purple),line("annualizedMrr",C.teal),line("committedArr",C.green)], "dollar");
+  mkDoughnut("c-split",
+    [w.monthlyPlanRev||0, w.annualPlanRev||0],
+    ["Monthly","Annual"], [C.purple,C.teal]);
+  mkDoughnut("c-mix",
+    [w.monthlySubsPct||0, w.annualSubsPct||0],
+    ["Monthly","Annual"], [C.purple,C.teal]);
+}
 
-  // Plan mix doughnut for current week
-  const mPct = w.monthlySubsPct;
-  const aPct = w.annualSubsPct;
-  if (mPct!=null||aPct!=null) {
-    makePieChart("mixChart",[mPct||0,aPct||0],["Monthly","Annual"],["#635bff","#00b8d4"]);
-  }
-  // Revenue split doughnut
-  const mRev = w.monthlyPlanRev;
-  const aRev = w.annualPlanRev;
-  if (mRev!=null||aRev!=null) {
-    makePieChart("splitChart",[mRev||0,aRev||0],["Monthly","Annual"],["#635bff","#00b8d4"]);
-  }
+function kpiCards(keys, kpis) {
+  return keys.map(([ek,dl])=>{
+    const k = kpis[ek]||{v:"—",w:""};
+    const wc = k.w.includes("▲")?"up":k.w.includes("▼")?"down":k.w==="flat"?"flat":"";
+    return `<div class="kpi"><div class="kpi-label">${dl}</div><div class="kpi-value">${k.v}</div>`+
+           (k.w?`<div class="kpi-wow ${wc}">${k.w}</div>`:``)+"</div>";
+  }).join("");
 }
 
 function renderKpis(idx) {
-  const row = KPI_ROWS[idx];
-  const w = WEEKS[idx];
+  const kd = KPI_WEEKS[idx];
+  const kpis = kd.kpis;
+  const w = CHART_WEEKS[idx];
 
-  // Warning
-  const warnEl = document.getElementById("warn-box");
-  if (row.missing.length > 0) {
-    warnEl.textContent = "⚠️ Missing data: " + row.missing.join(", ");
-    warnEl.style.display = "block";
-  } else {
-    warnEl.style.display = "none";
-  }
+  document.getElementById("warn").innerHTML = kd.missing.length
+    ? `<div class="warning">⚠️ Missing data: ${kd.missing.join(", ")}</div>` : "";
 
-  SCHEMA_ORDER.forEach(([sectionTitle, keys]) => {
-    const gridId = "grid-" + sectionTitle.replace(/[^a-z]/gi,"_");
-    const el = document.getElementById(gridId);
-    if (!el) return;
-    el.innerHTML = keys.map(([key, display, fmt]) => {
-      const kpi = row.kpis[key] || {value:"—",wow:""};
-      const wowCls = kpi.wow.includes("▲") ? "up" : kpi.wow.includes("▼") ? "down" : "neutral";
-      const wowHtml = kpi.wow ? `<div class="kpi-wow ${wowCls}">${kpi.wow}</div>` : "";
-      return `<div class="kpi"><div class="kpi-label">${display}</div><div class="kpi-value">${kpi.value}</div>${wowHtml}</div>`;
-    }).join("");
+  SCHEMA.forEach(sec=>{
+    const el = document.getElementById("kpi-"+sec.id);
+    if (el) el.innerHTML = kpiCards(sec.keys, kpis);
   });
 
   // Plan mix bar
-  const mP = w.monthlySubsPct!=null ? w.monthlySubsPct.toFixed(1) : 0;
-  const aP = w.annualSubsPct!=null  ? w.annualSubsPct.toFixed(1)  : 0;
-  document.getElementById("planMixBar").innerHTML = `
-    <div class="mix-bar-wrap"><div class="mix-bar-m" style="width:${mP}%"></div><div class="mix-bar-a" style="width:${aP}%"></div></div>
-    <div class="mix-legend">
-      <span><span class="mix-dot" style="background:#635bff"></span>Monthly ${mP}%</span>
-      <span><span class="mix-dot" style="background:#00b8d4"></span>Annual ${aP}%</span>
-    </div>`;
+  const mP = w.monthlySubsPct!=null?w.monthlySubsPct.toFixed(1):0;
+  const aP = w.annualSubsPct!=null?w.annualSubsPct.toFixed(1):0;
+  document.getElementById("mix-bar").innerHTML =
+    `<div class="mix-bar-wrap"><div class="mix-bar-m" style="width:${mP}%"></div><div class="mix-bar-a" style="width:${aP}%"></div></div>
+     <div class="mix-legend">
+       <span><span class="mix-dot" style="background:#635bff"></span>Monthly ${mP}%</span>
+       <span><span class="mix-dot" style="background:#00b8d4"></span>Annual ${aP}%</span>
+     </div>`;
 }
 
-function buildContent() {
-  const el = document.getElementById("content");
-  el.innerHTML = `
-    <div class="warning" id="warn-box" style="display:none"></div>
+function buildShell() {
+  document.getElementById("app").innerHTML = `
+    <div id="warn"></div>
 
-    <div class="section-label">Revenue</div>
-    <div class="kpi-grid" id="grid-Revenue"></div>
+    <div class="sec-label">Revenue</div>
+    <div class="kpi-grid" id="kpi-revenue"></div>
     <div class="chart-card">
-      <div class="chart-title">Total revenue collected — week over week</div>
+      <div class="chart-title">Total revenue — week over week</div>
       <div class="chart-sub">All charges across monthly and annual plans</div>
-      <div class="chart-wrap" style="height:220px"><canvas id="revChart"></canvas></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="c-rev"></canvas></div>
     </div>
     <div class="two-col">
       <div class="chart-card">
         <div class="chart-title">New subscription revenue</div>
         <div class="chart-sub">First charge from new subscribers</div>
-        <div class="chart-wrap" style="height:190px"><canvas id="newSubRevChart"></canvas></div>
+        <div class="chart-wrap" style="height:190px"><canvas id="c-nsrev"></canvas></div>
       </div>
       <div class="chart-card">
         <div class="chart-title">Monthly vs annual revenue split</div>
         <div class="chart-sub">Current week</div>
-        <div class="chart-wrap" style="height:190px"><canvas id="splitChart"></canvas></div>
+        <div class="chart-wrap" style="height:190px"><canvas id="c-split"></canvas></div>
       </div>
     </div>
 
-    <div class="section-label">MRR & ARR Trends</div>
+    <div class="sec-label">MRR & ARR Trends</div>
     <div class="chart-card">
       <div class="chart-title">MRR / Annualized MRR / Committed ARR — all weeks</div>
-      <div class="chart-sub">Purple = MRR, Teal = Annualized MRR, Green = Committed ARR</div>
-      <div class="chart-wrap" style="height:220px"><canvas id="mrrChart"></canvas></div>
+      <div class="chart-sub">Purple = MRR &nbsp;·&nbsp; Teal = Annualized MRR &nbsp;·&nbsp; Green = Committed ARR</div>
+      <div class="chart-wrap" style="height:240px"><canvas id="c-mrr"></canvas></div>
     </div>
 
-    <div class="section-label">Subscriptions & MRR</div>
-    <div class="kpi-grid" id="grid-Subscriptions___MRR"></div>
+    <div class="sec-label">Subscriptions & MRR</div>
+    <div class="kpi-grid" id="kpi-subscriptions"></div>
     <div class="two-col">
       <div class="chart-card">
-        <div class="chart-title">New subscriptions added</div>
-        <div class="chart-sub">Week over week</div>
-        <div class="chart-wrap" style="height:190px"><canvas id="newSubCountChart"></canvas></div>
+        <div class="chart-title">New subscriptions added — week over week</div>
+        <div class="chart-sub"></div>
+        <div class="chart-wrap" style="height:190px"><canvas id="c-nsubs"></canvas></div>
       </div>
       <div class="chart-card">
-        <div class="chart-title">Plan mix</div>
-        <div class="chart-sub">Active subscribers by plan type</div>
-        <div id="planMixBar"></div>
-        <div class="chart-wrap" style="height:150px"><canvas id="mixChart"></canvas></div>
+        <div class="chart-title">Plan mix — active subscribers</div>
+        <div class="chart-sub">Monthly vs annual</div>
+        <div id="mix-bar"></div>
+        <div class="chart-wrap" style="height:150px"><canvas id="c-mix"></canvas></div>
       </div>
     </div>
 
-    <div class="section-label">Cancellations & Churn</div>
-    <div class="kpi-grid" id="grid-Cancellations___Churn"></div>
+    <div class="sec-label">Cancellations & Churn</div>
+    <div class="kpi-grid" id="kpi-churn"></div>
     <div class="chart-card">
       <div class="chart-title">Total cancellations — week over week</div>
       <div class="chart-sub">All plan types combined</div>
-      <div class="chart-wrap" style="height:210px"><canvas id="churnChart"></canvas></div>
+      <div class="chart-wrap" style="height:210px"><canvas id="c-cxl"></canvas></div>
     </div>
 
-    <div class="section-label">Failed Payments</div>
-    <div class="kpi-grid" id="grid-Failed_Payments"></div>
+    <div class="sec-label">Failed Payments</div>
+    <div class="kpi-grid" id="kpi-failed_payments"></div>
     <div class="chart-card">
-      <div class="chart-title">$ at risk from failed payments</div>
-      <div class="chart-sub">Unique subscriber balance at risk each week</div>
-      <div class="chart-wrap" style="height:210px"><canvas id="atRiskChart"></canvas></div>
+      <div class="chart-title">$ at risk from failed payments — week over week</div>
+      <div class="chart-sub">Unique subscriber balance at risk</div>
+      <div class="chart-wrap" style="height:210px"><canvas id="c-risk"></canvas></div>
     </div>
 
-    <div class="section-label">Disputes</div>
-    <div class="kpi-grid" id="grid-Disputes"></div>
+    <div class="sec-label">Disputes</div>
+    <div class="kpi-grid" id="kpi-disputes"></div>
 
-    <div class="section-label">Lifetime Value</div>
-    <div class="kpi-grid" id="grid-Lifetime_Value"></div>
+    <div class="sec-label">Lifetime Value</div>
+    <div class="kpi-grid" id="kpi-ltv"></div>
 
     <div class="note-box">
       <strong>Campaign note:</strong> Re-engagement campaign (launched Mar 24, 2026) inflated churn figures.
-      236 subscribers re-engaged. Cancellations reflect intentional list hygiene — do not use for churn baseline trending.
+      236 subscribers re-engaged — cancellations reflect intentional list hygiene, not organic churn.
     </div>`;
 }
 
@@ -326,8 +242,7 @@ function showTab(idx) {
   renderCharts(idx);
 }
 
-buildContent();
+buildShell();
 showTab(currentIdx);
 </script>
-</body>
-</html>
+</body></html>
