@@ -2,187 +2,332 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Privy — Weekly Stripe Report</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f6f9;color:#1a1d23;font-size:14px}
-header{background:#1a1d23;color:#fff;padding:18px 32px;display:flex;align-items:center;gap:16px}
+header{background:#1a1d23;color:#fff;padding:18px 32px;display:flex;align-items:center}
 .logo{font-size:20px;font-weight:700;letter-spacing:-0.5px}
-.subtitle{font-size:13px;color:#8a8f9c}
-.tabs{background:#fff;border-bottom:1px solid #e2e6ed;padding:0 32px;display:flex;gap:4px;overflow-x:auto}
-.tab-btn{padding:14px 18px;border:none;background:none;cursor:pointer;font-size:13px;color:#6b7280;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.15s}
+.subtitle{font-size:13px;color:#8a8f9c;margin-top:2px}
+.tabs{background:#fff;border-bottom:1px solid #e2e6ed;padding:0 24px;display:flex;gap:2px;overflow-x:auto}
+.tab-btn{padding:12px 16px;border:none;background:none;cursor:pointer;font-size:13px;color:#6b7280;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
 .tab-btn:hover{color:#1a1d23}
-.tab-btn.active{color:#635bff;border-bottom-color:#635bff;font-weight:500}
-.content{padding:28px 32px;max-width:1200px;margin:0 auto}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
-.section{margin-bottom:32px}
-.section h2{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;margin-bottom:14px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.metric-card{background:#fff;border:1px solid #e2e6ed;border-radius:10px;padding:16px}
-.metric-label{font-size:12px;color:#6b7280;margin-bottom:6px;line-height:1.3}
-.metric-value{font-size:22px;font-weight:600;color:#1a1d23;line-height:1.1}
-.wow{font-size:12px;margin-top:4px;display:block}
-.wow.up{color:#16a34a}
-.wow.down{color:#dc2626}
-.wow.neutral{color:#6b7280}
-.warning{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:12px 16px;margin-bottom:20px;color:#9a3412;font-size:13px}
-.charts-section{margin-bottom:36px}
-.charts-section h2{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#6b7280;margin-bottom:14px}
-.chart-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
-.chart-card{background:#fff;border:1px solid #e2e6ed;border-radius:10px;padding:20px}
-.chart-title{font-size:12px;font-weight:600;color:#6b7280;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.05em}
-.chart-wrap{position:relative;height:180px}
-footer{text-align:center;color:#9ca3af;font-size:12px;padding:24px 32px 40px}
+.tab-btn.active{color:#635bff;border-bottom-color:#635bff;font-weight:600}
+.content{padding:24px 32px;max-width:1200px;margin:0 auto}
+.section-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#6b7280;margin:28px 0 12px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:10px;margin-bottom:10px}
+.kpi{background:#fff;border:1px solid #e2e6ed;border-radius:10px;padding:14px 16px}
+.kpi-label{font-size:11px;color:#9ca3af;margin-bottom:5px;line-height:1.3}
+.kpi-value{font-size:21px;font-weight:700;color:#1a1d23;line-height:1.1}
+.kpi-wow{font-size:11px;margin-top:4px}
+.kpi-wow.up{color:#16a34a}
+.kpi-wow.down{color:#dc2626}
+.kpi-wow.neutral{color:#9ca3af}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.chart-card{background:#fff;border:1px solid #e2e6ed;border-radius:10px;padding:18px;margin-bottom:14px}
+.chart-title{font-size:12px;font-weight:700;color:#374151;margin-bottom:2px}
+.chart-sub{font-size:11px;color:#9ca3af;margin-bottom:12px}
+.chart-wrap{position:relative}
+.mix-bar-wrap{height:14px;border-radius:7px;overflow:hidden;display:flex;margin:10px 0 6px}
+.mix-bar-m{background:#635bff;height:100%}
+.mix-bar-a{background:#00b8d4;height:100%}
+.mix-legend{display:flex;gap:16px;font-size:12px;color:#6b7280}
+.mix-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.plan-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+.plan-table th{text-align:left;color:#9ca3af;font-weight:600;padding:4px 6px;border-bottom:1px solid #f0f0f0}
+.plan-table td{padding:5px 6px;border-bottom:1px solid #f9f9f9;color:#374151}
+.warning{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 14px;margin-bottom:16px;color:#9a3412;font-size:12px}
+.note-box{background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:10px 14px;margin:20px 0;font-size:12px;color:#075985}
+footer{text-align:center;color:#9ca3af;font-size:11px;padding:20px 32px 40px}
 a{color:#635bff;text-decoration:none}
 a:hover{text-decoration:underline}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}.content{padding:16px}}
 </style>
 </head>
 <body>
 <header>
   <div><div class="logo">Privy</div><div class="subtitle">Weekly Stripe Report</div></div>
 </header>
-<div class="tabs"><button class="tab-btn " onclick="showTab(0)">Week of Apr 20-26, 2026</button>
-<button class="tab-btn " onclick="showTab(1)">Week of May 11 - May 17, 2026</button>
-<button class="tab-btn " onclick="showTab(2)">Week of Apr 13-19, 2026</button>
-<button class="tab-btn " onclick="showTab(3)">Week of Apr 27 - May 3, 2026</button>
-<button class="tab-btn " onclick="showTab(4)">Week of Apr 7-13, 2026</button>
-<button class="tab-btn active" onclick="showTab(5)">Week of May 4 - May 10, 2026</button>
+<div class="tabs"><button class="tab-btn " onclick="showTab(0)" id="tab-0">Apr 20-26</button>
+<button class="tab-btn " onclick="showTab(1)" id="tab-1">May 11 - May 17</button>
+<button class="tab-btn " onclick="showTab(2)" id="tab-2">Apr 13-19</button>
+<button class="tab-btn " onclick="showTab(3)" id="tab-3">Apr 27 - May 3</button>
+<button class="tab-btn " onclick="showTab(4)" id="tab-4">Apr 7-13</button>
+<button class="tab-btn active" onclick="showTab(5)" id="tab-5">May 4 - May 10</button>
 </div>
-<div class="content">
-  <div class="charts-section">
-    <h2>Trends — all weeks</h2>
-    <div class="chart-grid" id="chart-grid"></div>
-  </div>
-  <div class="tab-panel " id="panel-0">
-<div class="warning"><strong>⚠️ Missing data:</strong> Annual Cancellations, Annual Subs Pct, Avg LTV, Churned ARR, Churned MRR, Monthly Cancellations, Monthly Subs Pct</div>
-<div class="section"><h2>Revenue</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total revenue collected</div><div class="metric-value">$25,379</div><span class="wow up">▲ 20.9%</span></div><div class="metric-card"><div class="metric-label">Recurring revenue</div><div class="metric-value">$20,486</div></div><div class="metric-card"><div class="metric-label">New sub revenue</div><div class="metric-value">$4,855</div></div><div class="metric-card"><div class="metric-label">Monthly plan revenue</div><div class="metric-value">$13,454</div></div><div class="metric-card"><div class="metric-label">Annual plan revenue</div><div class="metric-value">$11,925</div></div><div class="metric-card"><div class="metric-label">Current MRR</div><div class="metric-value">$105,696</div></div><div class="metric-card"><div class="metric-label">MRR — monthly plans</div><div class="metric-value">$50,712</div></div><div class="metric-card"><div class="metric-label">MRR — annual plans (÷12)</div><div class="metric-value">$54,984</div></div><div class="metric-card"><div class="metric-label">Avg MRR / subscriber</div><div class="metric-value">$68.59</div></div><div class="metric-card"><div class="metric-label">Annualized MRR</div><div class="metric-value">$1.27M</div></div><div class="metric-card"><div class="metric-label">Committed ARR</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">ARR gap</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Subscriptions & MRR</h2><div class="grid"><div class="metric-card"><div class="metric-label">Active subscriptions</div><div class="metric-value">1,541</div></div><div class="metric-card"><div class="metric-label">New subscriptions</div><div class="metric-value">15</div><span class="wow up">▲ 3</span></div><div class="metric-card"><div class="metric-label">New sub MRR added</div><div class="metric-value">$1,441</div></div><div class="metric-card"><div class="metric-label">Avg MRR / subscriber</div><div class="metric-value">$68.59</div></div><div class="metric-card"><div class="metric-label">Monthly subs</div><div class="metric-value">564</div></div><div class="metric-card"><div class="metric-label">Monthly subs %</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Annual subs</div><div class="metric-value">977</div></div><div class="metric-card"><div class="metric-label">Annual subs %</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Cancellations & Churn</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total cancellations</div><div class="metric-value">31</div></div><div class="metric-card"><div class="metric-label">Monthly cancellations</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Annual cancellations</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Weekly churn rate</div><div class="metric-value">2.01%</div><span class="wow up">▲ 0.84pp</span></div><div class="metric-card"><div class="metric-label">Churned MRR</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Churned ARR</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Failed Payments</h2><div class="grid"><div class="metric-card"><div class="metric-label">$ at risk (unique subs)</div><div class="metric-value">$27,545</div><span class="wow up">▲ $7,671.60</span></div><div class="metric-card"><div class="metric-label">Unique subs w/ failed pmts</div><div class="metric-value">66</div><span class="wow up">▲ 16</span></div><div class="metric-card"><div class="metric-label">Total failed attempts</div><div class="metric-value">120</div></div><div class="metric-card"><div class="metric-label">Avg attempts / failed sub</div><div class="metric-value">1.818181818181818</div></div></div></div>
-<div class="section"><h2>Disputes</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total disputes</div><div class="metric-value">0</div></div><div class="metric-card"><div class="metric-label">$ disputed</div><div class="metric-value">$0.00</div><span class="wow down">▼ $525.00</span></div><div class="metric-card"><div class="metric-label">Win/Loss breakdown</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Lifetime Value</h2><div class="grid"><div class="metric-card"><div class="metric-label">Avg LTV</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Monthly LTV</div><div class="metric-value">$4,470</div><span class="wow down">▼ 41.9%</span></div><div class="metric-card"><div class="metric-label">Annual LTV</div><div class="metric-value">$645.59</div><span class="wow down">▼ 41.9%</span></div></div></div>
-</div><div class="tab-panel " id="panel-1">
+<div class="content" id="content"></div>
+<footer>Auto-generated May 19, 2026 at 01:19 PM&nbsp;|&nbsp;<a href="https://bensonjuarez-creator.github.io/privy-dashboard">https://bensonjuarez-creator.github.io/privy-dashboard</a></footer>
 
-<div class="section"><h2>Revenue</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total revenue collected</div><div class="metric-value">$38,584</div><span class="wow up">▲ 23.8%</span></div><div class="metric-card"><div class="metric-label">Recurring revenue</div><div class="metric-value">$22,770</div><span class="wow up">▲ 7.4%</span></div><div class="metric-card"><div class="metric-label">New sub revenue</div><div class="metric-value">$15,814</div><span class="wow up">▲ 59.0%</span></div><div class="metric-card"><div class="metric-label">Monthly plan revenue</div><div class="metric-value">$11,679</div><span class="wow up">▲ 6.6%</span></div><div class="metric-card"><div class="metric-label">Annual plan revenue</div><div class="metric-value">$26,905</div><span class="wow up">▲ 33.2%</span></div><div class="metric-card"><div class="metric-label">Current MRR</div><div class="metric-value">$104,347</div><span class="wow down">▼ 1.6%</span></div><div class="metric-card"><div class="metric-label">MRR — monthly plans</div><div class="metric-value">$50,706</div><span class="wow down">▼ 2.1%</span></div><div class="metric-card"><div class="metric-label">MRR — annual plans (÷12)</div><div class="metric-value">$53,641</div><span class="wow down">▼ 1.1%</span></div><div class="metric-card"><div class="metric-label">Avg MRR / subscriber</div><div class="metric-value">$68.38</div><span class="wow down">▼ $1.31</span></div><div class="metric-card"><div class="metric-label">Annualized MRR</div><div class="metric-value">$1.25M</div><span class="wow down">▼ 1.6%</span></div><div class="metric-card"><div class="metric-label">Committed ARR</div><div class="metric-value">$643,696</div><span class="wow down">▼ 1.1%</span></div><div class="metric-card"><div class="metric-label">ARR gap</div><div class="metric-value">$-608,467</div><span class="wow up">▲ 2.1%</span></div></div></div>
-<div class="section"><h2>Subscriptions & MRR</h2><div class="grid"><div class="metric-card"><div class="metric-label">Active subscriptions</div><div class="metric-value">1,526</div><span class="wow up">▲ 5</span></div><div class="metric-card"><div class="metric-label">New subscriptions</div><div class="metric-value">26</div><span class="wow up">▲ 12</span></div><div class="metric-card"><div class="metric-label">New sub MRR added</div><div class="metric-value">$2,759</div><span class="wow up">▲ 108.9%</span></div><div class="metric-card"><div class="metric-label">Avg MRR / subscriber</div><div class="metric-value">$68.38</div><span class="wow down">▼ $1.31</span></div><div class="metric-card"><div class="metric-label">Monthly subs</div><div class="metric-value">552</div><span class="wow down">▼ 13</span></div><div class="metric-card"><div class="metric-label">Monthly subs %</div><div class="metric-value">36.17%</div></div><div class="metric-card"><div class="metric-label">Annual subs</div><div class="metric-value">948</div><span class="wow down">▼ 8</span></div><div class="metric-card"><div class="metric-label">Annual subs %</div><div class="metric-value">62.12%</div></div></div></div>
-<div class="section"><h2>Cancellations & Churn</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total cancellations</div><div class="metric-value">28</div><span class="wow up">▲ 4</span></div><div class="metric-card"><div class="metric-label">Monthly cancellations</div><div class="metric-value">13</div><span class="wow up">▲ 1</span></div><div class="metric-card"><div class="metric-label">Annual cancellations</div><div class="metric-value">8</div><span class="wow down">▼ 4</span></div><div class="metric-card"><div class="metric-label">Weekly churn rate</div><div class="metric-value">1.83%</div><span class="wow up">▲ 0.26pp</span></div><div class="metric-card"><div class="metric-label">Churned MRR</div><div class="metric-value">$1,651</div><span class="wow down">▼ $70.50</span></div><div class="metric-card"><div class="metric-label">Churned ARR</div><div class="metric-value">$6,853</div><span class="wow down">▼ $1806.00</span></div></div></div>
-<div class="section"><h2>Failed Payments</h2><div class="grid"><div class="metric-card"><div class="metric-label">$ at risk (unique subs)</div><div class="metric-value">$18,237</div><span class="wow up">▲ 10.3%</span></div><div class="metric-card"><div class="metric-label">Unique subs w/ failed pmts</div><div class="metric-value">49</div></div><div class="metric-card"><div class="metric-label">Total failed attempts</div><div class="metric-value">124</div><span class="wow up">▲ 19</span></div><div class="metric-card"><div class="metric-label">Avg attempts / failed sub</div><div class="metric-value">2.53</div><span class="wow up">▲ 0.39</span></div></div></div>
-<div class="section"><h2>Disputes</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total disputes</div><div class="metric-value">0</div><span class="wow down">▼ 1</span></div><div class="metric-card"><div class="metric-label">$ disputed</div><div class="metric-value">$0.00</div><span class="wow down">▼ $931.00</span></div><div class="metric-card"><div class="metric-label">Win/Loss breakdown</div><div class="metric-value">n/a (MCP limit)</div></div></div></div>
-<div class="section"><h2>Lifetime Value</h2><div class="grid"><div class="metric-card"><div class="metric-label">Avg LTV</div><div class="metric-value">$5,377</div></div><div class="metric-card"><div class="metric-label">Monthly LTV</div><div class="metric-value">$3,992</div><span class="wow down">▼ 7.5%</span></div><div class="metric-card"><div class="metric-label">Annual LTV</div><div class="metric-value">$6,762</div><span class="wow up">▲ 49.4%</span></div></div></div>
-</div><div class="tab-panel " id="panel-2">
-<div class="warning"><strong>⚠️ Missing data:</strong> Annual Cancellations, Annual Plan Revenue, Annual Subs Pct, Avg LTV, Churned ARR, Churned MRR, Monthly Cancellations, Monthly Plan Revenue, Monthly Subs Pct, New Sub Revenue</div>
-<div class="section"><h2>Revenue</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total revenue collected</div><div class="metric-value">$20,984</div></div><div class="metric-card"><div class="metric-label">Recurring revenue</div><div class="metric-value">$16,290</div></div><div class="metric-card"><div class="metric-label">New sub revenue</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Monthly plan revenue</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Annual plan revenue</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Current MRR</div><div class="metric-value">$105,733</div></div><div class="metric-card"><div class="metric-label">MRR — monthly plans</div><div class="metric-value">$50,749</div></div><div class="metric-card"><div class="metric-label">MRR — annual plans (÷12)</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Avg MRR / subscriber</div><div class="metric-value">$68.57</div></div><div class="metric-card"><div class="metric-label">Annualized MRR</div><div class="metric-value">$1.27M</div></div><div class="metric-card"><div class="metric-label">Committed ARR</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">ARR gap</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Subscriptions & MRR</h2><div class="grid"><div class="metric-card"><div class="metric-label">Active subscriptions</div><div class="metric-value">1,542</div></div><div class="metric-card"><div class="metric-label">New subscriptions</div><div class="metric-value">12</div><span class="wow down">▼ 7</span></div><div class="metric-card"><div class="metric-label">New sub MRR added</div><div class="metric-value">$1,231</div></div><div class="metric-card"><div class="metric-label">Avg MRR / subscriber</div><div class="metric-value">$68.57</div></div><div class="metric-card"><div class="metric-label">Monthly subs</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Monthly subs %</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Annual subs</div><div class="metric-value">977</div></div><div class="metric-card"><div class="metric-label">Annual subs %</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Cancellations & Churn</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total cancellations</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Monthly cancellations</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Annual cancellations</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Weekly churn rate</div><div class="metric-value">1.17%</div><span class="wow down">▼ 1.17pp</span></div><div class="metric-card"><div class="metric-label">Churned MRR</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Churned ARR</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Failed Payments</h2><div class="grid"><div class="metric-card"><div class="metric-label">$ at risk (unique subs)</div><div class="metric-value">$19,873</div><span class="wow down">▼ $933.82</span></div><div class="metric-card"><div class="metric-label">Unique subs w/ failed pmts</div><div class="metric-value">50</div><span class="wow up">▲ 7</span></div><div class="metric-card"><div class="metric-label">Total failed attempts</div><div class="metric-value">119</div><span class="wow up">▲ 52</span></div><div class="metric-card"><div class="metric-label">Avg attempts / failed sub</div><div class="metric-value">2.38</div><span class="wow up">▲ 52.7%</span></div></div></div>
-<div class="section"><h2>Disputes</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total disputes</div><div class="metric-value">0</div></div><div class="metric-card"><div class="metric-label">$ disputed</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Win/Loss breakdown</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Lifetime Value</h2><div class="grid"><div class="metric-card"><div class="metric-label">Avg LTV</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Monthly LTV</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Annual LTV</div><div class="metric-value">—</div></div></div></div>
-</div><div class="tab-panel " id="panel-3">
-<div class="warning"><strong>⚠️ Missing data:</strong> Annual Cancellations, Annual Subs Pct, Avg Attempts Per Sub, Avg LTV, Churned ARR, Churned MRR, Monthly Cancellations, Monthly Subs Pct</div>
-<div class="section"><h2>Revenue</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total revenue collected</div><div class="metric-value">$29,193</div><span class="wow up">▲ 15.0%</span></div><div class="metric-card"><div class="metric-label">Recurring revenue</div><div class="metric-value">$26,393</div></div><div class="metric-card"><div class="metric-label">New sub revenue</div><div class="metric-value">$2,800</div></div><div class="metric-card"><div class="metric-label">Monthly plan revenue</div><div class="metric-value">$13,002</div></div><div class="metric-card"><div class="metric-label">Annual plan revenue</div><div class="metric-value">$16,191</div></div><div class="metric-card"><div class="metric-label">Current MRR</div><div class="metric-value">$105,696</div></div><div class="metric-card"><div class="metric-label">MRR — monthly plans</div><div class="metric-value">$50,712</div></div><div class="metric-card"><div class="metric-label">MRR — annual plans (÷12)</div><div class="metric-value">$54,984</div></div><div class="metric-card"><div class="metric-label">Avg MRR / subscriber</div><div class="metric-value">$68.59</div></div><div class="metric-card"><div class="metric-label">Annualized MRR</div><div class="metric-value">$1.27M</div></div><div class="metric-card"><div class="metric-label">Committed ARR</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">ARR gap</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Subscriptions & MRR</h2><div class="grid"><div class="metric-card"><div class="metric-label">Active subscriptions</div><div class="metric-value">1,541</div></div><div class="metric-card"><div class="metric-label">New subscriptions</div><div class="metric-value">8</div><span class="wow down">▼ 7</span></div><div class="metric-card"><div class="metric-label">New sub MRR added</div><div class="metric-value">$1,093</div></div><div class="metric-card"><div class="metric-label">Avg MRR / subscriber</div><div class="metric-value">$68.59</div></div><div class="metric-card"><div class="metric-label">Monthly subs</div><div class="metric-value">564</div></div><div class="metric-card"><div class="metric-label">Monthly subs %</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Annual subs</div><div class="metric-value">977</div></div><div class="metric-card"><div class="metric-label">Annual subs %</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Cancellations & Churn</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total cancellations</div><div class="metric-value">32</div></div><div class="metric-card"><div class="metric-label">Monthly cancellations</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Annual cancellations</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Weekly churn rate</div><div class="metric-value">2.08%</div><span class="wow up">▲ 0.06pp</span></div><div class="metric-card"><div class="metric-label">Churned MRR</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Churned ARR</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Failed Payments</h2><div class="grid"><div class="metric-card"><div class="metric-label">$ at risk (unique subs)</div><div class="metric-value">$4,311</div><span class="wow down">▼ $23,233.60</span></div><div class="metric-card"><div class="metric-label">Unique subs w/ failed pmts</div><div class="metric-value">12</div><span class="wow down">▼ 54</span></div><div class="metric-card"><div class="metric-label">Total failed attempts</div><div class="metric-value">>=100 (cap)</div></div><div class="metric-card"><div class="metric-label">Avg attempts / failed sub</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Disputes</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total disputes</div><div class="metric-value">0</div></div><div class="metric-card"><div class="metric-label">$ disputed</div><div class="metric-value">$0.00</div></div><div class="metric-card"><div class="metric-label">Win/Loss breakdown</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Lifetime Value</h2><div class="grid"><div class="metric-card"><div class="metric-label">Avg LTV</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Monthly LTV</div><div class="metric-value">$4,330</div><span class="wow down">▼ 3.1%</span></div><div class="metric-card"><div class="metric-label">Annual LTV</div><div class="metric-value">$625.42</div><span class="wow down">▼ 3.1%</span></div></div></div>
-</div><div class="tab-panel " id="panel-4">
-<div class="warning"><strong>⚠️ Missing data:</strong> Annual Plan Revenue, Annual Subs Pct, At Risk Amount, Avg Attempts Per Sub, Avg LTV, Dispute Win Loss, Failed Subs Unique, Monthly Plan Revenue, Monthly Subs Pct, New Sub Revenue</div>
-<div class="section"><h2>Revenue</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total revenue collected</div><div class="metric-value">$23,128</div></div><div class="metric-card"><div class="metric-label">Recurring revenue</div><div class="metric-value">$14,938</div></div><div class="metric-card"><div class="metric-label">New sub revenue</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Monthly plan revenue</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Annual plan revenue</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Current MRR</div><div class="metric-value">$105,733</div></div><div class="metric-card"><div class="metric-label">MRR — monthly plans</div><div class="metric-value">$50,749</div></div><div class="metric-card"><div class="metric-label">MRR — annual plans (÷12)</div><div class="metric-value">$54,984</div></div><div class="metric-card"><div class="metric-label">Avg MRR / subscriber</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Annualized MRR</div><div class="metric-value">$1.27M</div></div><div class="metric-card"><div class="metric-label">Committed ARR</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">ARR gap</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Subscriptions & MRR</h2><div class="grid"><div class="metric-card"><div class="metric-label">Active subscriptions</div><div class="metric-value">1,542</div></div><div class="metric-card"><div class="metric-label">New subscriptions</div><div class="metric-value">15</div><span class="wow up">▲ 7</span></div><div class="metric-card"><div class="metric-label">New sub MRR added</div><div class="metric-value">$1,584</div></div><div class="metric-card"><div class="metric-label">Avg MRR / subscriber</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Monthly subs</div><div class="metric-value">565</div></div><div class="metric-card"><div class="metric-label">Monthly subs %</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Annual subs</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Annual subs %</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Cancellations & Churn</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total cancellations</div><div class="metric-value">35</div></div><div class="metric-card"><div class="metric-label">Monthly cancellations</div><div class="metric-value">13</div><span class="wow down">▼ 4</span></div><div class="metric-card"><div class="metric-label">Annual cancellations</div><div class="metric-value">22</div><span class="wow up">▲ 9</span></div><div class="metric-card"><div class="metric-label">Weekly churn rate</div><div class="metric-value">2.27%</div></div><div class="metric-card"><div class="metric-label">Churned MRR</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Churned ARR</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Failed Payments</h2><div class="grid"><div class="metric-card"><div class="metric-label">$ at risk (unique subs)</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Unique subs w/ failed pmts</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Total failed attempts</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Avg attempts / failed sub</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Disputes</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total disputes</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">$ disputed</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Win/Loss breakdown</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Lifetime Value</h2><div class="grid"><div class="metric-card"><div class="metric-label">Avg LTV</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Monthly LTV</div><div class="metric-value">$3,994</div><span class="wow up">▲ 30.8%</span></div><div class="metric-card"><div class="metric-label">Annual LTV</div><div class="metric-value">$576.75</div><span class="wow down">▼ 40.9%</span></div></div></div>
-</div><div class="tab-panel active" id="panel-5">
-<div class="warning"><strong>⚠️ Missing data:</strong> Annual Subs Pct, Avg LTV, Monthly Subs Pct</div>
-<div class="section"><h2>Revenue</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total revenue collected</div><div class="metric-value">$32,348</div><span class="wow up">▲ 10.8%</span></div><div class="metric-card"><div class="metric-label">Recurring revenue</div><div class="metric-value">$22,281</div></div><div class="metric-card"><div class="metric-label">New sub revenue</div><div class="metric-value">$10,040</div></div><div class="metric-card"><div class="metric-label">Monthly plan revenue</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Annual plan revenue</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Current MRR</div><div class="metric-value">$105,998</div></div><div class="metric-card"><div class="metric-label">MRR — monthly plans</div><div class="metric-value">$51,786</div><span class="wow up">▲ 2.1%</span></div><div class="metric-card"><div class="metric-label">MRR — annual plans (÷12)</div><div class="metric-value">$54,212</div><span class="wow down">▼ 1.4%</span></div><div class="metric-card"><div class="metric-label">Avg MRR / subscriber</div><div class="metric-value">$69.69</div><span class="wow up">▲ 1.6%</span></div><div class="metric-card"><div class="metric-label">Annualized MRR</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Committed ARR</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">ARR gap</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Subscriptions & MRR</h2><div class="grid"><div class="metric-card"><div class="metric-label">Active subscriptions</div><div class="metric-value">1,521</div><span class="wow down">▼ 20</span></div><div class="metric-card"><div class="metric-label">New subscriptions</div><div class="metric-value">15</div><span class="wow up">▲ 7</span></div><div class="metric-card"><div class="metric-label">New sub MRR added</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Avg MRR / subscriber</div><div class="metric-value">$69.69</div><span class="wow up">▲ 1.6%</span></div><div class="metric-card"><div class="metric-label">Monthly subs</div><div class="metric-value">565</div></div><div class="metric-card"><div class="metric-label">Monthly subs %</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Annual subs</div><div class="metric-value">956</div></div><div class="metric-card"><div class="metric-label">Annual subs %</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Cancellations & Churn</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total cancellations</div><div class="metric-value">25</div></div><div class="metric-card"><div class="metric-label">Monthly cancellations</div><div class="metric-value">12</div></div><div class="metric-card"><div class="metric-label">Annual cancellations</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Weekly churn rate</div><div class="metric-value">1.64%</div><span class="wow down">▼ 0.43pp</span></div><div class="metric-card"><div class="metric-label">Churned MRR</div><div class="metric-value">$1,742</div></div><div class="metric-card"><div class="metric-label">Churned ARR</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Failed Payments</h2><div class="grid"><div class="metric-card"><div class="metric-label">$ at risk (unique subs)</div><div class="metric-value">$16,606</div><span class="wow up">▲ $2,574.56</span></div><div class="metric-card"><div class="metric-label">Unique subs w/ failed pmts</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Total failed attempts</div><div class="metric-value">105</div><span class="wow up">▲ 27</span></div><div class="metric-card"><div class="metric-label">Avg attempts / failed sub</div><div class="metric-value">2.1</div><span class="wow up">▲ 0.37</span></div></div></div>
-<div class="section"><h2>Disputes</h2><div class="grid"><div class="metric-card"><div class="metric-label">Total disputes</div><div class="metric-value">0</div></div><div class="metric-card"><div class="metric-label">$ disputed</div><div class="metric-value">$0.00</div><span class="wow down">▼ $642.00</span></div><div class="metric-card"><div class="metric-label">Win/Loss breakdown</div><div class="metric-value">—</div></div></div></div>
-<div class="section"><h2>Lifetime Value</h2><div class="grid"><div class="metric-card"><div class="metric-label">Avg LTV</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Monthly LTV</div><div class="metric-value">—</div></div><div class="metric-card"><div class="metric-label">Annual LTV</div><div class="metric-value">$4,227</div><span class="wow up">▲ 35.9%</span></div></div></div>
-</div>
-</div>
-<footer>Auto-generated May 19, 2026 at 01:10 PM&nbsp;&nbsp;|&nbsp;&nbsp;<a href="https://bensonjuarez-creator.github.io/privy-dashboard">https://bensonjuarez-creator.github.io/privy-dashboard</a></footer>
 <script>
-const CHART_DATA = {"labels": ["Week of Apr 20-26, 2026", "Week of May 11 - May 17, 2026", "Week of Apr 13-19, 2026", "Week of Apr 27 - May 3, 2026", "Week of Apr 7-13, 2026", "Week of May 4 - May 10, 2026"], "datasets": [{"key": "Total Revenue", "label": "Total Revenue", "fmt": "dollar", "data": [25378.98, 38583.8, 20983.93, 29193.0, 23128.16, 32347.86]}, {"key": "Current MRR", "label": "MRR", "fmt": "dollar", "data": [105695.525, 104346.9416666666, 105732.5249999994, 105695.5249999994, 105732.525, 105998.025]}, {"key": "Annualized MRR", "label": "Annualized MRR", "fmt": "dollar", "data": [1268346.3, 1252163.299999999, 1268790.299999993, 1268346.299999993, 1268790.3, null]}, {"key": "Committed ARR", "label": "Committed ARR", "fmt": "dollar", "data": [null, 643695.9799999995, null, null, null, null]}, {"key": "New Subs", "label": "New Subs", "fmt": "integer", "data": [15.0, 26.0, 12.0, 8.0, 15.0, 15.0]}, {"key": "Total Cancellations", "label": "Cancellations", "fmt": "integer", "data": [31.0, 28.0, null, 32.0, 35.0, 25.0]}, {"key": "Weekly Churn Rate", "label": "Churn Rate", "fmt": "percent", "data": [2.01, 1.834862385321101, 1.17, 2.08, 2.27, 1.6400000000000001]}, {"key": "At Risk Amount", "label": "$ At Risk", "fmt": "dollar", "data": [27544.6, 18237.2, 19873.0, 4311.0, null, 16606.13]}]};
-
-const COLORS = [
-  "#635bff","#16a34a","#2563eb","#d97706","#dc2626","#0891b2","#7c3aed","#db2777"
+const WEEKS = [{"label": "Apr 20-26", "totalRevenue": 25378.98, "recurringRev": 20485.6, "newSubRev": 4855.0, "monthlyPlanRev": 13453.98, "annualPlanRev": 11925.0, "mrr": 105695.525, "mrrMonthly": 50711.61, "mrrAnnual": 54983.91499999996, "avgMrr": 68.5889195327709, "annualizedMrr": 1268346.3, "committedArr": null, "arrGap": null, "activeSubs": 1541.0, "newSubs": 15.0, "newSubMrr": 1441.333333333333, "monthlySubsCount": 564.0, "monthlySubsPct": null, "annualSubsCount": 977.0, "annualSubsPct": null, "cancellations": 31.0, "monthlyCancels": null, "annualCancels": null, "churnRate": 2.01, "churnedMrr": null, "churnedArr": null, "failedUnique": 66.0, "atRisk": 27544.6, "failedAttempts": 120.0, "avgAttempts": 1.818181818181818, "disputes": 0.0, "disputed": 0.0, "avgLtv": null, "monthlyLtv": 4469.605983184626, "annualLtv": 645.594680238538}, {"label": "May 11 - May 17", "totalRevenue": 38583.8, "recurringRev": 22769.8, "newSubRev": 15814.0, "monthlyPlanRev": 11679.0, "annualPlanRev": 26904.8, "mrr": 104346.9416666666, "mrrMonthly": 50705.61, "mrrAnnual": 53641.33166666663, "avgMrr": 68.37938510266488, "annualizedMrr": 1252163.299999999, "committedArr": 643695.9799999995, "arrGap": -608467.3199999998, "activeSubs": 1526.0, "newSubs": 26.0, "newSubMrr": 2758.833333333333, "monthlySubsCount": 552.0, "monthlySubsPct": 36.17300131061599, "annualSubsCount": 948.0, "annualSubsPct": 62.123197903014415, "cancellations": 28.0, "monthlyCancels": 13.0, "annualCancels": 8.0, "churnRate": 1.834862385321101, "churnedMrr": 1651.083333333333, "churnedArr": 6853.0, "failedUnique": 49.0, "atRisk": 18237.2, "failedAttempts": 124.0, "avgAttempts": 2.53, "disputes": 0.0, "disputed": 0.0, "avgLtv": 5377.019834558994, "monthlyLtv": 3992.289527591974, "annualLtv": 6761.750141526015}, {"label": "Apr 13-19", "totalRevenue": 20983.93, "recurringRev": 16289.56, "newSubRev": null, "monthlyPlanRev": null, "annualPlanRev": null, "mrr": 105732.5249999994, "mrrMonthly": 50748.61, "mrrAnnual": null, "avgMrr": 68.56843385213969, "annualizedMrr": 1268790.299999993, "committedArr": null, "arrGap": null, "activeSubs": 1542.0, "newSubs": 12.0, "newSubMrr": 1230.666666666667, "monthlySubsCount": null, "monthlySubsPct": null, "annualSubsCount": 977.0, "annualSubsPct": null, "cancellations": null, "monthlyCancels": null, "annualCancels": null, "churnRate": 1.17, "churnedMrr": null, "churnedArr": null, "failedUnique": 50.0, "atRisk": 19873.0, "failedAttempts": 119.0, "avgAttempts": 2.38, "disputes": 0.0, "disputed": null, "avgLtv": null, "monthlyLtv": null, "annualLtv": null}, {"label": "Apr 27 - May 3", "totalRevenue": 29193.0, "recurringRev": 26393.0, "newSubRev": 2800.0, "monthlyPlanRev": 13002.0, "annualPlanRev": 16191.0, "mrr": 105695.5249999994, "mrrMonthly": 50711.61, "mrrAnnual": 54983.91500000044, "avgMrr": 68.58891953277053, "annualizedMrr": 1268346.299999993, "committedArr": null, "arrGap": null, "activeSubs": 1541.0, "newSubs": 8.0, "newSubMrr": 1093.166666666667, "monthlySubsCount": 564.0, "monthlySubsPct": null, "annualSubsCount": 977.0, "annualSubsPct": null, "cancellations": 32.0, "monthlyCancels": null, "annualCancels": null, "churnRate": 2.08, "churnedMrr": null, "churnedArr": null, "failedUnique": 12.0, "atRisk": 4311.0, "failedAttempts": null, "avgAttempts": null, "disputes": 0.0, "disputed": 0.0, "avgLtv": null, "monthlyLtv": 4329.930796210107, "annualLtv": 625.419846481089}, {"label": "Apr 7-13", "totalRevenue": 23128.16, "recurringRev": 14938.16, "newSubRev": null, "monthlyPlanRev": null, "annualPlanRev": null, "mrr": 105732.525, "mrrMonthly": 50748.61, "mrrAnnual": 54983.915, "avgMrr": null, "annualizedMrr": 1268790.3, "committedArr": null, "arrGap": null, "activeSubs": 1542.0, "newSubs": 15.0, "newSubMrr": 1584.33333333333, "monthlySubsCount": 565.0, "monthlySubsPct": null, "annualSubsCount": null, "annualSubsPct": null, "cancellations": 35.0, "monthlyCancels": 13.0, "annualCancels": 22.0, "churnRate": 2.27, "churnedMrr": null, "churnedArr": null, "failedUnique": null, "atRisk": null, "failedAttempts": null, "avgAttempts": null, "disputes": null, "disputed": null, "avgLtv": null, "monthlyLtv": 3993.56, "annualLtv": 576.754353146853}, {"label": "May 4 - May 10", "totalRevenue": 32347.86, "recurringRev": 22280.8, "newSubRev": 10040.0, "monthlyPlanRev": null, "annualPlanRev": null, "mrr": 105998.025, "mrrMonthly": 51785.61, "mrrAnnual": 54212.41499999996, "avgMrr": 69.68969428007887, "annualizedMrr": null, "committedArr": null, "arrGap": null, "activeSubs": 1521.0, "newSubs": 15.0, "newSubMrr": null, "monthlySubsCount": 565.0, "monthlySubsPct": null, "annualSubsCount": 956.0, "annualSubsPct": null, "cancellations": 25.0, "monthlyCancels": 12.0, "annualCancels": null, "churnRate": 1.6400000000000001, "churnedMrr": 1742.242357001972, "churnedArr": null, "failedUnique": null, "atRisk": 16606.13, "failedAttempts": 105.0, "avgAttempts": 2.1, "disputes": 0.0, "disputed": 0.0, "avgLtv": null, "monthlyLtv": null, "annualLtv": 4226.893316301896}];
+const KPI_ROWS = [{"label": "Apr 20-26", "missing": ["Annual Cancellations", "Annual Subs Pct", "Avg LTV", "Churned ARR", "Churned MRR", "Monthly Cancellations", "Monthly Subs Pct"], "kpis": {"Total Revenue": {"value": "$25,379", "wow": "\u25b2 20.9%"}, "Recurring Revenue": {"value": "$20,486", "wow": ""}, "New Sub Revenue": {"value": "$4,855", "wow": ""}, "Monthly Plan Revenue": {"value": "$13,454", "wow": ""}, "Annual Plan Revenue": {"value": "$11,925", "wow": ""}, "Current MRR": {"value": "$105,696", "wow": ""}, "MRR Monthly Plans": {"value": "$50,712", "wow": ""}, "MRR Annual Plans": {"value": "$54,984", "wow": ""}, "Avg MRR Per Sub": {"value": "$68.59", "wow": ""}, "Annualized MRR": {"value": "$1.27M", "wow": ""}, "Committed ARR": {"value": "\u2014", "wow": ""}, "ARR Gap": {"value": "\u2014", "wow": ""}, "Active Subs": {"value": "1,541", "wow": ""}, "New Subs": {"value": "15", "wow": "\u25b2 3"}, "New Sub MRR Added": {"value": "$1,441", "wow": ""}, "Monthly Subs Count": {"value": "564", "wow": ""}, "Monthly Subs Pct": {"value": "\u2014", "wow": ""}, "Annual Subs Count": {"value": "977", "wow": ""}, "Annual Subs Pct": {"value": "\u2014", "wow": ""}, "Total Cancellations": {"value": "31", "wow": ""}, "Monthly Cancellations": {"value": "\u2014", "wow": ""}, "Annual Cancellations": {"value": "\u2014", "wow": ""}, "Weekly Churn Rate": {"value": "2.01%", "wow": "\u25b2 0.84pp"}, "Churned MRR": {"value": "\u2014", "wow": ""}, "Churned ARR": {"value": "\u2014", "wow": ""}, "Failed Subs Unique": {"value": "66", "wow": "\u25b2 16"}, "At Risk Amount": {"value": "$27,545", "wow": "\u25b2 $7,671.60"}, "Total Failed Attempts": {"value": "120", "wow": ""}, "Avg Attempts Per Sub": {"value": "1.818181818181818", "wow": ""}, "Total Disputes": {"value": "0", "wow": ""}, "Disputed Amount": {"value": "$0.00", "wow": "\u25bc $525.00"}, "Dispute Win Loss": {"value": "\u2014", "wow": ""}, "Avg LTV": {"value": "\u2014", "wow": ""}, "Monthly LTV": {"value": "$4,470", "wow": "\u25bc 41.9%"}, "Annual LTV": {"value": "$645.59", "wow": "\u25bc 41.9%"}}}, {"label": "May 11 - May 17", "missing": [], "kpis": {"Total Revenue": {"value": "$38,584", "wow": "\u25b2 23.8%"}, "Recurring Revenue": {"value": "$22,770", "wow": "\u25b2 7.4%"}, "New Sub Revenue": {"value": "$15,814", "wow": "\u25b2 59.0%"}, "Monthly Plan Revenue": {"value": "$11,679", "wow": "\u25b2 6.6%"}, "Annual Plan Revenue": {"value": "$26,905", "wow": "\u25b2 33.2%"}, "Current MRR": {"value": "$104,347", "wow": "\u25bc 1.6%"}, "MRR Monthly Plans": {"value": "$50,706", "wow": "\u25bc 2.1%"}, "MRR Annual Plans": {"value": "$53,641", "wow": "\u25bc 1.1%"}, "Avg MRR Per Sub": {"value": "$68.38", "wow": "\u25bc $1.31"}, "Annualized MRR": {"value": "$1.25M", "wow": "\u25bc 1.6%"}, "Committed ARR": {"value": "$643,696", "wow": "\u25bc 1.1%"}, "ARR Gap": {"value": "$-608,467", "wow": "\u25b2 2.1%"}, "Active Subs": {"value": "1,526", "wow": "\u25b2 5"}, "New Subs": {"value": "26", "wow": "\u25b2 12"}, "New Sub MRR Added": {"value": "$2,759", "wow": "\u25b2 108.9%"}, "Monthly Subs Count": {"value": "552", "wow": "\u25bc 13"}, "Monthly Subs Pct": {"value": "36.17%", "wow": ""}, "Annual Subs Count": {"value": "948", "wow": "\u25bc 8"}, "Annual Subs Pct": {"value": "62.12%", "wow": ""}, "Total Cancellations": {"value": "28", "wow": "\u25b2 4"}, "Monthly Cancellations": {"value": "13", "wow": "\u25b2 1"}, "Annual Cancellations": {"value": "8", "wow": "\u25bc 4"}, "Weekly Churn Rate": {"value": "1.83%", "wow": "\u25b2 0.26pp"}, "Churned MRR": {"value": "$1,651", "wow": "\u25bc $70.50"}, "Churned ARR": {"value": "$6,853", "wow": "\u25bc $1806.00"}, "Failed Subs Unique": {"value": "49", "wow": ""}, "At Risk Amount": {"value": "$18,237", "wow": "\u25b2 10.3%"}, "Total Failed Attempts": {"value": "124", "wow": "\u25b2 19"}, "Avg Attempts Per Sub": {"value": "2.53", "wow": "\u25b2 0.39"}, "Total Disputes": {"value": "0", "wow": "\u25bc 1"}, "Disputed Amount": {"value": "$0.00", "wow": "\u25bc $931.00"}, "Dispute Win Loss": {"value": "n/a (MCP limit)", "wow": ""}, "Avg LTV": {"value": "$5,377", "wow": ""}, "Monthly LTV": {"value": "$3,992", "wow": "\u25bc 7.5%"}, "Annual LTV": {"value": "$6,762", "wow": "\u25b2 49.4%"}}}, {"label": "Apr 13-19", "missing": ["Annual Cancellations", "Annual Plan Revenue", "Annual Subs Pct", "Avg LTV", "Churned ARR", "Churned MRR", "Monthly Cancellations", "Monthly Plan Revenue", "Monthly Subs Pct", "New Sub Revenue"], "kpis": {"Total Revenue": {"value": "$20,984", "wow": ""}, "Recurring Revenue": {"value": "$16,290", "wow": ""}, "New Sub Revenue": {"value": "\u2014", "wow": ""}, "Monthly Plan Revenue": {"value": "\u2014", "wow": ""}, "Annual Plan Revenue": {"value": "\u2014", "wow": ""}, "Current MRR": {"value": "$105,733", "wow": ""}, "MRR Monthly Plans": {"value": "$50,749", "wow": ""}, "MRR Annual Plans": {"value": "\u2014", "wow": ""}, "Avg MRR Per Sub": {"value": "$68.57", "wow": ""}, "Annualized MRR": {"value": "$1.27M", "wow": ""}, "Committed ARR": {"value": "\u2014", "wow": ""}, "ARR Gap": {"value": "\u2014", "wow": ""}, "Active Subs": {"value": "1,542", "wow": ""}, "New Subs": {"value": "12", "wow": "\u25bc 7"}, "New Sub MRR Added": {"value": "$1,231", "wow": ""}, "Monthly Subs Count": {"value": "\u2014", "wow": ""}, "Monthly Subs Pct": {"value": "\u2014", "wow": ""}, "Annual Subs Count": {"value": "977", "wow": ""}, "Annual Subs Pct": {"value": "\u2014", "wow": ""}, "Total Cancellations": {"value": "\u2014", "wow": ""}, "Monthly Cancellations": {"value": "\u2014", "wow": ""}, "Annual Cancellations": {"value": "\u2014", "wow": ""}, "Weekly Churn Rate": {"value": "1.17%", "wow": "\u25bc 1.17pp"}, "Churned MRR": {"value": "\u2014", "wow": ""}, "Churned ARR": {"value": "\u2014", "wow": ""}, "Failed Subs Unique": {"value": "50", "wow": "\u25b2 7"}, "At Risk Amount": {"value": "$19,873", "wow": "\u25bc $933.82"}, "Total Failed Attempts": {"value": "119", "wow": "\u25b2 52"}, "Avg Attempts Per Sub": {"value": "2.38", "wow": "\u25b2 52.7%"}, "Total Disputes": {"value": "0", "wow": ""}, "Disputed Amount": {"value": "\u2014", "wow": ""}, "Dispute Win Loss": {"value": "\u2014", "wow": ""}, "Avg LTV": {"value": "\u2014", "wow": ""}, "Monthly LTV": {"value": "\u2014", "wow": ""}, "Annual LTV": {"value": "\u2014", "wow": ""}}}, {"label": "Apr 27 - May 3", "missing": ["Annual Cancellations", "Annual Subs Pct", "Avg Attempts Per Sub", "Avg LTV", "Churned ARR", "Churned MRR", "Monthly Cancellations", "Monthly Subs Pct"], "kpis": {"Total Revenue": {"value": "$29,193", "wow": "\u25b2 15.0%"}, "Recurring Revenue": {"value": "$26,393", "wow": ""}, "New Sub Revenue": {"value": "$2,800", "wow": ""}, "Monthly Plan Revenue": {"value": "$13,002", "wow": ""}, "Annual Plan Revenue": {"value": "$16,191", "wow": ""}, "Current MRR": {"value": "$105,696", "wow": ""}, "MRR Monthly Plans": {"value": "$50,712", "wow": ""}, "MRR Annual Plans": {"value": "$54,984", "wow": ""}, "Avg MRR Per Sub": {"value": "$68.59", "wow": ""}, "Annualized MRR": {"value": "$1.27M", "wow": ""}, "Committed ARR": {"value": "\u2014", "wow": ""}, "ARR Gap": {"value": "\u2014", "wow": ""}, "Active Subs": {"value": "1,541", "wow": ""}, "New Subs": {"value": "8", "wow": "\u25bc 7"}, "New Sub MRR Added": {"value": "$1,093", "wow": ""}, "Monthly Subs Count": {"value": "564", "wow": ""}, "Monthly Subs Pct": {"value": "\u2014", "wow": ""}, "Annual Subs Count": {"value": "977", "wow": ""}, "Annual Subs Pct": {"value": "\u2014", "wow": ""}, "Total Cancellations": {"value": "32", "wow": ""}, "Monthly Cancellations": {"value": "\u2014", "wow": ""}, "Annual Cancellations": {"value": "\u2014", "wow": ""}, "Weekly Churn Rate": {"value": "2.08%", "wow": "\u25b2 0.06pp"}, "Churned MRR": {"value": "\u2014", "wow": ""}, "Churned ARR": {"value": "\u2014", "wow": ""}, "Failed Subs Unique": {"value": "12", "wow": "\u25bc 54"}, "At Risk Amount": {"value": "$4,311", "wow": "\u25bc $23,233.60"}, "Total Failed Attempts": {"value": ">=100 (cap)", "wow": ""}, "Avg Attempts Per Sub": {"value": "\u2014", "wow": ""}, "Total Disputes": {"value": "0", "wow": ""}, "Disputed Amount": {"value": "$0.00", "wow": ""}, "Dispute Win Loss": {"value": "\u2014", "wow": ""}, "Avg LTV": {"value": "\u2014", "wow": ""}, "Monthly LTV": {"value": "$4,330", "wow": "\u25bc 3.1%"}, "Annual LTV": {"value": "$625.42", "wow": "\u25bc 3.1%"}}}, {"label": "Apr 7-13", "missing": ["Annual Plan Revenue", "Annual Subs Pct", "At Risk Amount", "Avg Attempts Per Sub", "Avg LTV", "Dispute Win Loss", "Failed Subs Unique", "Monthly Plan Revenue", "Monthly Subs Pct", "New Sub Revenue"], "kpis": {"Total Revenue": {"value": "$23,128", "wow": ""}, "Recurring Revenue": {"value": "$14,938", "wow": ""}, "New Sub Revenue": {"value": "\u2014", "wow": ""}, "Monthly Plan Revenue": {"value": "\u2014", "wow": ""}, "Annual Plan Revenue": {"value": "\u2014", "wow": ""}, "Current MRR": {"value": "$105,733", "wow": ""}, "MRR Monthly Plans": {"value": "$50,749", "wow": ""}, "MRR Annual Plans": {"value": "$54,984", "wow": ""}, "Avg MRR Per Sub": {"value": "\u2014", "wow": ""}, "Annualized MRR": {"value": "$1.27M", "wow": ""}, "Committed ARR": {"value": "\u2014", "wow": ""}, "ARR Gap": {"value": "\u2014", "wow": ""}, "Active Subs": {"value": "1,542", "wow": ""}, "New Subs": {"value": "15", "wow": "\u25b2 7"}, "New Sub MRR Added": {"value": "$1,584", "wow": ""}, "Monthly Subs Count": {"value": "565", "wow": ""}, "Monthly Subs Pct": {"value": "\u2014", "wow": ""}, "Annual Subs Count": {"value": "\u2014", "wow": ""}, "Annual Subs Pct": {"value": "\u2014", "wow": ""}, "Total Cancellations": {"value": "35", "wow": ""}, "Monthly Cancellations": {"value": "13", "wow": "\u25bc 4"}, "Annual Cancellations": {"value": "22", "wow": "\u25b2 9"}, "Weekly Churn Rate": {"value": "2.27%", "wow": ""}, "Churned MRR": {"value": "\u2014", "wow": ""}, "Churned ARR": {"value": "\u2014", "wow": ""}, "Failed Subs Unique": {"value": "\u2014", "wow": ""}, "At Risk Amount": {"value": "\u2014", "wow": ""}, "Total Failed Attempts": {"value": "\u2014", "wow": ""}, "Avg Attempts Per Sub": {"value": "\u2014", "wow": ""}, "Total Disputes": {"value": "\u2014", "wow": ""}, "Disputed Amount": {"value": "\u2014", "wow": ""}, "Dispute Win Loss": {"value": "\u2014", "wow": ""}, "Avg LTV": {"value": "\u2014", "wow": ""}, "Monthly LTV": {"value": "$3,994", "wow": "\u25b2 30.8%"}, "Annual LTV": {"value": "$576.75", "wow": "\u25bc 40.9%"}}}, {"label": "May 4 - May 10", "missing": ["Annual Subs Pct", "Avg LTV", "Monthly Subs Pct"], "kpis": {"Total Revenue": {"value": "$32,348", "wow": "\u25b2 10.8%"}, "Recurring Revenue": {"value": "$22,281", "wow": ""}, "New Sub Revenue": {"value": "$10,040", "wow": ""}, "Monthly Plan Revenue": {"value": "\u2014", "wow": ""}, "Annual Plan Revenue": {"value": "\u2014", "wow": ""}, "Current MRR": {"value": "$105,998", "wow": ""}, "MRR Monthly Plans": {"value": "$51,786", "wow": "\u25b2 2.1%"}, "MRR Annual Plans": {"value": "$54,212", "wow": "\u25bc 1.4%"}, "Avg MRR Per Sub": {"value": "$69.69", "wow": "\u25b2 1.6%"}, "Annualized MRR": {"value": "\u2014", "wow": ""}, "Committed ARR": {"value": "\u2014", "wow": ""}, "ARR Gap": {"value": "\u2014", "wow": ""}, "Active Subs": {"value": "1,521", "wow": "\u25bc 20"}, "New Subs": {"value": "15", "wow": "\u25b2 7"}, "New Sub MRR Added": {"value": "\u2014", "wow": ""}, "Monthly Subs Count": {"value": "565", "wow": ""}, "Monthly Subs Pct": {"value": "\u2014", "wow": ""}, "Annual Subs Count": {"value": "956", "wow": ""}, "Annual Subs Pct": {"value": "\u2014", "wow": ""}, "Total Cancellations": {"value": "25", "wow": ""}, "Monthly Cancellations": {"value": "12", "wow": ""}, "Annual Cancellations": {"value": "\u2014", "wow": ""}, "Weekly Churn Rate": {"value": "1.64%", "wow": "\u25bc 0.43pp"}, "Churned MRR": {"value": "$1,742", "wow": ""}, "Churned ARR": {"value": "\u2014", "wow": ""}, "Failed Subs Unique": {"value": "\u2014", "wow": ""}, "At Risk Amount": {"value": "$16,606", "wow": "\u25b2 $2,574.56"}, "Total Failed Attempts": {"value": "105", "wow": "\u25b2 27"}, "Avg Attempts Per Sub": {"value": "2.1", "wow": "\u25b2 0.37"}, "Total Disputes": {"value": "0", "wow": ""}, "Disputed Amount": {"value": "$0.00", "wow": "\u25bc $642.00"}, "Dispute Win Loss": {"value": "\u2014", "wow": ""}, "Avg LTV": {"value": "\u2014", "wow": ""}, "Monthly LTV": {"value": "\u2014", "wow": ""}, "Annual LTV": {"value": "$4,227", "wow": "\u25b2 35.9%"}}}];
+const SCHEMA_ORDER = [
+  ["Revenue",[
+    ["Total Revenue","Total revenue collected","dollar"],
+    ["Recurring Revenue","Recurring revenue","dollar"],
+    ["New Sub Revenue","New sub revenue","dollar"],
+    ["Monthly Plan Revenue","Monthly plan revenue","dollar"],
+    ["Annual Plan Revenue","Annual plan revenue","dollar"],
+    ["Current MRR","Current MRR","dollar"],
+    ["MRR Monthly Plans","MRR — monthly plans","dollar"],
+    ["MRR Annual Plans","MRR — annual plans (÷12)","dollar"],
+    ["Avg MRR Per Sub","Avg MRR / subscriber","dollar"],
+    ["Annualized MRR","Annualized MRR","dollar"],
+    ["Committed ARR","Committed ARR","dollar"],
+    ["ARR Gap","ARR gap","dollar"]
+  ]],
+  ["Subscriptions & MRR",[
+    ["Active Subs","Active subscriptions","integer"],
+    ["New Subs","New subscriptions","integer"],
+    ["New Sub MRR Added","New sub MRR added","dollar"],
+    ["Avg MRR Per Sub","Avg MRR / subscriber","dollar"],
+    ["Monthly Subs Count","Monthly subs","integer"],
+    ["Monthly Subs Pct","Monthly subs %","percent"],
+    ["Annual Subs Count","Annual subs","integer"],
+    ["Annual Subs Pct","Annual subs %","percent"]
+  ]],
+  ["Cancellations & Churn",[
+    ["Total Cancellations","Total cancellations","integer"],
+    ["Monthly Cancellations","Monthly cancellations","integer"],
+    ["Annual Cancellations","Annual cancellations","integer"],
+    ["Weekly Churn Rate","Weekly churn rate","percent"],
+    ["Churned MRR","Churned MRR","dollar"],
+    ["Churned ARR","Churned ARR","dollar"]
+  ]],
+  ["Failed Payments",[
+    ["Failed Subs Unique","Unique subs w/ failed pmts","integer"],
+    ["At Risk Amount","$ at risk (unique subs)","dollar"],
+    ["Total Failed Attempts","Total failed attempts","text"],
+    ["Avg Attempts Per Sub","Avg attempts / failed sub","text"]
+  ]],
+  ["Disputes",[
+    ["Total Disputes","Total disputes","integer"],
+    ["Disputed Amount","$ disputed","dollar"],
+    ["Dispute Win Loss","Win/Loss breakdown","text"]
+  ]],
+  ["Lifetime Value",[
+    ["Avg LTV","Avg LTV","dollar"],
+    ["Monthly LTV","Monthly LTV","dollar"],
+    ["Annual LTV","Annual LTV","dollar"]
+  ]]
 ];
 
-const FMT = {
-  dollar: v => v == null ? "—" : (Math.abs(v) >= 1000000 ? "$" + (v/1000000).toFixed(2) + "M" : "$" + v.toLocaleString("en-US", {maximumFractionDigits:0})),
-  percent: v => v == null ? "—" : v.toFixed(2) + "%",
-  integer: v => v == null ? "—" : Math.round(v).toLocaleString("en-US"),
-};
+const labels = WEEKS.map(w=>w.label);
+let currentIdx = WEEKS.length - 1;
+const chartObjs = {};
 
-function buildCharts() {
-  const grid = document.getElementById("chart-grid");
-  CHART_DATA.datasets.forEach((ds, idx) => {
-    const hasData = ds.data.some(v => v != null);
-    if (!hasData) return;
+const fmtD = v => v==null ? "—" : (Math.abs(v)>=1000000 ? "$"+(v/1000000).toFixed(2)+"M" : "$"+Math.round(v).toLocaleString());
+const fmtN = v => v==null ? "—" : Math.round(v).toLocaleString();
+const fmtPct = v => v==null ? "—" : v.toFixed(2)+"%";
+const fmtAuto = (v,fmt) => fmt==="dollar"?fmtD(v):fmt==="percent"?fmtPct(v):fmt==="integer"?fmtN(v):v==null?"—":String(v);
 
-    const card = document.createElement("div");
-    card.className = "chart-card";
-    card.innerHTML = `<div class="chart-title">${ds.label}</div><div class="chart-wrap"><canvas id="chart-${idx}"></canvas></div>`;
-    grid.appendChild(card);
+function barDataset(key, color) {
+  return {
+    data: WEEKS.map(w=>w[key]),
+    backgroundColor: color,
+    borderRadius: 4,
+    borderSkipped: false,
+  };
+}
 
-    const ctx = document.getElementById("chart-" + idx).getContext("2d");
-    new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: CHART_DATA.labels,
-        datasets: [{
-          data: ds.data,
-          borderColor: COLORS[idx % COLORS.length],
-          backgroundColor: COLORS[idx % COLORS.length] + "18",
-          borderWidth: 2,
-          pointRadius: 4,
-          pointHoverRadius: 6,
-          fill: true,
-          tension: 0.3,
-          spanGaps: true,
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: ctx => FMT[ds.fmt] ? FMT[ds.fmt](ctx.parsed.y) : ctx.parsed.y
-            }
-          }
-        },
-        scales: {
-          x: {
-            ticks: { font: { size: 10 }, maxRotation: 30 },
-            grid: { display: false }
-          },
-          y: {
-            ticks: {
-              font: { size: 10 },
-              callback: v => FMT[ds.fmt] ? FMT[ds.fmt](v) : v
-            },
-            grid: { color: "#f0f0f0" }
-          }
-        }
-      }
-    });
+function lineDataset(key, color) {
+  return {
+    data: WEEKS.map(w=>w[key]),
+    borderColor: color,
+    backgroundColor: color+"22",
+    borderWidth: 2,
+    pointRadius: 4,
+    tension: 0.3,
+    fill: true,
+    spanGaps: true,
+  };
+}
+
+function chartOpts(fmt, title) {
+  return {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label:c=>fmtAuto(c.parsed.y,fmt)}}
+    },
+    scales:{
+      x:{ticks:{font:{size:10},maxRotation:30},grid:{display:false}},
+      y:{ticks:{font:{size:10},callback:v=>fmtAuto(v,fmt)},grid:{color:"#f0f0f0"}}
+    }
+  };
+}
+
+function makeChart(id, type, datasets, fmt) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  if (chartObjs[id]) chartObjs[id].destroy();
+  chartObjs[id] = new Chart(ctx, {
+    type, data:{labels, datasets},
+    options: chartOpts(fmt)
   });
 }
 
-function showTab(idx) {
-  document.querySelectorAll(".tab-panel").forEach((p,i) => p.classList.toggle("active", i===idx));
-  document.querySelectorAll(".tab-btn").forEach((b,i) => b.classList.toggle("active", i===idx));
+function makePieChart(id, dataArr, labelsArr, colors) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  if (chartObjs[id]) chartObjs[id].destroy();
+  chartObjs[id] = new Chart(ctx, {
+    type:"doughnut",
+    data:{labels:labelsArr, datasets:[{data:dataArr,backgroundColor:colors,borderWidth:2}]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:"bottom",labels:{font:{size:11}}}}
+    }
+  });
 }
 
-buildCharts();
+function renderCharts(idx) {
+  const w = WEEKS[idx];
+  // Revenue bar
+  makeChart("revChart","bar",[barDataset("totalRevenue","#635bff")],"dollar");
+  makeChart("newSubRevChart","bar",[barDataset("newSubRev","#00b8d4")],"dollar");
+  makeChart("newSubCountChart","bar",[barDataset("newSubs","#635bff")],"integer");
+  makeChart("churnChart","bar",[barDataset("cancellations","#f43f5e")],"integer");
+  makeChart("atRiskChart","bar",[barDataset("atRisk","#f59e0b")],"dollar");
+  makeChart("mrrChart","line",[lineDataset("mrr","#635bff"),lineDataset("annualizedMrr","#00b8d4"),lineDataset("committedArr","#16a34a")],"dollar");
+
+  // Plan mix doughnut for current week
+  const mPct = w.monthlySubsPct;
+  const aPct = w.annualSubsPct;
+  if (mPct!=null||aPct!=null) {
+    makePieChart("mixChart",[mPct||0,aPct||0],["Monthly","Annual"],["#635bff","#00b8d4"]);
+  }
+  // Revenue split doughnut
+  const mRev = w.monthlyPlanRev;
+  const aRev = w.annualPlanRev;
+  if (mRev!=null||aRev!=null) {
+    makePieChart("splitChart",[mRev||0,aRev||0],["Monthly","Annual"],["#635bff","#00b8d4"]);
+  }
+}
+
+function renderKpis(idx) {
+  const row = KPI_ROWS[idx];
+  const w = WEEKS[idx];
+
+  // Warning
+  const warnEl = document.getElementById("warn-box");
+  if (row.missing.length > 0) {
+    warnEl.textContent = "⚠️ Missing data: " + row.missing.join(", ");
+    warnEl.style.display = "block";
+  } else {
+    warnEl.style.display = "none";
+  }
+
+  SCHEMA_ORDER.forEach(([sectionTitle, keys]) => {
+    const gridId = "grid-" + sectionTitle.replace(/[^a-z]/gi,"_");
+    const el = document.getElementById(gridId);
+    if (!el) return;
+    el.innerHTML = keys.map(([key, display, fmt]) => {
+      const kpi = row.kpis[key] || {value:"—",wow:""};
+      const wowCls = kpi.wow.includes("▲") ? "up" : kpi.wow.includes("▼") ? "down" : "neutral";
+      const wowHtml = kpi.wow ? `<div class="kpi-wow ${wowCls}">${kpi.wow}</div>` : "";
+      return `<div class="kpi"><div class="kpi-label">${display}</div><div class="kpi-value">${kpi.value}</div>${wowHtml}</div>`;
+    }).join("");
+  });
+
+  // Plan mix bar
+  const mP = w.monthlySubsPct!=null ? w.monthlySubsPct.toFixed(1) : 0;
+  const aP = w.annualSubsPct!=null  ? w.annualSubsPct.toFixed(1)  : 0;
+  document.getElementById("planMixBar").innerHTML = `
+    <div class="mix-bar-wrap"><div class="mix-bar-m" style="width:${mP}%"></div><div class="mix-bar-a" style="width:${aP}%"></div></div>
+    <div class="mix-legend">
+      <span><span class="mix-dot" style="background:#635bff"></span>Monthly ${mP}%</span>
+      <span><span class="mix-dot" style="background:#00b8d4"></span>Annual ${aP}%</span>
+    </div>`;
+}
+
+function buildContent() {
+  const el = document.getElementById("content");
+  el.innerHTML = `
+    <div class="warning" id="warn-box" style="display:none"></div>
+
+    <div class="section-label">Revenue</div>
+    <div class="kpi-grid" id="grid-Revenue"></div>
+    <div class="chart-card">
+      <div class="chart-title">Total revenue collected — week over week</div>
+      <div class="chart-sub">All charges across monthly and annual plans</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="revChart"></canvas></div>
+    </div>
+    <div class="two-col">
+      <div class="chart-card">
+        <div class="chart-title">New subscription revenue</div>
+        <div class="chart-sub">First charge from new subscribers</div>
+        <div class="chart-wrap" style="height:190px"><canvas id="newSubRevChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Monthly vs annual revenue split</div>
+        <div class="chart-sub">Current week</div>
+        <div class="chart-wrap" style="height:190px"><canvas id="splitChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="section-label">MRR & ARR Trends</div>
+    <div class="chart-card">
+      <div class="chart-title">MRR / Annualized MRR / Committed ARR — all weeks</div>
+      <div class="chart-sub">Purple = MRR, Teal = Annualized MRR, Green = Committed ARR</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="mrrChart"></canvas></div>
+    </div>
+
+    <div class="section-label">Subscriptions & MRR</div>
+    <div class="kpi-grid" id="grid-Subscriptions___MRR"></div>
+    <div class="two-col">
+      <div class="chart-card">
+        <div class="chart-title">New subscriptions added</div>
+        <div class="chart-sub">Week over week</div>
+        <div class="chart-wrap" style="height:190px"><canvas id="newSubCountChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Plan mix</div>
+        <div class="chart-sub">Active subscribers by plan type</div>
+        <div id="planMixBar"></div>
+        <div class="chart-wrap" style="height:150px"><canvas id="mixChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="section-label">Cancellations & Churn</div>
+    <div class="kpi-grid" id="grid-Cancellations___Churn"></div>
+    <div class="chart-card">
+      <div class="chart-title">Total cancellations — week over week</div>
+      <div class="chart-sub">All plan types combined</div>
+      <div class="chart-wrap" style="height:210px"><canvas id="churnChart"></canvas></div>
+    </div>
+
+    <div class="section-label">Failed Payments</div>
+    <div class="kpi-grid" id="grid-Failed_Payments"></div>
+    <div class="chart-card">
+      <div class="chart-title">$ at risk from failed payments</div>
+      <div class="chart-sub">Unique subscriber balance at risk each week</div>
+      <div class="chart-wrap" style="height:210px"><canvas id="atRiskChart"></canvas></div>
+    </div>
+
+    <div class="section-label">Disputes</div>
+    <div class="kpi-grid" id="grid-Disputes"></div>
+
+    <div class="section-label">Lifetime Value</div>
+    <div class="kpi-grid" id="grid-Lifetime_Value"></div>
+
+    <div class="note-box">
+      <strong>Campaign note:</strong> Re-engagement campaign (launched Mar 24, 2026) inflated churn figures.
+      236 subscribers re-engaged. Cancellations reflect intentional list hygiene — do not use for churn baseline trending.
+    </div>`;
+}
+
+function showTab(idx) {
+  currentIdx = idx;
+  document.querySelectorAll(".tab-btn").forEach((b,i)=>b.classList.toggle("active",i===idx));
+  renderKpis(idx);
+  renderCharts(idx);
+}
+
+buildContent();
+showTab(currentIdx);
 </script>
 </body>
 </html>
