@@ -1,251 +1,1312 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Privy — Weekly Stripe Report</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privy Stripe Dashboard</title>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f6f9;color:#1a1d23;font-size:14px}
-header{background:#1a1d23;color:#fff;padding:18px 32px}
-.logo{font-size:20px;font-weight:700;letter-spacing:-.5px}
-.subtitle{font-size:13px;color:#8a8f9c;margin-top:2px}
-.tabs{background:#fff;border-bottom:1px solid #e2e6ed;padding:0 24px;display:flex;gap:2px;overflow-x:auto}
-.tab-btn{padding:12px 15px;border:none;background:none;cursor:pointer;font-size:13px;color:#6b7280;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
-.tab-btn:hover{color:#1a1d23}
-.tab-btn.active{color:#635bff;border-bottom-color:#635bff;font-weight:600}
-.content{padding:24px 32px;max-width:1200px;margin:0 auto}
-.sec-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9ca3af;margin:28px 0 12px;padding-bottom:6px;border-bottom:1px solid #e5e7eb}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:14px}
-.kpi{background:#fff;border:1px solid #e2e6ed;border-radius:10px;padding:14px 16px}
-.kpi-label{font-size:11px;color:#9ca3af;margin-bottom:5px;line-height:1.3}
-.kpi-value{font-size:20px;font-weight:700;color:#1a1d23;line-height:1.1}
-.kpi-wow{font-size:11px;margin-top:4px}
-.kpi-wow.up{color:#16a34a}.kpi-wow.down{color:#dc2626}.kpi-wow.flat{color:#9ca3af}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.chart-card{background:#fff;border:1px solid #e2e6ed;border-radius:10px;padding:18px;margin-bottom:14px}
-.chart-title{font-size:12px;font-weight:700;color:#374151;margin-bottom:2px}
-.chart-sub{font-size:11px;color:#9ca3af;margin-bottom:12px}
-.chart-wrap{position:relative}
-.mix-bar-wrap{height:14px;border-radius:7px;overflow:hidden;display:flex;margin:8px 0 6px}
-.mix-bar-m{background:#635bff;height:100%}
-.mix-bar-a{background:#00b8d4;height:100%}
-.mix-legend{display:flex;gap:16px;font-size:12px;color:#6b7280;margin-bottom:10px}
-.mix-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
-.warning{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px 14px;margin-bottom:16px;color:#9a3412;font-size:12px}
-.note-box{background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:10px 14px;margin:20px 0;font-size:12px;color:#075985}
-footer{text-align:center;color:#9ca3af;font-size:11px;padding:20px 32px 40px}
-a{color:#635bff;text-decoration:none}
-@media(max-width:700px){.two-col{grid-template-columns:1fr}.content{padding:16px}}
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+          background:#0f172a; color:#e2e8f0; min-height:100vh; }
+  header { background:#1e293b; border-bottom:1px solid #334155;
+            padding:20px 32px; display:flex; align-items:center; gap:16px; }
+  header h1 { font-size:1.4rem; font-weight:700; color:#f8fafc; }
+  header p  { color:#94a3b8; font-size:0.85rem; }
+  .logo { width:36px; height:36px; background:#7c3aed; border-radius:8px;
+           display:flex; align-items:center; justify-content:center;
+           font-size:1.2rem; }
+  .tabs { background:#1e293b; border-bottom:1px solid #334155;
+           padding:0 32px; display:flex; gap:4px; overflow-x:auto; }
+  .tab-btn { background:none; border:none; color:#94a3b8; cursor:pointer;
+              padding:14px 18px; font-size:0.85rem; border-bottom:3px solid transparent;
+              white-space:nowrap; transition:all .15s; }
+  .tab-btn:hover { color:#e2e8f0; }
+  .tab-btn.active { color:#a78bfa; border-bottom-color:#7c3aed; font-weight:600; }
+  main { max-width:1280px; margin:0 auto; padding:32px; }
+  .section { margin-bottom:32px; }
+  .section-title { font-size:1rem; font-weight:600; color:#94a3b8;
+                    text-transform:uppercase; letter-spacing:.06em;
+                    margin-bottom:16px; }
+  .card-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+                gap:16px; }
+  .card { background:#1e293b; border:1px solid #334155; border-radius:12px;
+           padding:20px; }
+  .card-label { font-size:0.78rem; color:#64748b; margin-bottom:8px;
+                 text-transform:uppercase; letter-spacing:.04em; }
+  .card-value { font-size:1.5rem; font-weight:700; color:#f8fafc; margin-bottom:4px; }
+  .card-wow   { font-size:0.82rem; min-height:1.2em; }
+  .warn { background:#451a03; border:1px solid #92400e; border-radius:8px;
+           padding:12px 16px; margin-bottom:24px; color:#fbbf24; font-size:0.85rem; }
+  .panel { animation:fadein .2s ease; }
+  @keyframes fadein { from { opacity:0; transform:translateY(4px); }
+                       to   { opacity:1; transform:translateY(0); } }
 </style>
 </head>
 <body>
-<header><div class="logo">Privy</div><div class="subtitle">Weekly Stripe Report</div></header>
-<div class="tabs"><button class="tab-btn " onclick="showTab(0)">Apr 7-13</button>
-<button class="tab-btn " onclick="showTab(1)">Apr 13-19</button>
-<button class="tab-btn " onclick="showTab(2)">Apr 20-26</button>
-<button class="tab-btn " onclick="showTab(3)">Apr 27 - May 3</button>
-<button class="tab-btn " onclick="showTab(4)">May 4 - May 10</button>
-<button class="tab-btn active" onclick="showTab(5)">May 11 - May 17</button>
+<header>
+  <div class="logo">📊</div>
+  <div>
+    <h1>Privy Stripe Dashboard</h1>
+    <p>Weekly metrics · 6 week(s) of data · Generated May 26, 2026 16:05 UTC</p>
+  </div>
+</header>
+<div class="tabs"><button class="tab-btn " onclick="showTab('tab0',this)">Week-Apr7-2026</button>
+<button class="tab-btn " onclick="showTab('tab1',this)">Week-Apr13-2026</button>
+<button class="tab-btn " onclick="showTab('tab2',this)">Week-Apr20-2026</button>
+<button class="tab-btn " onclick="showTab('tab3',this)">Week-Apr27-2026</button>
+<button class="tab-btn " onclick="showTab('tab4',this)">Week-May4-2026</button>
+<button class="tab-btn active" onclick="showTab('tab5',this)">Week-May11-2026</button>
 </div>
-<div class="content" id="app"></div>
-<footer>Auto-generated May 20, 2026 at 12:04 PM&nbsp;|&nbsp;<a href="https://bensonjuarez-creator.github.io/privy-dashboard">https://bensonjuarez-creator.github.io/privy-dashboard</a></footer>
+<main>
+        <div id="tab0" class="panel" style="display:none">
+          <div class="warn">⚠️ Missing keys: MRR — Monthly Plans, MRR — Annual Plans (÷12), Avg MRR / Subscriber, Active Subscriptions, Monthly Subs %, Annual Subs %, $ At Risk, Monthly Churn (mo), Avg Customer Lifespan</div>
+          
+    <div class="section">
+      <h2 class="section-title">💰 Revenue</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Total Revenue</div>
+      <div class="card-value">$23,128</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Recurring Revenue</div>
+      <div class="card-value">$14,938</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Sub Revenue</div>
+      <div class="card-value">$8,190</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Plan Revenue</div>
+      <div class="card-value">$8,353</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Plan Revenue</div>
+      <div class="card-value">$14,775</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">📈 MRR & ARR</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Current MRR</div>
+      <div class="card-value">$105,733</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">MRR — Monthly Plans</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">MRR — Annual Plans (÷12)</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg MRR / Subscriber</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annualized MRR</div>
+      <div class="card-value">$1.27M</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Committed ARR</div>
+      <div class="card-value">data unavailable for historical snapshot</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">ARR Gap</div>
+      <div class="card-value">data unavailable for historical snapshot</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">👥 Subscriptions</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Active Subscriptions</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Subscriptions</div>
+      <div class="card-value">15</div>
+      <div class="card-wow"><span style="font-size:0.82em;color:#94a3b8">8</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Sub MRR Added</div>
+      <div class="card-value">$1,584</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Subs Count</div>
+      <div class="card-value">565</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Subs %</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Subs Count</div>
+      <div class="card-value">977</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Subs %</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">📉 Churn & Cancellations</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Total Cancellations</div>
+      <div class="card-value">35</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Cancellations</div>
+      <div class="card-value">10</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Cancellations</div>
+      <div class="card-value">17</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Weekly Churn Rate</div>
+      <div class="card-value">0.02%</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Churned MRR</div>
+      <div class="card-value">$1,759</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Churned ARR</div>
+      <div class="card-value">$21,112</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">⚠️ Failed Payments</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">$ At Risk</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Failed Subs Unique</div>
+      <div class="card-value">27</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Total Failed Attempts</div>
+      <div class="card-value">55</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg Attempts Per Sub</div>
+      <div class="card-value">2.04</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">⭐ Lifetime Value (LTV)</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Monthly Churn (mo)</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg Customer Lifespan</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly LTV</div>
+      <div class="card-value">$913.82</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual LTV</div>
+      <div class="card-value">$572.57</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="border-left:3px solid #7c3aed;">
+      <div class="card-label">Avg LTV</div>
+      <div class="card-value">$743.20</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          <p style="color:#64748b;font-size:0.78em;margin-top:24px">
+            Note: Re-engagement campaign (Mar 24, 2026) inflated churn — 236 subscribers re-engaged.<br>
+            LTV = Avg Customer Lifespan × Avg MRR/sub. CAC not yet tracked; LTV:CAC ratio coming soon.
+          </p>
+        </div>
+        <div id="tab1" class="panel" style="display:none">
+          <div class="warn">⚠️ Missing keys: MRR — Monthly Plans, MRR — Annual Plans (÷12), Avg MRR / Subscriber, Active Subscriptions, Monthly Subs %, Annual Subs %, $ At Risk, Monthly Churn (mo), Avg Customer Lifespan</div>
+          
+    <div class="section">
+      <h2 class="section-title">💰 Revenue</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Total Revenue</div>
+      <div class="card-value">$20,984</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 9.3% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Recurring Revenue</div>
+      <div class="card-value">$16,290</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 9.0% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Sub Revenue</div>
+      <div class="card-value">$4,694</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 42.7% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Plan Revenue</div>
+      <div class="card-value">$10,072</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 20.6% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Plan Revenue</div>
+      <div class="card-value">$10,912</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 26.1% vs prior</span></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">📈 MRR & ARR</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Current MRR</div>
+      <div class="card-value">$105,733</div>
+      <div class="card-wow"><span style="font-size:0.82em;color:#94a3b8">flat</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">MRR — Monthly Plans</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">MRR — Annual Plans (÷12)</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg MRR / Subscriber</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annualized MRR</div>
+      <div class="card-value">$1.27M</div>
+      <div class="card-wow"><span style="font-size:0.82em;color:#94a3b8">flat</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Committed ARR</div>
+      <div class="card-value">data unavailable for historical snapshot</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">ARR Gap</div>
+      <div class="card-value">data unavailable for historical snapshot</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">👥 Subscriptions</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Active Subscriptions</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Subscriptions</div>
+      <div class="card-value">12</div>
+      <div class="card-wow"><span style="font-size:0.82em;color:#94a3b8">19</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Sub MRR Added</div>
+      <div class="card-value">$1,231</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 22.3% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Subs Count</div>
+      <div class="card-value">565</div>
+      <div class="card-wow"><span style="font-size:0.82em;color:#94a3b8">flat</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Subs %</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Subs Count</div>
+      <div class="card-value">977</div>
+      <div class="card-wow"><span style="font-size:0.82em;color:#94a3b8">flat</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Subs %</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">📉 Churn & Cancellations</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Total Cancellations</div>
+      <div class="card-value">18</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 48.6% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Cancellations</div>
+      <div class="card-value">10</div>
+      <div class="card-wow"><span style="font-size:0.82em;color:#94a3b8">flat</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Cancellations</div>
+      <div class="card-value">8</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 52.9% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Weekly Churn Rate</div>
+      <div class="card-value">0.01%</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 48.5% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Churned MRR</div>
+      <div class="card-value">$1,269</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 27.9% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Churned ARR</div>
+      <div class="card-value">$15,228</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 27.9% vs prior</span></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">⚠️ Failed Payments</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">$ At Risk</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Failed Subs Unique</div>
+      <div class="card-value">50</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 85.2% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Total Failed Attempts</div>
+      <div class="card-value">119</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 116.4% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg Attempts Per Sub</div>
+      <div class="card-value">2.38</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 16.7% vs prior</span></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">⭐ Lifetime Value (LTV)</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Monthly Churn (mo)</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg Customer Lifespan</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly LTV</div>
+      <div class="card-value">$1,773</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 94.0% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual LTV</div>
+      <div class="card-value">$1,111</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 94.0% vs prior</span></div>
+    </div>
+    <div class="card" style="border-left:3px solid #7c3aed;">
+      <div class="card-label">Avg LTV</div>
+      <div class="card-value">$1,442</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 94.0% vs prior</span></div>
+    </div></div>
+    </div>
+          <p style="color:#64748b;font-size:0.78em;margin-top:24px">
+            Note: Re-engagement campaign (Mar 24, 2026) inflated churn — 236 subscribers re-engaged.<br>
+            LTV = Avg Customer Lifespan × Avg MRR/sub. CAC not yet tracked; LTV:CAC ratio coming soon.
+          </p>
+        </div>
+        <div id="tab2" class="panel" style="display:none">
+          <div class="warn">⚠️ Missing keys: MRR — Monthly Plans, MRR — Annual Plans (÷12), Avg MRR / Subscriber, Active Subscriptions, Monthly Subs %, Annual Subs %, $ At Risk, Monthly Churn (mo), Avg Customer Lifespan</div>
+          
+    <div class="section">
+      <h2 class="section-title">💰 Revenue</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Total Revenue</div>
+      <div class="card-value">$25,379</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 20.9% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Recurring Revenue</div>
+      <div class="card-value">$20,486</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 25.8% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Sub Revenue</div>
+      <div class="card-value">$4,855</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 3.4% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Plan Revenue</div>
+      <div class="card-value">$13,454</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 33.6% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Plan Revenue</div>
+      <div class="card-value">$11,925</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 9.3% vs prior</span></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">📈 MRR & ARR</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Current MRR</div>
+      <div class="card-value">$105,696</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 0.0% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">MRR — Monthly Plans</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">MRR — Annual Plans (÷12)</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg MRR / Subscriber</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annualized MRR</div>
+      <div class="card-value">$1.27M</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 0.0% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Committed ARR</div>
+      <div class="card-value">data unavailable for historical snapshot</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">ARR Gap</div>
+      <div class="card-value">data unavailable for historical snapshot</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">👥 Subscriptions</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Active Subscriptions</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Subscriptions</div>
+      <div class="card-value">15</div>
+      <div class="card-wow"><span style="font-size:0.82em;color:#94a3b8">12</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Sub MRR Added</div>
+      <div class="card-value">$1,441</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 17.1% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Subs Count</div>
+      <div class="card-value">564</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 0.2% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Subs %</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Subs Count</div>
+      <div class="card-value">977</div>
+      <div class="card-wow"><span style="font-size:0.82em;color:#94a3b8">flat</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Subs %</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">📉 Churn & Cancellations</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Total Cancellations</div>
+      <div class="card-value">31</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 72.2% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Cancellations</div>
+      <div class="card-value">20</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 100.0% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Cancellations</div>
+      <div class="card-value">10</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 25.0% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Weekly Churn Rate</div>
+      <div class="card-value">0.02%</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 71.8% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Churned MRR</div>
+      <div class="card-value">$2,376</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 87.2% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Churned ARR</div>
+      <div class="card-value">$28,513</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 87.2% vs prior</span></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">⚠️ Failed Payments</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">$ At Risk</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Failed Subs Unique</div>
+      <div class="card-value">66</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 32.0% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Total Failed Attempts</div>
+      <div class="card-value">120</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 0.8% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg Attempts Per Sub</div>
+      <div class="card-value">1.82</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 23.6% vs prior</span></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">⭐ Lifetime Value (LTV)</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Monthly Churn (mo)</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg Customer Lifespan</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly LTV</div>
+      <div class="card-value">$1,033</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 41.7% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual LTV</div>
+      <div class="card-value">$646.63</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 41.8% vs prior</span></div>
+    </div>
+    <div class="card" style="border-left:3px solid #7c3aed;">
+      <div class="card-label">Avg LTV</div>
+      <div class="card-value">$839.87</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 41.8% vs prior</span></div>
+    </div></div>
+    </div>
+          <p style="color:#64748b;font-size:0.78em;margin-top:24px">
+            Note: Re-engagement campaign (Mar 24, 2026) inflated churn — 236 subscribers re-engaged.<br>
+            LTV = Avg Customer Lifespan × Avg MRR/sub. CAC not yet tracked; LTV:CAC ratio coming soon.
+          </p>
+        </div>
+        <div id="tab3" class="panel" style="display:none">
+          <div class="warn">⚠️ Missing keys: MRR — Monthly Plans, MRR — Annual Plans (÷12), Avg MRR / Subscriber, Active Subscriptions, Monthly Subs %, Annual Subs %, $ At Risk, Avg Attempts Per Sub, Monthly Churn (mo), Avg Customer Lifespan</div>
+          
+    <div class="section">
+      <h2 class="section-title">💰 Revenue</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Total Revenue</div>
+      <div class="card-value">$29,193</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 15.0% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Recurring Revenue</div>
+      <div class="card-value">$26,393</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 28.8% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Sub Revenue</div>
+      <div class="card-value">$2,800</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 42.3% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Plan Revenue</div>
+      <div class="card-value">$13,002</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 3.4% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Plan Revenue</div>
+      <div class="card-value">$16,191</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 35.8% vs prior</span></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">📈 MRR & ARR</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Current MRR</div>
+      <div class="card-value">$105,696</div>
+      <div class="card-wow"><span style="font-size:0.82em;color:#94a3b8">flat</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">MRR — Monthly Plans</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">MRR — Annual Plans (÷12)</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg MRR / Subscriber</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annualized MRR</div>
+      <div class="card-value">$1.27M</div>
+      <div class="card-wow"><span style="font-size:0.82em;color:#94a3b8">flat</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Committed ARR</div>
+      <div class="card-value">data unavailable for historical snapshot</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">ARR Gap</div>
+      <div class="card-value">data unavailable for historical snapshot</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">👥 Subscriptions</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Active Subscriptions</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Subscriptions</div>
+      <div class="card-value">8</div>
+      <div class="card-wow"><span style="font-size:0.82em;color:#94a3b8">15</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Sub MRR Added</div>
+      <div class="card-value">$1,093</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 24.2% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Subs Count</div>
+      <div class="card-value">564</div>
+      <div class="card-wow"><span style="font-size:0.82em;color:#94a3b8">flat</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Subs %</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Subs Count</div>
+      <div class="card-value">977</div>
+      <div class="card-wow"><span style="font-size:0.82em;color:#94a3b8">flat</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Subs %</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">📉 Churn & Cancellations</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Total Cancellations</div>
+      <div class="card-value">32</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 3.2% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Cancellations</div>
+      <div class="card-value">14</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 30.0% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Cancellations</div>
+      <div class="card-value">20</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 100.0% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Weekly Churn Rate</div>
+      <div class="card-value">0.02%</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 3.5% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Churned MRR</div>
+      <div class="card-value">$2,190</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 7.9% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Churned ARR</div>
+      <div class="card-value">$26,274</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 7.9% vs prior</span></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">⚠️ Failed Payments</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">$ At Risk</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Failed Subs Unique</div>
+      <div class="card-value">12</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 81.8% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Total Failed Attempts</div>
+      <div class="card-value">>=100 (cap)</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg Attempts Per Sub</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">⭐ Lifetime Value (LTV)</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Monthly Churn (mo)</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg Customer Lifespan</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly LTV</div>
+      <div class="card-value">$998.34</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 3.4% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual LTV</div>
+      <div class="card-value">$624.87</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 3.4% vs prior</span></div>
+    </div>
+    <div class="card" style="border-left:3px solid #7c3aed;">
+      <div class="card-label">Avg LTV</div>
+      <div class="card-value">$811.61</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 3.4% vs prior</span></div>
+    </div></div>
+    </div>
+          <p style="color:#64748b;font-size:0.78em;margin-top:24px">
+            Note: Re-engagement campaign (Mar 24, 2026) inflated churn — 236 subscribers re-engaged.<br>
+            LTV = Avg Customer Lifespan × Avg MRR/sub. CAC not yet tracked; LTV:CAC ratio coming soon.
+          </p>
+        </div>
+        <div id="tab4" class="panel" style="display:none">
+          <div class="warn">⚠️ Missing keys: MRR — Monthly Plans, MRR — Annual Plans (÷12), Avg MRR / Subscriber, Active Subscriptions, Monthly Subs %, Annual Subs %, $ At Risk, Monthly Churn (mo), Avg Customer Lifespan</div>
+          
+    <div class="section">
+      <h2 class="section-title">💰 Revenue</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Total Revenue</div>
+      <div class="card-value">$32,348</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 10.8% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Recurring Revenue</div>
+      <div class="card-value">$22,281</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 15.6% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Sub Revenue</div>
+      <div class="card-value">$10,040</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 258.6% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Plan Revenue</div>
+      <div class="card-value">see note</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Plan Revenue</div>
+      <div class="card-value">see note</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">📈 MRR & ARR</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Current MRR</div>
+      <div class="card-value">$105,998</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 0.3% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">MRR — Monthly Plans</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">MRR — Annual Plans (÷12)</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg MRR / Subscriber</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annualized MRR</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Committed ARR</div>
+      <div class="card-value">data unavailable for historical snapshot</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">ARR Gap</div>
+      <div class="card-value">data unavailable for historical snapshot</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">👥 Subscriptions</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Active Subscriptions</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Subscriptions</div>
+      <div class="card-value">15</div>
+      <div class="card-wow"><span style="font-size:0.82em;color:#94a3b8">8</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Sub MRR Added</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Subs Count</div>
+      <div class="card-value">565</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 0.2% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Subs %</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Subs Count</div>
+      <div class="card-value">956</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 2.1% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Subs %</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">📉 Churn & Cancellations</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Total Cancellations</div>
+      <div class="card-value">25</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 21.9% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Cancellations</div>
+      <div class="card-value">12</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 14.3% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Cancellations</div>
+      <div class="card-value">13</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 35.0% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Weekly Churn Rate</div>
+      <div class="card-value">0.02%</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 21.2% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Churned MRR</div>
+      <div class="card-value">$1,742</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 20.4% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Churned ARR</div>
+      <div class="card-value">$20,907</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 20.4% vs prior</span></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">⚠️ Failed Payments</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">$ At Risk</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Failed Subs Unique</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Total Failed Attempts</div>
+      <div class="card-value">105</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 12.5% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg Attempts Per Sub</div>
+      <div class="card-value">2.10</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 15.5% vs prior</span></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">⭐ Lifetime Value (LTV)</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Monthly Churn (mo)</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg Customer Lifespan</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly LTV</div>
+      <div class="card-value">$1,291</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 29.3% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual LTV</div>
+      <div class="card-value">$798.56</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 27.8% vs prior</span></div>
+    </div>
+    <div class="card" style="border-left:3px solid #7c3aed;">
+      <div class="card-label">Avg LTV</div>
+      <div class="card-value">$1,045</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 28.7% vs prior</span></div>
+    </div></div>
+    </div>
+          <p style="color:#64748b;font-size:0.78em;margin-top:24px">
+            Note: Re-engagement campaign (Mar 24, 2026) inflated churn — 236 subscribers re-engaged.<br>
+            LTV = Avg Customer Lifespan × Avg MRR/sub. CAC not yet tracked; LTV:CAC ratio coming soon.
+          </p>
+        </div>
+        <div id="tab5" class="panel" style="display:block">
+          <div class="warn">⚠️ Missing keys: MRR — Monthly Plans, MRR — Annual Plans (÷12), Avg MRR / Subscriber, Active Subscriptions, New Subscriptions, Monthly Subs %, Annual Subs %, $ At Risk, Monthly Churn (mo), Avg Customer Lifespan</div>
+          
+    <div class="section">
+      <h2 class="section-title">💰 Revenue</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Total Revenue</div>
+      <div class="card-value">$38,584</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 19.3% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Recurring Revenue</div>
+      <div class="card-value">$22,770</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 2.2% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Sub Revenue</div>
+      <div class="card-value">$15,814</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 57.5% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Plan Revenue</div>
+      <div class="card-value">$11,679</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 10.2% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Plan Revenue</div>
+      <div class="card-value">$26,905</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 66.2% vs prior</span></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">📈 MRR & ARR</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Current MRR</div>
+      <div class="card-value">$104,347</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 1.6% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">MRR — Monthly Plans</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">MRR — Annual Plans (÷12)</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg MRR / Subscriber</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annualized MRR</div>
+      <div class="card-value">$1.25M</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 1.3% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Committed ARR</div>
+      <div class="card-value">$643,696</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">ARR Gap</div>
+      <div class="card-value">$-608,467</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">👥 Subscriptions</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Active Subscriptions</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Subscriptions</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">New Sub MRR Added</div>
+      <div class="card-value">$2,759</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 152.4% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Subs Count</div>
+      <div class="card-value">552</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 2.3% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Subs %</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Subs Count</div>
+      <div class="card-value">948</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 0.8% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Subs %</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">📉 Churn & Cancellations</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Total Cancellations</div>
+      <div class="card-value">28</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 12.0% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly Cancellations</div>
+      <div class="card-value">13</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 8.3% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual Cancellations</div>
+      <div class="card-value">8</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 38.5% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Weekly Churn Rate</div>
+      <div class="card-value">0.02%</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 11.9% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Churned MRR</div>
+      <div class="card-value">$1,651</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 5.2% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Churned ARR</div>
+      <div class="card-value">$6,853</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 67.2% vs prior</span></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">⚠️ Failed Payments</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">$ At Risk</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Failed Subs Unique</div>
+      <div class="card-value">49</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 308.3% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Total Failed Attempts</div>
+      <div class="card-value">124</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 18.1% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg Attempts Per Sub</div>
+      <div class="card-value">2.53</div>
+      <div class="card-wow"><span style="color:#22c55e;font-size:0.82em">▲ 20.5% vs prior</span></div>
+    </div></div>
+    </div>
+          
+    <div class="section">
+      <h2 class="section-title">⭐ Lifetime Value (LTV)</h2>
+      <div class="card-grid">
+    <div class="card" style="">
+      <div class="card-label">Monthly Churn (mo)</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Avg Customer Lifespan</div>
+      <div class="card-value">—</div>
+      <div class="card-wow"></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Monthly LTV</div>
+      <div class="card-value">$1,156</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 10.4% vs prior</span></div>
+    </div>
+    <div class="card" style="">
+      <div class="card-label">Annual LTV</div>
+      <div class="card-value">$712.20</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 10.8% vs prior</span></div>
+    </div>
+    <div class="card" style="border-left:3px solid #7c3aed;">
+      <div class="card-label">Avg LTV</div>
+      <div class="card-value">$934.19</div>
+      <div class="card-wow"><span style="color:#ef4444;font-size:0.82em">▼ 10.6% vs prior</span></div>
+    </div></div>
+    </div>
+          <p style="color:#64748b;font-size:0.78em;margin-top:24px">
+            Note: Re-engagement campaign (Mar 24, 2026) inflated churn — 236 subscribers re-engaged.<br>
+            LTV = Avg Customer Lifespan × Avg MRR/sub. CAC not yet tracked; LTV:CAC ratio coming soon.
+          </p>
+        </div></main>
 <script>
-const CHART_WEEKS = [{"label": "Apr 7-13", "totalRevenue": 23128.16, "newSubRev": 8190.0, "mrr": 105732.525, "annualizedMrr": 1268790.3, "committedArr": null, "newSubs": 15.0, "cancellations": 35.0, "churnRate": 2.27, "atRisk": 8082.91, "monthlyPlanRev": 8352.89, "annualPlanRev": 14775.27, "monthlySubsPct": 36.64072632944228, "annualSubsPct": 63.35927367055771}, {"label": "Apr 13-19", "totalRevenue": 20983.93, "newSubRev": 4694.37, "mrr": 105732.5249999994, "annualizedMrr": 1268790.299999993, "committedArr": null, "newSubs": 12.0, "cancellations": null, "churnRate": 1.17, "atRisk": 19873.0, "monthlyPlanRev": 10071.69, "annualPlanRev": 10912.24, "monthlySubsPct": 36.64072632944228, "annualSubsPct": 63.35927367055771}, {"label": "Apr 20-26", "totalRevenue": 25378.98, "newSubRev": 4855.0, "mrr": 105695.525, "annualizedMrr": 1268346.3, "committedArr": null, "newSubs": 15.0, "cancellations": 31.0, "churnRate": 2.01, "atRisk": 27544.6, "monthlyPlanRev": 13453.98, "annualPlanRev": 11925.0, "monthlySubsPct": 36.59961064243997, "annualSubsPct": 63.40038935756003}, {"label": "Apr 27 - May 3", "totalRevenue": 29193.0, "newSubRev": 2800.0, "mrr": 105695.5249999994, "annualizedMrr": 1268346.299999993, "committedArr": null, "newSubs": 8.0, "cancellations": 32.0, "churnRate": 2.08, "atRisk": 4311.0, "monthlyPlanRev": 13002.0, "annualPlanRev": 16191.0, "monthlySubsPct": 36.59961064243997, "annualSubsPct": 63.40038935756003}, {"label": "May 4 - May 10", "totalRevenue": 32347.86, "newSubRev": 10040.0, "mrr": 105998.025, "annualizedMrr": null, "committedArr": null, "newSubs": 15.0, "cancellations": 25.0, "churnRate": 1.6400000000000001, "atRisk": 16606.13, "monthlyPlanRev": null, "annualPlanRev": null, "monthlySubsPct": 37.14661406969099, "annualSubsPct": 62.853385930309}, {"label": "May 11 - May 17", "totalRevenue": 38583.8, "newSubRev": 15814.0, "mrr": 104346.9416666666, "annualizedMrr": 1252163.299999999, "committedArr": 643695.9799999995, "newSubs": 26.0, "cancellations": 28.0, "churnRate": 1.834862385321101, "atRisk": 18237.2, "monthlyPlanRev": 11679.0, "annualPlanRev": 26904.8, "monthlySubsPct": 36.17300131061599, "annualSubsPct": 62.123197903014415}];
-const KPI_WEEKS   = [{"label": "Apr 7-13", "missing": [], "kpis": {"Total Revenue": {"v": "$23,128", "w": ""}, "Recurring Revenue": {"v": "$14,938", "w": ""}, "New Sub Revenue": {"v": "$8,190", "w": ""}, "Monthly Plan Revenue": {"v": "$8,353", "w": ""}, "Annual Plan Revenue": {"v": "$14,775", "w": ""}, "Current MRR": {"v": "$105,733", "w": ""}, "MRR Monthly Plans": {"v": "$50,749", "w": ""}, "MRR Annual Plans": {"v": "$54,984", "w": ""}, "Avg MRR Per Sub": {"v": "$69", "w": ""}, "Annualized MRR": {"v": "$1.27M", "w": ""}, "Committed ARR": {"v": "\u2014", "w": ""}, "ARR Gap": {"v": "\u2014", "w": ""}, "Active Subs": {"v": "1,542", "w": ""}, "New Subs": {"v": "15", "w": ""}, "New Sub MRR Added": {"v": "$1,584", "w": ""}, "Monthly Subs Count": {"v": "565", "w": ""}, "Monthly Subs Pct": {"v": "36.64%", "w": ""}, "Annual Subs Count": {"v": "977", "w": ""}, "Annual Subs Pct": {"v": "63.36%", "w": ""}, "Total Cancellations": {"v": "35", "w": ""}, "Monthly Cancellations": {"v": "10", "w": ""}, "Annual Cancellations": {"v": "17", "w": ""}, "Weekly Churn Rate": {"v": "2.27%", "w": ""}, "Churned MRR": {"v": "\u2014", "w": ""}, "Churned ARR": {"v": "\u2014", "w": ""}, "Failed Subs Unique": {"v": "27", "w": ""}, "At Risk Amount": {"v": "$8,083", "w": ""}, "Total Failed Attempts": {"v": "\u2014", "w": ""}, "Avg Attempts Per Sub": {"v": "2.04", "w": ""}, "Avg LTV": {"v": "$743", "w": ""}, "Monthly LTV": {"v": "$914", "w": ""}, "Annual LTV": {"v": "$573", "w": ""}}}, {"label": "Apr 13-19", "missing": [], "kpis": {"Total Revenue": {"v": "$20,984", "w": "\u25bc 9.3% vs prior"}, "Recurring Revenue": {"v": "$16,290", "w": ""}, "New Sub Revenue": {"v": "$4,694", "w": "\u25bc 42.7% vs prior"}, "Monthly Plan Revenue": {"v": "$10,072", "w": "\u25b2 20.6% vs prior"}, "Annual Plan Revenue": {"v": "$10,912", "w": "\u25bc 26.1% vs prior"}, "Current MRR": {"v": "$105,733", "w": ""}, "MRR Monthly Plans": {"v": "$50,749", "w": "flat"}, "MRR Annual Plans": {"v": "$54,984", "w": "flat"}, "Avg MRR Per Sub": {"v": "$69", "w": "flat"}, "Annualized MRR": {"v": "$1.27M", "w": "flat"}, "Committed ARR": {"v": "\u2014", "w": ""}, "ARR Gap": {"v": "\u2014", "w": ""}, "Active Subs": {"v": "1,542", "w": "flat"}, "New Subs": {"v": "12", "w": "\u25bc 20.0% vs prior"}, "New Sub MRR Added": {"v": "$1,231", "w": ""}, "Monthly Subs Count": {"v": "565", "w": "flat"}, "Monthly Subs Pct": {"v": "36.64%", "w": "flat"}, "Annual Subs Count": {"v": "977", "w": "flat"}, "Annual Subs Pct": {"v": "63.36%", "w": "flat"}, "Total Cancellations": {"v": "\u2014", "w": ""}, "Monthly Cancellations": {"v": "10", "w": "flat"}, "Annual Cancellations": {"v": "8", "w": "\u25bc 52.9% vs prior"}, "Weekly Churn Rate": {"v": "1.17%", "w": "\u25bc 48.5% vs prior"}, "Churned MRR": {"v": "$1,269", "w": "\u25bc 27.9% vs prior"}, "Churned ARR": {"v": "$15,228", "w": "\u25bc 27.9% vs prior"}, "Failed Subs Unique": {"v": "50", "w": "\u25b2 85.2% vs prior"}, "At Risk Amount": {"v": "$19,873", "w": "\u25b2 145.9% vs prior"}, "Total Failed Attempts": {"v": "119", "w": "\u25b2 116.4% vs prior"}, "Avg Attempts Per Sub": {"v": "2.38", "w": "\u25b2 16.7% vs prior"}, "Avg LTV": {"v": "$1,442", "w": "\u25b2 94.0% vs prior"}, "Monthly LTV": {"v": "$1,773", "w": "\u25b2 94.0% vs prior"}, "Annual LTV": {"v": "$1,111", "w": "\u25b2 94.0% vs prior"}}}, {"label": "Apr 20-26", "missing": [], "kpis": {"Total Revenue": {"v": "$25,379", "w": "\u25b2 20.9% vs prior"}, "Recurring Revenue": {"v": "$20,486", "w": ""}, "New Sub Revenue": {"v": "$4,855", "w": ""}, "Monthly Plan Revenue": {"v": "$13,454", "w": ""}, "Annual Plan Revenue": {"v": "$11,925", "w": ""}, "Current MRR": {"v": "$105,696", "w": ""}, "MRR Monthly Plans": {"v": "$50,712", "w": "\u25bc 0.1% vs prior"}, "MRR Annual Plans": {"v": "$54,984", "w": "flat"}, "Avg MRR Per Sub": {"v": "$69", "w": "\u25b2 0.0% vs prior"}, "Annualized MRR": {"v": "$1.27M", "w": "\u25bc 0.0% vs prior"}, "Committed ARR": {"v": "\u2014", "w": ""}, "ARR Gap": {"v": "\u2014", "w": ""}, "Active Subs": {"v": "1,541", "w": "\u25bc 0.1% vs prior"}, "New Subs": {"v": "15", "w": "\u25b2 25.0% vs prior"}, "New Sub MRR Added": {"v": "$1,441", "w": ""}, "Monthly Subs Count": {"v": "564", "w": "\u25bc 0.2% vs prior"}, "Monthly Subs Pct": {"v": "36.60%", "w": "\u25bc 0.1% vs prior"}, "Annual Subs Count": {"v": "977", "w": "flat"}, "Annual Subs Pct": {"v": "63.40%", "w": "\u25b2 0.1% vs prior"}, "Total Cancellations": {"v": "31", "w": ""}, "Monthly Cancellations": {"v": "20", "w": "\u25b2 100.0% vs prior"}, "Annual Cancellations": {"v": "10", "w": "\u25b2 25.0% vs prior"}, "Weekly Churn Rate": {"v": "2.01%", "w": "\u25b2 71.8% vs prior"}, "Churned MRR": {"v": "$2,376", "w": "\u25b2 87.2% vs prior"}, "Churned ARR": {"v": "$28,513", "w": "\u25b2 87.2% vs prior"}, "Failed Subs Unique": {"v": "66", "w": "\u25b2 32.0% vs prior"}, "At Risk Amount": {"v": "$27,545", "w": "\u25b2 38.6% vs prior"}, "Total Failed Attempts": {"v": "120", "w": "\u25b2 0.8% vs prior"}, "Avg Attempts Per Sub": {"v": "1.818181818181818", "w": "\u25bc 23.6% vs prior"}, "Avg LTV": {"v": "$840", "w": "\u25bc 41.8% vs prior"}, "Monthly LTV": {"v": "$1,033", "w": "\u25bc 41.7% vs prior"}, "Annual LTV": {"v": "$647", "w": "\u25bc 41.8% vs prior"}}}, {"label": "Apr 27 - May 3", "missing": ["Avg Attempts Per Sub"], "kpis": {"Total Revenue": {"v": "$29,193", "w": "\u25b2 15.0% vs prior"}, "Recurring Revenue": {"v": "$26,393", "w": ""}, "New Sub Revenue": {"v": "$2,800", "w": ""}, "Monthly Plan Revenue": {"v": "$13,002", "w": ""}, "Annual Plan Revenue": {"v": "$16,191", "w": ""}, "Current MRR": {"v": "$105,696", "w": ""}, "MRR Monthly Plans": {"v": "$50,712", "w": "flat"}, "MRR Annual Plans": {"v": "$54,984", "w": "flat"}, "Avg MRR Per Sub": {"v": "$69", "w": "flat"}, "Annualized MRR": {"v": "$1.27M", "w": "flat"}, "Committed ARR": {"v": "\u2014", "w": ""}, "ARR Gap": {"v": "\u2014", "w": ""}, "Active Subs": {"v": "1,541", "w": "flat"}, "New Subs": {"v": "8", "w": "\u25bc 46.7% vs prior"}, "New Sub MRR Added": {"v": "$1,093", "w": ""}, "Monthly Subs Count": {"v": "564", "w": "flat"}, "Monthly Subs Pct": {"v": "36.60%", "w": "flat"}, "Annual Subs Count": {"v": "977", "w": "flat"}, "Annual Subs Pct": {"v": "63.40%", "w": "flat"}, "Total Cancellations": {"v": "32", "w": ""}, "Monthly Cancellations": {"v": "14", "w": "\u25bc 30.0% vs prior"}, "Annual Cancellations": {"v": "20", "w": "\u25b2 100.0% vs prior"}, "Weekly Churn Rate": {"v": "2.08%", "w": "\u25b2 3.5% vs prior"}, "Churned MRR": {"v": "$2,190", "w": "\u25bc 7.9% vs prior"}, "Churned ARR": {"v": "$26,274", "w": "\u25bc 7.9% vs prior"}, "Failed Subs Unique": {"v": "12", "w": "\u25bc 81.8% vs prior"}, "At Risk Amount": {"v": "$4,311", "w": "\u25bc 84.3% vs prior"}, "Total Failed Attempts": {"v": ">=100 (cap)", "w": ""}, "Avg Attempts Per Sub": {"v": "\u2014", "w": ""}, "Avg LTV": {"v": "$812", "w": "\u25bc 3.4% vs prior"}, "Monthly LTV": {"v": "$998", "w": "\u25bc 3.4% vs prior"}, "Annual LTV": {"v": "$625", "w": "\u25bc 3.4% vs prior"}}}, {"label": "May 4 - May 10", "missing": [], "kpis": {"Total Revenue": {"v": "$32,348", "w": "\u25b2 10.8% vs prior"}, "Recurring Revenue": {"v": "$22,281", "w": ""}, "New Sub Revenue": {"v": "$10,040", "w": ""}, "Monthly Plan Revenue": {"v": "\u2014", "w": ""}, "Annual Plan Revenue": {"v": "\u2014", "w": ""}, "Current MRR": {"v": "$105,998", "w": ""}, "MRR Monthly Plans": {"v": "$51,786", "w": "\u25b2 2.1% vs prior"}, "MRR Annual Plans": {"v": "$54,212", "w": "\u25bc 1.4% vs prior"}, "Avg MRR Per Sub": {"v": "$70", "w": "\u25b2 1.6% vs prior"}, "Annualized MRR": {"v": "\u2014", "w": ""}, "Committed ARR": {"v": "\u2014", "w": ""}, "ARR Gap": {"v": "\u2014", "w": ""}, "Active Subs": {"v": "1,521", "w": "\u25bc 1.3% vs prior"}, "New Subs": {"v": "15", "w": "\u25b2 87.5% vs prior"}, "New Sub MRR Added": {"v": "\u2014", "w": ""}, "Monthly Subs Count": {"v": "565", "w": "\u25b2 0.2% vs prior"}, "Monthly Subs Pct": {"v": "37.15%", "w": "\u25b2 1.5% vs prior"}, "Annual Subs Count": {"v": "956", "w": "\u25bc 2.1% vs prior"}, "Annual Subs Pct": {"v": "62.85%", "w": "\u25bc 0.9% vs prior"}, "Total Cancellations": {"v": "25", "w": ""}, "Monthly Cancellations": {"v": "12", "w": "\u25bc 14.3% vs prior"}, "Annual Cancellations": {"v": "13", "w": "\u25bc 35.0% vs prior"}, "Weekly Churn Rate": {"v": "1.64%", "w": "\u25bc 21.2% vs prior"}, "Churned MRR": {"v": "$1,742", "w": "\u25bc 20.4% vs prior"}, "Churned ARR": {"v": "\u2014", "w": ""}, "Failed Subs Unique": {"v": "\u2014", "w": ""}, "At Risk Amount": {"v": "$16,606", "w": "\u25b2 285.2% vs prior"}, "Total Failed Attempts": {"v": "105", "w": "\u25bc 12.5% vs prior"}, "Avg Attempts Per Sub": {"v": "2.1", "w": "\u25b2 15.5% vs prior"}, "Avg LTV": {"v": "$1,045", "w": "\u25b2 28.7% vs prior"}, "Monthly LTV": {"v": "$1,291", "w": "\u25b2 29.3% vs prior"}, "Annual LTV": {"v": "$799", "w": "\u25b2 27.8% vs prior"}}}, {"label": "May 11 - May 17", "missing": [], "kpis": {"Total Revenue": {"v": "$38,584", "w": "\u25b2 19.3% vs prior"}, "Recurring Revenue": {"v": "$22,770", "w": "\u25b2 2.2% vs prior"}, "New Sub Revenue": {"v": "$15,814", "w": "\u25b2 57.5% vs prior"}, "Monthly Plan Revenue": {"v": "$11,679", "w": "\u25bc 10.2% vs prior"}, "Annual Plan Revenue": {"v": "$26,905", "w": "\u25b2 66.2% vs prior"}, "Current MRR": {"v": "$104,347", "w": "\u25bc 1.6% vs prior"}, "MRR Monthly Plans": {"v": "$50,706", "w": "\u25bc 2.1% vs prior"}, "MRR Annual Plans": {"v": "$53,641", "w": "\u25bc 1.1% vs prior"}, "Avg MRR Per Sub": {"v": "$68", "w": "\u25bc 1.9% vs prior"}, "Annualized MRR": {"v": "$1.25M", "w": "\u25bc 1.3% vs prior"}, "Committed ARR": {"v": "$643,696", "w": ""}, "ARR Gap": {"v": "$-608,467", "w": ""}, "Active Subs": {"v": "1,526", "w": "\u25b2 0.3% vs prior"}, "New Subs": {"v": "26", "w": "\u25b2 73.3% vs prior"}, "New Sub MRR Added": {"v": "$2,759", "w": "\u25b2 152.4% vs prior"}, "Monthly Subs Count": {"v": "552", "w": "\u25bc 2.3% vs prior"}, "Monthly Subs Pct": {"v": "36.17%", "w": "\u25bc 2.6% vs prior"}, "Annual Subs Count": {"v": "948", "w": "\u25bc 0.8% vs prior"}, "Annual Subs Pct": {"v": "62.12%", "w": "\u25bc 1.2% vs prior"}, "Total Cancellations": {"v": "28", "w": "\u25b2 12.0% vs prior"}, "Monthly Cancellations": {"v": "13", "w": "\u25b2 8.3% vs prior"}, "Annual Cancellations": {"v": "8", "w": "\u25bc 38.5% vs prior"}, "Weekly Churn Rate": {"v": "1.83%", "w": "\u25b2 11.9% vs prior"}, "Churned MRR": {"v": "$1,651", "w": "\u25bc 5.2% vs prior"}, "Churned ARR": {"v": "$6,853", "w": "\u25bc 67.2% vs prior"}, "Failed Subs Unique": {"v": "49", "w": "\u25b2 308.3% vs prior"}, "At Risk Amount": {"v": "$18,237", "w": "\u25b2 9.8% vs prior"}, "Total Failed Attempts": {"v": "124", "w": "\u25b2 18.1% vs prior"}, "Avg Attempts Per Sub": {"v": "2.53", "w": "\u25b2 20.5% vs prior"}, "Avg LTV": {"v": "$934", "w": "\u25bc 10.6% vs prior"}, "Monthly LTV": {"v": "$1,156", "w": "\u25bc 10.4% vs prior"}, "Annual LTV": {"v": "$712", "w": "\u25bc 10.8% vs prior"}}}];
-const SCHEMA      = [{"id": "revenue", "title": "Revenue", "keys": [["Total Revenue", "Total revenue collected", "dollar"], ["Recurring Revenue", "Recurring revenue", "dollar"], ["New Sub Revenue", "New sub revenue", "dollar"], ["Monthly Plan Revenue", "Monthly plan revenue", "dollar"], ["Annual Plan Revenue", "Annual plan revenue", "dollar"], ["Current MRR", "Current MRR", "dollar"], ["MRR Monthly Plans", "MRR \u2014 monthly plans", "dollar"], ["MRR Annual Plans", "MRR \u2014 annual plans (\u00f712)", "dollar"], ["Avg MRR Per Sub", "Avg MRR / subscriber", "dollar"], ["Annualized MRR", "Annualized MRR", "dollar"], ["Committed ARR", "Committed ARR", "dollar"], ["ARR Gap", "ARR gap", "dollar"]]}, {"id": "subscriptions", "title": "Subscriptions & MRR", "keys": [["Active Subs", "Active subscriptions", "integer"], ["New Subs", "New subscriptions", "integer"], ["New Sub MRR Added", "New sub MRR added", "dollar"], ["Avg MRR Per Sub", "Avg MRR / subscriber", "dollar"], ["Monthly Subs Count", "Monthly subs", "integer"], ["Monthly Subs Pct", "Monthly subs %", "percent"], ["Annual Subs Count", "Annual subs", "integer"], ["Annual Subs Pct", "Annual subs %", "percent"]]}, {"id": "churn", "title": "Cancellations & Churn", "keys": [["Total Cancellations", "Total cancellations", "integer"], ["Monthly Cancellations", "Monthly cancellations", "integer"], ["Annual Cancellations", "Annual cancellations", "integer"], ["Weekly Churn Rate", "Weekly churn rate", "percent"], ["Churned MRR", "Churned MRR", "dollar"], ["Churned ARR", "Churned ARR", "dollar"]]}, {"id": "failed_payments", "title": "Failed Payments", "keys": [["Failed Subs Unique", "Unique subs w/ failed pmts", "integer"], ["At Risk Amount", "$ at risk (unique subs)", "dollar"], ["Total Failed Attempts", "Total failed attempts", "text"], ["Avg Attempts Per Sub", "Avg attempts / failed sub", "text"]]}, {"id": "ltv", "title": "Lifetime Value", "keys": [["Avg LTV", "Avg LTV", "dollar"], ["Monthly LTV", "Monthly LTV", "dollar"], ["Annual LTV", "Annual LTV", "dollar"]]}];
-const LABELS      = CHART_WEEKS.map(w=>w.label);
-
-let currentIdx = CHART_WEEKS.length - 1;
-const _charts  = {};
-
-const C = {
-  purple:"#635bff", teal:"#00b8d4", green:"#16a34a",
-  red:"#f43f5e", amber:"#f59e0b", blue:"#2563eb"
-};
-
-const fmtD   = v => v==null?"—":(Math.abs(v)>=1e6?"$"+(v/1e6).toFixed(2)+"M":"$"+Math.round(v).toLocaleString());
-const fmtN   = v => v==null?"—":Math.round(v).toLocaleString();
-const fmtPct = v => v==null?"—":v.toFixed(2)+"%";
-const fmtA   = (v,f) => f==="dollar"?fmtD(v):f==="percent"?fmtPct(v):f==="integer"?fmtN(v):(v==null?"—":String(v));
-
-function mkChart(id, type, datasets, fmt, opts={}) {
-  const ctx = document.getElementById(id);
-  if (!ctx) return;
-  if (_charts[id]) _charts[id].destroy();
-  _charts[id] = new Chart(ctx, {
-    type,
-    data: { labels: LABELS, datasets },
-    options: {
-      responsive:true, maintainAspectRatio:false,
-      plugins:{
-        legend: opts.legend || {display:false},
-        tooltip:{callbacks:{label:c=>fmtA(c.parsed.y,fmt)}}
-      },
-      scales: type==="doughnut"?{}:{
-        x:{ticks:{font:{size:10},maxRotation:35},grid:{display:false}},
-        y:{ticks:{font:{size:10},callback:v=>fmtA(v,fmt)},grid:{color:"#f4f4f4"}}
-      },
-      ...opts
-    }
-  });
+function showTab(id, btn) {
+  document.querySelectorAll(".panel").forEach(p => p.style.display="none");
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById(id).style.display = "block";
+  btn.classList.add("active");
 }
-
-function bar(key, color) {
-  return {data:CHART_WEEKS.map(w=>w[key]),backgroundColor:color,borderRadius:5,borderSkipped:false};
-}
-function line(key, color) {
-  return {data:CHART_WEEKS.map(w=>w[key]),borderColor:color,backgroundColor:color+"18",
-           borderWidth:2,pointRadius:4,tension:.3,fill:true,spanGaps:true};
-}
-
-function mkDoughnut(id, data, labels, colors) {
-  const ctx = document.getElementById(id);
-  if (!ctx) return;
-  if (_charts[id]) _charts[id].destroy();
-  _charts[id] = new Chart(ctx, {
-    type:"doughnut",
-    data:{labels, datasets:[{data,backgroundColor:colors,borderWidth:2}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:"bottom",labels:{font:{size:11}}}}}
-  });
-}
-
-function renderCharts(idx) {
-  const w = CHART_WEEKS[idx];
-  mkChart("c-rev",   "bar",  [bar("totalRevenue",C.purple)],             "dollar");
-  mkChart("c-nsrev", "bar",  [bar("newSubRev",C.teal)],                  "dollar");
-  mkChart("c-nsubs", "bar",  [bar("newSubs",C.purple)],                  "integer");
-  mkChart("c-cxl",   "bar",  [bar("cancellations",C.red)],               "integer");
-  mkChart("c-risk",  "bar",  [bar("atRisk",C.amber)],                    "dollar");
-  mkChart("c-mrr",   "bar",  [bar("mrr",C.purple)], "dollar");
-  mkChart("c-arr",   "line", [line("annualizedMrr",C.teal),line("committedArr",C.green)], "dollar");
-  mkDoughnut("c-split",
-    [w.monthlyPlanRev||0, w.annualPlanRev||0],
-    ["Monthly","Annual"], [C.purple,C.teal]);
-  mkDoughnut("c-mix",
-    [w.monthlySubsPct||0, w.annualSubsPct||0],
-    ["Monthly","Annual"], [C.purple,C.teal]);
-}
-
-function kpiCards(keys, kpis) {
-  return keys.map(([ek,dl])=>{
-    const k = kpis[ek]||{v:"—",w:""};
-    const wc = k.w.includes("▲")?"up":k.w.includes("▼")?"down":k.w==="flat"?"flat":"";
-    return `<div class="kpi"><div class="kpi-label">${dl}</div><div class="kpi-value">${k.v}</div>`+
-           (k.w?`<div class="kpi-wow ${wc}">${k.w}</div>`:``)+"</div>";
-  }).join("");
-}
-
-function renderKpis(idx) {
-  const kd = KPI_WEEKS[idx];
-  const kpis = kd.kpis;
-  const w = CHART_WEEKS[idx];
-
-  document.getElementById("warn").innerHTML = kd.missing.length
-    ? `<div class="warning">⚠️ Missing data: ${kd.missing.join(", ")}</div>` : "";
-
-  SCHEMA.forEach(sec=>{
-    const el = document.getElementById("kpi-"+sec.id);
-    if (el) el.innerHTML = kpiCards(sec.keys, kpis);
-  });
-
-  // Plan mix bar
-  const mP = w.monthlySubsPct!=null?w.monthlySubsPct.toFixed(1):0;
-  const aP = w.annualSubsPct!=null?w.annualSubsPct.toFixed(1):0;
-  document.getElementById("mix-bar").innerHTML =
-    `<div class="mix-bar-wrap"><div class="mix-bar-m" style="width:${mP}%"></div><div class="mix-bar-a" style="width:${aP}%"></div></div>
-     <div class="mix-legend">
-       <span><span class="mix-dot" style="background:#635bff"></span>Monthly ${mP}%</span>
-       <span><span class="mix-dot" style="background:#00b8d4"></span>Annual ${aP}%</span>
-     </div>`;
-}
-
-function buildShell() {
-  document.getElementById("app").innerHTML = `
-    <div id="warn"></div>
-
-    <div class="sec-label">Revenue</div>
-    <div class="kpi-grid" id="kpi-revenue"></div>
-    <div class="chart-card">
-      <div class="chart-title">Total revenue — week over week</div>
-      <div class="chart-sub">All charges across monthly and annual plans</div>
-      <div class="chart-wrap" style="height:220px"><canvas id="c-rev"></canvas></div>
-    </div>
-    <div class="two-col">
-      <div class="chart-card">
-        <div class="chart-title">New subscription revenue</div>
-        <div class="chart-sub">First charge from new subscribers</div>
-        <div class="chart-wrap" style="height:190px"><canvas id="c-nsrev"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Monthly vs annual revenue split</div>
-        <div class="chart-sub">Current week</div>
-        <div class="chart-wrap" style="height:190px"><canvas id="c-split"></canvas></div>
-      </div>
-    </div>
-
-    <div class="sec-label">MRR & ARR Trends</div>
-    <div class="chart-card">
-      <div class="chart-title">Current MRR — week over week</div>
-      <div class="chart-sub">Monthly recurring revenue across all active subscribers</div>
-      <div class="chart-wrap" style="height:220px"><canvas id="c-mrr"></canvas></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">Annualized MRR vs Committed ARR — all weeks</div>
-      <div class="chart-sub">Teal = Annualized MRR (MRR × 12) &nbsp;·&nbsp; Green = Committed ARR (active annual plan amounts)</div>
-      <div class="chart-wrap" style="height:220px"><canvas id="c-arr"></canvas></div>
-    </div>
-
-    <div class="sec-label">Subscriptions & MRR</div>
-    <div class="kpi-grid" id="kpi-subscriptions"></div>
-    <div class="two-col">
-      <div class="chart-card">
-        <div class="chart-title">New subscriptions added — week over week</div>
-        <div class="chart-sub"></div>
-        <div class="chart-wrap" style="height:190px"><canvas id="c-nsubs"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Plan mix — active subscribers</div>
-        <div class="chart-sub">Monthly vs annual</div>
-        <div id="mix-bar"></div>
-        <div class="chart-wrap" style="height:150px"><canvas id="c-mix"></canvas></div>
-      </div>
-    </div>
-
-    <div class="sec-label">Cancellations & Churn</div>
-    <div class="kpi-grid" id="kpi-churn"></div>
-    <div class="chart-card">
-      <div class="chart-title">Total cancellations — week over week</div>
-      <div class="chart-sub">All plan types combined</div>
-      <div class="chart-wrap" style="height:210px"><canvas id="c-cxl"></canvas></div>
-    </div>
-
-    <div class="sec-label">Failed Payments</div>
-    <div class="kpi-grid" id="kpi-failed_payments"></div>
-    <div class="chart-card">
-      <div class="chart-title">$ at risk from failed payments — week over week</div>
-      <div class="chart-sub">Unique subscriber balance at risk</div>
-      <div class="chart-wrap" style="height:210px"><canvas id="c-risk"></canvas></div>
-    </div>
-
-    <div class="sec-label">Lifetime Value</div>
-    <div class="kpi-grid" id="kpi-ltv"></div>
-
-    <div class="note-box">
-      <strong>Campaign note:</strong> Re-engagement campaign (launched Mar 24, 2026) inflated churn figures.
-      236 subscribers re-engaged — cancellations reflect intentional list hygiene, not organic churn.
-    </div>`;
-}
-
-function showTab(idx) {
-  currentIdx = idx;
-  document.querySelectorAll(".tab-btn").forEach((b,i)=>b.classList.toggle("active",i===idx));
-  renderKpis(idx);
-  renderCharts(idx);
-}
-
-buildShell();
-showTab(currentIdx);
 </script>
-</body></html>
+</body>
+</html>
