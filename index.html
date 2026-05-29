@@ -7,620 +7,219 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  --bg:#0d0d12; --card:#15151e; --card2:#1c1c28; --border:#232330;
-  --purple:#635bff; --green:#00c48c; --red:#ff5c5c; --amber:#f5a623; --violet:#a78bfa;
-  --text:#e6e6f0; --muted:#666;
+  --bg:#0d0d12;--card:#15151e;--border:#232330;
+  --purple:#635bff;--green:#00c48c;--red:#ff5c5c;--amber:#f5a623;--violet:#a78bfa;
+  --text:#e6e6f0;--muted:#666;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;}
-
-/* Header */
 .hdr{background:var(--card);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;gap:.75rem;}
-.hdr-icon{font-size:1.4rem;}
 .hdr-title{font-size:1.2rem;font-weight:800;color:var(--purple);letter-spacing:-.02em;}
 .hdr-sub{font-size:.73rem;color:var(--muted);margin-left:.4rem;}
 .hdr-url{margin-left:auto;font-size:.72rem;color:var(--purple);text-decoration:none;}
-
-/* Wrap */
 .wrap{max-width:1400px;margin:0 auto;padding:1.8rem 1.5rem;}
 
-/* Trends */
-.trends-hdr{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.9rem;}
-.charts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem;margin-bottom:2.4rem;}
+/* Trend section */
+.section-hdr{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.9rem;margin-top:1.8rem;}
+.charts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-bottom:.5rem;}
 .chart-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.1rem .8rem;}
 .chart-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.5rem;}
 
-/* Week tabs */
-.tab-nav{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:1.5rem;border-bottom:1px solid var(--border);padding-bottom:1rem;}
+/* Tab nav */
+.tab-nav{display:flex;flex-wrap:wrap;gap:.35rem;margin:1.8rem 0 1.2rem;border-bottom:1px solid var(--border);padding-bottom:1rem;}
 .tab-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:.38rem .9rem;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .12s;}
 .tab-btn:hover{border-color:var(--purple);color:var(--text);}
 .tab-btn.active{background:var(--purple);border-color:var(--purple);color:#fff;font-weight:600;}
 
-/* Sections */
-.section{margin-bottom:1.6rem;}
-.sec-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:.75rem;padding-left:.1rem;}
+/* Viz row (donuts, progress, bar) */
+.viz-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin-bottom:1.5rem;}
+.viz-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem 1.2rem;}
+.viz-title{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.8rem;}
+.donut-legend{font-size:.75rem;color:var(--muted);margin-top:.6rem;display:flex;align-items:center;flex-wrap:wrap;gap:.3rem;}
+.leg-dot{display:inline-block;width:9px;height:9px;border-radius:50%;}
 
-/* Metric cards grid */
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.75rem;}
+/* Progress bars */
+.prog-row{margin-bottom:.85rem;}
+.prog-label{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-bottom:.3rem;}
+.prog-track{background:rgba(255,255,255,.06);border-radius:99px;height:8px;overflow:hidden;}
+.prog-bar{height:100%;border-radius:99px;transition:width .3s;}
+
+/* Metric sections */
+.section{margin-bottom:1.5rem;}
+.sec-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:.75rem;}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.7rem;}
 .metric-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem;transition:border-color .15s;}
 .metric-card:hover{border-color:var(--purple);}
-.metric-name{font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;margin-bottom:.45rem;}
-.metric-val{font-size:1.25rem;font-weight:700;color:var(--text);line-height:1.2;margin-bottom:.3rem;}
-.wow{font-size:.75rem;font-weight:600;min-height:1rem;}
+.metric-name{font-size:.62rem;font-weight:600;color:var(--muted);letter-spacing:.05em;margin-bottom:.4rem;}
+.metric-val{font-size:1.2rem;font-weight:700;color:var(--text);line-height:1.2;margin-bottom:.25rem;word-break:break-word;}
+.wow{font-size:.73rem;font-weight:600;min-height:1rem;}
 .wow.up{color:var(--green);}
 .wow.dn{color:var(--red);}
 
-/* Warning */
 .warn{background:rgba(255,92,92,.07);border:1px solid rgba(255,92,92,.25);border-radius:8px;padding:.7rem 1rem;margin-bottom:1.2rem;font-size:.78rem;color:var(--red);}
 .warn ul{padding-left:1.1rem;margin-top:.3rem;}
-
-/* Footer */
 .footer{font-size:.72rem;color:var(--muted);margin-top:1.5rem;padding:.75rem 1rem;background:var(--card);border:1px solid var(--border);border-radius:8px;line-height:1.6;}
 </style>
 </head>
 <body>
 <div class="hdr">
-  <span class="hdr-icon">📊</span>
+  <span style="font-size:1.4rem">📊</span>
   <span class="hdr-title">Privy Stripe Dashboard</span>
-  <span class="hdr-sub">Weekly metrics &middot; 7 week(s) of data &middot; Generated May 29, 2026 01:27 UTC</span>
+  <span class="hdr-sub">Weekly metrics &middot; 7 week(s) of data &middot; Generated May 29, 2026 01:30 UTC</span>
   <a class="hdr-url" href="https://bensonjuarez-creator.github.io/privy-dashboard">https://bensonjuarez-creator.github.io/privy-dashboard</a>
 </div>
-
 <div class="wrap">
-  <div class="trends-hdr">Trends — all weeks</div>
+
+  <div class="section-hdr">📈 Trend lines — all weeks</div>
   <div class="charts-grid">
 
     <div class="chart-card">
       <div class="chart-label">Revenue ($)</div>
-      <canvas id="c_Total_Revenue" height="130"></canvas>
-      <script>
-      (function(){
-        var ctx = document.getElementById('c_Total_Revenue').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],
-            datasets: [{
-              data: [23128.16, 20983.93, 25378.98, 29193.0, 32347.86, 38583.8, 31161.43],
-              borderColor: '#635bff',
-              backgroundColor: 'rgba(99,91,255,0.12)',
-              borderWidth: 2.5,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              pointBackgroundColor: '#635bff',
-              fill: true,
-              tension: 0.35,
-              spanGaps: true
-            }]
-          },
-          options: {
-            responsive: true,
-            animation: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: { mode: 'index', intersect: false }
-            },
-            scales: {
-              x: {
-                ticks: { maxRotation: 40, font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.04)' }
-              },
-              y: {
-                beginAtZero: false,
-                ticks: { font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.06)' }
-              }
-            }
-          }
+      <canvas id="lc_Total_Revenue" height="120"></canvas>
+      <script>(function(){
+        new Chart(document.getElementById('lc_Total_Revenue').getContext('2d'),{
+          type:'line',
+          data:{labels:["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],datasets:[{data:[23128.16, 20983.93, 25378.98, 29193.0, 32347.86, 38583.8, 31161.43],borderColor:'#635bff',backgroundColor:'rgba(99,91,255,0.12)',borderWidth:2.5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:'#635bff',fill:true,tension:0.35,spanGaps:true}]},
+          options:{responsive:true,animation:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{maxRotation:40,font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.04)'}},y:{beginAtZero:false,ticks:{font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
         });
-      })();
-      </script>
+      })();</script>
     </div>
     <div class="chart-card">
       <div class="chart-label">MRR ($)</div>
-      <canvas id="c_Current_MRR" height="130"></canvas>
-      <script>
-      (function(){
-        var ctx = document.getElementById('c_Current_MRR').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],
-            datasets: [{
-              data: [105732.52, 105732.52, 105695.52, 105695.52, 105998.02, 104346.94, 106233.19],
-              borderColor: '#635bff',
-              backgroundColor: 'rgba(99,91,255,0.12)',
-              borderWidth: 2.5,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              pointBackgroundColor: '#635bff',
-              fill: true,
-              tension: 0.35,
-              spanGaps: true
-            }]
-          },
-          options: {
-            responsive: true,
-            animation: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: { mode: 'index', intersect: false }
-            },
-            scales: {
-              x: {
-                ticks: { maxRotation: 40, font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.04)' }
-              },
-              y: {
-                beginAtZero: false,
-                ticks: { font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.06)' }
-              }
-            }
-          }
+      <canvas id="lc_Current_MRR" height="120"></canvas>
+      <script>(function(){
+        new Chart(document.getElementById('lc_Current_MRR').getContext('2d'),{
+          type:'line',
+          data:{labels:["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],datasets:[{data:[105732.52, 105732.52, 105695.52, 105695.52, 105998.02, 104346.94, 106233.19],borderColor:'#635bff',backgroundColor:'rgba(99,91,255,0.12)',borderWidth:2.5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:'#635bff',fill:true,tension:0.35,spanGaps:true}]},
+          options:{responsive:true,animation:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{maxRotation:40,font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.04)'}},y:{beginAtZero:false,ticks:{font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
         });
-      })();
-      </script>
+      })();</script>
     </div>
     <div class="chart-card">
       <div class="chart-label">Annualized MRR ($)</div>
-      <canvas id="c_Annualized_MRR" height="130"></canvas>
-      <script>
-      (function(){
-        var ctx = document.getElementById('c_Annualized_MRR').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],
-            datasets: [{
-              data: [1268790.3, 1268790.3, 1268346.3, 1268346.3, 1271976.24, 1252163.3, 1274798.3],
-              borderColor: '#635bff',
-              backgroundColor: 'rgba(99,91,255,0.12)',
-              borderWidth: 2.5,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              pointBackgroundColor: '#635bff',
-              fill: true,
-              tension: 0.35,
-              spanGaps: true
-            }]
-          },
-          options: {
-            responsive: true,
-            animation: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: { mode: 'index', intersect: false }
-            },
-            scales: {
-              x: {
-                ticks: { maxRotation: 40, font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.04)' }
-              },
-              y: {
-                beginAtZero: false,
-                ticks: { font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.06)' }
-              }
-            }
-          }
+      <canvas id="lc_Annualized_MRR" height="120"></canvas>
+      <script>(function(){
+        new Chart(document.getElementById('lc_Annualized_MRR').getContext('2d'),{
+          type:'line',
+          data:{labels:["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],datasets:[{data:[1268790.3, 1268790.3, 1268346.3, 1268346.3, 1271976.24, 1252163.3, 1274798.3],borderColor:'#635bff',backgroundColor:'rgba(99,91,255,0.12)',borderWidth:2.5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:'#635bff',fill:true,tension:0.35,spanGaps:true}]},
+          options:{responsive:true,animation:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{maxRotation:40,font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.04)'}},y:{beginAtZero:false,ticks:{font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
         });
-      })();
-      </script>
+      })();</script>
     </div>
     <div class="chart-card">
       <div class="chart-label">Committed ARR ($)</div>
-      <canvas id="c_Committed_ARR" height="130"></canvas>
-      <script>
-      (function(){
-        var ctx = document.getElementById('c_Committed_ARR').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],
-            datasets: [{
-              data: ["null", "null", "null", "null", "null", 643695.98, 647262.98],
-              borderColor: '#635bff',
-              backgroundColor: 'rgba(99,91,255,0.12)',
-              borderWidth: 2.5,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              pointBackgroundColor: '#635bff',
-              fill: true,
-              tension: 0.35,
-              spanGaps: true
-            }]
-          },
-          options: {
-            responsive: true,
-            animation: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: { mode: 'index', intersect: false }
-            },
-            scales: {
-              x: {
-                ticks: { maxRotation: 40, font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.04)' }
-              },
-              y: {
-                beginAtZero: false,
-                ticks: { font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.06)' }
-              }
-            }
-          }
+      <canvas id="lc_Committed_ARR" height="120"></canvas>
+      <script>(function(){
+        new Chart(document.getElementById('lc_Committed_ARR').getContext('2d'),{
+          type:'line',
+          data:{labels:["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],datasets:[{data:["null", "null", "null", "null", "null", 643695.98, 647262.98],borderColor:'#635bff',backgroundColor:'rgba(99,91,255,0.12)',borderWidth:2.5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:'#635bff',fill:true,tension:0.35,spanGaps:true}]},
+          options:{responsive:true,animation:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{maxRotation:40,font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.04)'}},y:{beginAtZero:false,ticks:{font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
         });
-      })();
-      </script>
-    </div>
-    <div class="chart-card">
-      <div class="chart-label">New Subs</div>
-      <canvas id="c_New_Subscriptions" height="130"></canvas>
-      <script>
-      (function(){
-        var ctx = document.getElementById('c_New_Subscriptions').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],
-            datasets: [{
-              data: [15.0, 12.0, 15.0, 8.0, 15.0, 26.0, 19.0],
-              borderColor: '#00c48c',
-              backgroundColor: 'rgba(0,196,140,0.12)',
-              borderWidth: 2.5,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              pointBackgroundColor: '#00c48c',
-              fill: true,
-              tension: 0.35,
-              spanGaps: true
-            }]
-          },
-          options: {
-            responsive: true,
-            animation: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: { mode: 'index', intersect: false }
-            },
-            scales: {
-              x: {
-                ticks: { maxRotation: 40, font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.04)' }
-              },
-              y: {
-                beginAtZero: false,
-                ticks: { font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.06)' }
-              }
-            }
-          }
-        });
-      })();
-      </script>
-    </div>
-    <div class="chart-card">
-      <div class="chart-label">Cancellations</div>
-      <canvas id="c_Total_Cancellations" height="130"></canvas>
-      <script>
-      (function(){
-        var ctx = document.getElementById('c_Total_Cancellations').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],
-            datasets: [{
-              data: [35.0, 18.0, 31.0, 32.0, 25.0, 28.0, 19.0],
-              borderColor: '#ff5c5c',
-              backgroundColor: 'rgba(255,92,92,0.12)',
-              borderWidth: 2.5,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              pointBackgroundColor: '#ff5c5c',
-              fill: true,
-              tension: 0.35,
-              spanGaps: true
-            }]
-          },
-          options: {
-            responsive: true,
-            animation: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: { mode: 'index', intersect: false }
-            },
-            scales: {
-              x: {
-                ticks: { maxRotation: 40, font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.04)' }
-              },
-              y: {
-                beginAtZero: false,
-                ticks: { font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.06)' }
-              }
-            }
-          }
-        });
-      })();
-      </script>
-    </div>
-    <div class="chart-card">
-      <div class="chart-label">Weekly Churn Rate (%)</div>
-      <canvas id="c_Weekly_Churn_Rate" height="130"></canvas>
-      <script>
-      (function(){
-        var ctx = document.getElementById('c_Weekly_Churn_Rate').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],
-            datasets: [{
-              data: [2.27, 1.17, 2.01, 2.08, 1.64, 1.83, 1.25],
-              borderColor: '#ff5c5c',
-              backgroundColor: 'rgba(255,92,92,0.12)',
-              borderWidth: 2.5,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              pointBackgroundColor: '#ff5c5c',
-              fill: true,
-              tension: 0.35,
-              spanGaps: true
-            }]
-          },
-          options: {
-            responsive: true,
-            animation: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: { mode: 'index', intersect: false }
-            },
-            scales: {
-              x: {
-                ticks: { maxRotation: 40, font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.04)' }
-              },
-              y: {
-                beginAtZero: false,
-                ticks: { font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.06)' }
-              }
-            }
-          }
-        });
-      })();
-      </script>
+      })();</script>
     </div>
     <div class="chart-card">
       <div class="chart-label">Active Subs</div>
-      <canvas id="c_Active_Subscriptions" height="130"></canvas>
-      <script>
-      (function(){
-        var ctx = document.getElementById('c_Active_Subscriptions').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],
-            datasets: [{
-              data: [1542.0, 1542.0, 1541.0, 1541.0, 1521.0, 1526.0, 1521.0],
-              borderColor: '#00c48c',
-              backgroundColor: 'rgba(0,196,140,0.12)',
-              borderWidth: 2.5,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              pointBackgroundColor: '#00c48c',
-              fill: true,
-              tension: 0.35,
-              spanGaps: true
-            }]
-          },
-          options: {
-            responsive: true,
-            animation: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: { mode: 'index', intersect: false }
-            },
-            scales: {
-              x: {
-                ticks: { maxRotation: 40, font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.04)' }
-              },
-              y: {
-                beginAtZero: false,
-                ticks: { font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.06)' }
-              }
-            }
-          }
+      <canvas id="lc_Active_Subscriptions" height="120"></canvas>
+      <script>(function(){
+        new Chart(document.getElementById('lc_Active_Subscriptions').getContext('2d'),{
+          type:'line',
+          data:{labels:["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],datasets:[{data:[1542.0, 1542.0, 1541.0, 1541.0, 1521.0, 1526.0, 1521.0],borderColor:'#00c48c',backgroundColor:'rgba(0,196,140,0.12)',borderWidth:2.5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:'#00c48c',fill:true,tension:0.35,spanGaps:true}]},
+          options:{responsive:true,animation:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{maxRotation:40,font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.04)'}},y:{beginAtZero:false,ticks:{font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
         });
-      })();
-      </script>
+      })();</script>
     </div>
     <div class="chart-card">
-      <div class="chart-label">$ At Risk</div>
-      <canvas id="c___At_Risk" height="130"></canvas>
-      <script>
-      (function(){
-        var ctx = document.getElementById('c___At_Risk').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],
-            datasets: [{
-              data: [8082.91, 19873.0, 27544.6, 4311.0, 16606.13, 18237.2, 11017.41],
-              borderColor: '#f5a623',
-              backgroundColor: 'rgba(245,166,35,0.12)',
-              borderWidth: 2.5,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              pointBackgroundColor: '#f5a623',
-              fill: true,
-              tension: 0.35,
-              spanGaps: true
-            }]
-          },
-          options: {
-            responsive: true,
-            animation: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: { mode: 'index', intersect: false }
-            },
-            scales: {
-              x: {
-                ticks: { maxRotation: 40, font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.04)' }
-              },
-              y: {
-                beginAtZero: false,
-                ticks: { font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.06)' }
-              }
-            }
-          }
+      <div class="chart-label">Churn Rate (%)</div>
+      <canvas id="lc_Weekly_Churn_Rate" height="120"></canvas>
+      <script>(function(){
+        new Chart(document.getElementById('lc_Weekly_Churn_Rate').getContext('2d'),{
+          type:'line',
+          data:{labels:["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],datasets:[{data:[2.27, 1.17, 2.01, 2.08, 1.64, 1.83, 1.25],borderColor:'#ff5c5c',backgroundColor:'rgba(255,92,92,0.12)',borderWidth:2.5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:'#ff5c5c',fill:true,tension:0.35,spanGaps:true}]},
+          options:{responsive:true,animation:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{maxRotation:40,font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.04)'}},y:{beginAtZero:false,ticks:{font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
         });
-      })();
-      </script>
+      })();</script>
     </div>
     <div class="chart-card">
       <div class="chart-label">Monthly LTV ($)</div>
-      <canvas id="c_Monthly_LTV" height="130"></canvas>
-      <script>
-      (function(){
-        var ctx = document.getElementById('c_Monthly_LTV').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],
-            datasets: [{
-              data: [913.82, 1772.97, 1033.1, 998.34, 1290.71, 1156.18, 1291.27],
-              borderColor: '#a78bfa',
-              backgroundColor: 'rgba(167,139,250,0.12)',
-              borderWidth: 2.5,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              pointBackgroundColor: '#a78bfa',
-              fill: true,
-              tension: 0.35,
-              spanGaps: true
-            }]
-          },
-          options: {
-            responsive: true,
-            animation: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: { mode: 'index', intersect: false }
-            },
-            scales: {
-              x: {
-                ticks: { maxRotation: 40, font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.04)' }
-              },
-              y: {
-                beginAtZero: false,
-                ticks: { font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.06)' }
-              }
-            }
-          }
+      <canvas id="lc_Monthly_LTV" height="120"></canvas>
+      <script>(function(){
+        new Chart(document.getElementById('lc_Monthly_LTV').getContext('2d'),{
+          type:'line',
+          data:{labels:["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],datasets:[{data:[913.82, 1772.97, 1033.1, 998.34, 1290.71, 1156.18, 1291.27],borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,0.12)',borderWidth:2.5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:'#a78bfa',fill:true,tension:0.35,spanGaps:true}]},
+          options:{responsive:true,animation:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{maxRotation:40,font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.04)'}},y:{beginAtZero:false,ticks:{font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
         });
-      })();
-      </script>
-    </div>
-    <div class="chart-card">
-      <div class="chart-label">Annual LTV ($)</div>
-      <canvas id="c_Annual_LTV" height="130"></canvas>
-      <script>
-      (function(){
-        var ctx = document.getElementById('c_Annual_LTV').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],
-            datasets: [{
-              data: [572.57, 1110.88, 646.63, 624.87, 798.56, 712.2, 1085.43],
-              borderColor: '#a78bfa',
-              backgroundColor: 'rgba(167,139,250,0.12)',
-              borderWidth: 2.5,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              pointBackgroundColor: '#a78bfa',
-              fill: true,
-              tension: 0.35,
-              spanGaps: true
-            }]
-          },
-          options: {
-            responsive: true,
-            animation: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: { mode: 'index', intersect: false }
-            },
-            scales: {
-              x: {
-                ticks: { maxRotation: 40, font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.04)' }
-              },
-              y: {
-                beginAtZero: false,
-                ticks: { font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.06)' }
-              }
-            }
-          }
-        });
-      })();
-      </script>
+      })();</script>
     </div>
     <div class="chart-card">
       <div class="chart-label">Avg LTV ($)</div>
-      <canvas id="c_Avg_LTV" height="130"></canvas>
-      <script>
-      (function(){
-        var ctx = document.getElementById('c_Avg_LTV').getContext('2d');
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: ["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],
-            datasets: [{
-              data: [743.2, 1441.93, 839.87, 811.61, 1044.63, 934.19, 1188.35],
-              borderColor: '#a78bfa',
-              backgroundColor: 'rgba(167,139,250,0.12)',
-              borderWidth: 2.5,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              pointBackgroundColor: '#a78bfa',
-              fill: true,
-              tension: 0.35,
-              spanGaps: true
-            }]
-          },
-          options: {
-            responsive: true,
-            animation: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: { mode: 'index', intersect: false }
-            },
-            scales: {
-              x: {
-                ticks: { maxRotation: 40, font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.04)' }
-              },
-              y: {
-                beginAtZero: false,
-                ticks: { font: { size: 10 }, color: '#666' },
-                grid: { color: 'rgba(255,255,255,0.06)' }
-              }
-            }
-          }
+      <canvas id="lc_Avg_LTV" height="120"></canvas>
+      <script>(function(){
+        new Chart(document.getElementById('lc_Avg_LTV').getContext('2d'),{
+          type:'line',
+          data:{labels:["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],datasets:[{data:[743.2, 1441.93, 839.87, 811.61, 1044.63, 934.19, 1188.35],borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,0.12)',borderWidth:2.5,pointRadius:4,pointHoverRadius:6,pointBackgroundColor:'#a78bfa',fill:true,tension:0.35,spanGaps:true}]},
+          options:{responsive:true,animation:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{maxRotation:40,font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.04)'}},y:{beginAtZero:false,ticks:{font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
         });
-      })();
-      </script>
+      })();</script>
+    </div>
+  </div>
+
+  <div class="section-hdr">📊 Bar charts — all weeks</div>
+  <div class="charts-grid">
+
+    <div class="chart-card">
+      <div class="chart-label">New Sub Revenue ($)</div>
+      <canvas id="bc_New_Sub_Revenue" height="120"></canvas>
+      <script>(function(){
+        new Chart(document.getElementById('bc_New_Sub_Revenue').getContext('2d'),{
+          type:'bar',
+          data:{labels:["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],datasets:[{data:[8190.0, 4694.37, 4855.0, 2800.0, 10040.0, 15814.0, 5766.0],backgroundColor:'#635bff99',borderColor:'#635bff',borderWidth:1.5,borderRadius:4}]},
+          options:{responsive:true,animation:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{maxRotation:40,font:{size:10},color:'#555'},grid:{display:false}},y:{beginAtZero:true,ticks:{font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
+        });
+      })();</script>
+    </div>
+    <div class="chart-card">
+      <div class="chart-label">New Subscriptions</div>
+      <canvas id="bc_New_Subscriptions" height="120"></canvas>
+      <script>(function(){
+        new Chart(document.getElementById('bc_New_Subscriptions').getContext('2d'),{
+          type:'bar',
+          data:{labels:["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],datasets:[{data:[15.0, 12.0, 15.0, 8.0, 15.0, 26.0, 19.0],backgroundColor:'#00c48c99',borderColor:'#00c48c',borderWidth:1.5,borderRadius:4}]},
+          options:{responsive:true,animation:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{maxRotation:40,font:{size:10},color:'#555'},grid:{display:false}},y:{beginAtZero:true,ticks:{font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
+        });
+      })();</script>
+    </div>
+    <div class="chart-card">
+      <div class="chart-label">Cancellations</div>
+      <canvas id="bc_Total_Cancellations" height="120"></canvas>
+      <script>(function(){
+        new Chart(document.getElementById('bc_Total_Cancellations').getContext('2d'),{
+          type:'bar',
+          data:{labels:["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],datasets:[{data:[35.0, 18.0, 31.0, 32.0, 25.0, 28.0, 19.0],backgroundColor:'#ff5c5c99',borderColor:'#ff5c5c',borderWidth:1.5,borderRadius:4}]},
+          options:{responsive:true,animation:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{maxRotation:40,font:{size:10},color:'#555'},grid:{display:false}},y:{beginAtZero:true,ticks:{font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
+        });
+      })();</script>
+    </div>
+    <div class="chart-card">
+      <div class="chart-label">Churned MRR ($)</div>
+      <canvas id="bc_Churned_MRR" height="120"></canvas>
+      <script>(function(){
+        new Chart(document.getElementById('bc_Churned_MRR').getContext('2d'),{
+          type:'bar',
+          data:{labels:["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],datasets:[{data:[1759.33, 1268.97, 2376.08, 2189.5, 1742.24, 1651.08, 2380.33],backgroundColor:'#ff5c5c99',borderColor:'#ff5c5c',borderWidth:1.5,borderRadius:4}]},
+          options:{responsive:true,animation:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{maxRotation:40,font:{size:10},color:'#555'},grid:{display:false}},y:{beginAtZero:true,ticks:{font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
+        });
+      })();</script>
+    </div>
+    <div class="chart-card">
+      <div class="chart-label">$ At Risk</div>
+      <canvas id="bc___At_Risk" height="120"></canvas>
+      <script>(function(){
+        new Chart(document.getElementById('bc___At_Risk').getContext('2d'),{
+          type:'bar',
+          data:{labels:["Week-Apr7-2026", "Week-Apr13-2026", "Week-Apr20-2026", "Week-Apr27-2026", "Week-May4-2026", "Week-May11-2026", "Week-May18-2026"],datasets:[{data:[8082.91, 19873.0, 27544.6, 4311.0, 16606.13, 18237.2, 11017.41],backgroundColor:'#f5a62399',borderColor:'#f5a623',borderWidth:1.5,borderRadius:4}]},
+          options:{responsive:true,animation:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{maxRotation:40,font:{size:10},color:'#555'},grid:{display:false}},y:{beginAtZero:true,ticks:{font:{size:10},color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
+        });
+      })();</script>
     </div>
   </div>
 
@@ -637,1431 +236,1865 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 
       <div class="panel" id="p0" style="display:none">
         
+        <div class="viz-row">
+          
+          <div class="viz-card">
+            <div class="viz-title">MRR Split — Monthly vs Annual</div>
+            <canvas id="dm0" height="180"></canvas>
+            <div class="donut-legend">
+              <span class="leg-dot" style="background:#635bff"></span>Monthly
+              <span class="leg-dot" style="background:#00c48c;margin-left:1rem"></span>Annual
+            </div>
+            <script>(function(){
+              new Chart(document.getElementById('dm0').getContext('2d'),{
+                type:'doughnut',
+                data:{labels:['Monthly','Annual'],datasets:[{data:[50748.61,54983.92],backgroundColor:['#635bff','#00c48c'],borderColor:'#15151e',borderWidth:3}]},
+                options:{responsive:true,animation:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': $'+c.raw.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}}}}}
+              });
+            })();</script>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">Subscriber Mix — Monthly vs Annual</div>
+            <canvas id="ds0" height="180"></canvas>
+            <div class="donut-legend">
+              <span class="leg-dot" style="background:#635bff"></span>Monthly (565)
+              <span class="leg-dot" style="background:#00c48c;margin-left:1rem"></span>Annual (977)
+            </div>
+            <script>(function(){
+              new Chart(document.getElementById('ds0').getContext('2d'),{
+                type:'doughnut',
+                data:{labels:['Monthly','Annual'],datasets:[{data:[565,977],backgroundColor:['#635bff','#00c48c'],borderColor:'#15151e',borderWidth:3}]},
+                options:{responsive:true,animation:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': '+c.raw+' subs';}}}}}
+              });
+            })();</script>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">Key Ratios</div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Monthly subs</span><span>36.6%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:36.6%;background:#635bff"></div></div>
+            </div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Annual subs</span><span>63.4%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:63.4%;background:#00c48c"></div></div>
+            </div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Weekly churn (0–10% scale)</span><span>2.27%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:22.7%;background:#ff5c5c"></div></div>
+            </div>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">New Subs vs Cancellations</div>
+            <canvas id="bnc0" height="160"></canvas>
+            <script>(function(){
+              new Chart(document.getElementById('bnc0').getContext('2d'),{
+                type:'bar',
+                data:{labels:['New Subs','Cancellations'],datasets:[{data:[15,35],backgroundColor:['#00c48c99','#ff5c5c99'],borderColor:['#00c48c','#ff5c5c'],borderWidth:1.5,borderRadius:6}]},
+                options:{responsive:true,animation:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#555'}},y:{beginAtZero:true,ticks:{color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
+              });
+            })();</script>
+          </div>
+        </div>
         
-        <div class="section">
-          <div class="sec-title">💰 Revenue</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">TOTAL REVENUE</div>
-            <div class="metric-val">$23,128.16</div>
-            <div class="wow"></div>
+          <div class="section">
+            <div class="sec-title">💰 Revenue</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">TOTAL REVENUE</div>
+                <div class="metric-val">$23,128.16</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">RECURRING REVENUE</div>
+                <div class="metric-val">$14,938.16</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUB REVENUE</div>
+                <div class="metric-val">$8,190.00</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY PLAN REVENUE</div>
+                <div class="metric-val">$8,352.89</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL PLAN REVENUE</div>
+                <div class="metric-val">$14,775.27</div>
+                <div class="wow"></div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">RECURRING REVENUE</div>
-            <div class="metric-val">$14,938.16</div>
-            <div class="wow"></div>
+          <div class="section">
+            <div class="sec-title">📈 MRR & ARR</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">CURRENT MRR</div>
+                <div class="metric-val">$105,732.52</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MRR — MONTHLY PLANS</div>
+                <div class="metric-val">$50,748.61</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MRR — ANNUAL PLANS (÷12)</div>
+                <div class="metric-val">$54,983.92</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG MRR / SUBSCRIBER</div>
+                <div class="metric-val">$68.57</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUALIZED MRR</div>
+                <div class="metric-val">$1,268,790.30</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">COMMITTED ARR</div>
+                <div class="metric-val">data unavailable for historical snapshot</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ARR GAP</div>
+                <div class="metric-val">data unavailable for historical snapshot</div>
+                <div class="wow"></div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUB REVENUE</div>
-            <div class="metric-val">$8,190.00</div>
-            <div class="wow"></div>
+          <div class="section">
+            <div class="sec-title">👥 Subscriptions</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">ACTIVE SUBSCRIPTIONS</div>
+                <div class="metric-val">1,542</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUBSCRIPTIONS</div>
+                <div class="metric-val">15</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUB MRR ADDED</div>
+                <div class="metric-val">$1,584.33</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY SUBS COUNT</div>
+                <div class="metric-val">565</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY SUBS %</div>
+                <div class="metric-val">36.64%</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL SUBS COUNT</div>
+                <div class="metric-val">977</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL SUBS %</div>
+                <div class="metric-val">63.36%</div>
+                <div class="wow"></div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY PLAN REVENUE</div>
-            <div class="metric-val">$8,352.89</div>
-            <div class="wow"></div>
+          <div class="section">
+            <div class="sec-title">📉 Churn & Cancellations</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">TOTAL CANCELLATIONS</div>
+                <div class="metric-val">35</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY CANCELLATIONS</div>
+                <div class="metric-val">10</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL CANCELLATIONS</div>
+                <div class="metric-val">17</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">WEEKLY CHURN RATE</div>
+                <div class="metric-val">2.27%</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">CHURNED MRR</div>
+                <div class="metric-val">$1,759.33</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">CHURNED ARR</div>
+                <div class="metric-val">$21,112.00</div>
+                <div class="wow"></div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL PLAN REVENUE</div>
-            <div class="metric-val">$14,775.27</div>
-            <div class="wow"></div>
+          <div class="section">
+            <div class="sec-title">⚠️ Failed Payments</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">$ AT RISK</div>
+                <div class="metric-val">$8,082.91</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">FAILED SUBS UNIQUE</div>
+                <div class="metric-val">27</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">TOTAL FAILED ATTEMPTS</div>
+                <div class="metric-val">55</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG ATTEMPTS PER SUB</div>
+                <div class="metric-val">2.04</div>
+                <div class="wow"></div>
+              </div>
+            </div>
           </div>
+          <div class="section">
+            <div class="sec-title">⭐ Lifetime Value (LTV)</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY CHURN (MO)</div>
+                <div class="metric-val">9.83%</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG CUSTOMER LIFESPAN</div>
+                <div class="metric-val">10.17</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY LTV</div>
+                <div class="metric-val">$913.82</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL LTV</div>
+                <div class="metric-val">$572.57</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG LTV</div>
+                <div class="metric-val">$743.20</div>
+                <div class="wow"></div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">📈 MRR & ARR</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">CURRENT MRR</div>
-            <div class="metric-val">$105,732.52</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MRR — MONTHLY PLANS</div>
-            <div class="metric-val">$50,748.61</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MRR — ANNUAL PLANS (÷12)</div>
-            <div class="metric-val">$54,983.92</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG MRR / SUBSCRIBER</div>
-            <div class="metric-val">$68.57</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUALIZED MRR</div>
-            <div class="metric-val">$1,268,790.30</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">COMMITTED ARR</div>
-            <div class="metric-val">data unavailable for historical snapshot</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ARR GAP</div>
-            <div class="metric-val">data unavailable for historical snapshot</div>
-            <div class="wow"></div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">👥 Subscriptions</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">ACTIVE SUBSCRIPTIONS</div>
-            <div class="metric-val">1,542</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUBSCRIPTIONS</div>
-            <div class="metric-val">15</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUB MRR ADDED</div>
-            <div class="metric-val">$1,584.33</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY SUBS COUNT</div>
-            <div class="metric-val">565</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY SUBS %</div>
-            <div class="metric-val">36.64%</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL SUBS COUNT</div>
-            <div class="metric-val">977</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL SUBS %</div>
-            <div class="metric-val">63.36%</div>
-            <div class="wow"></div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">📉 Churn & Cancellations</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">TOTAL CANCELLATIONS</div>
-            <div class="metric-val">35</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY CANCELLATIONS</div>
-            <div class="metric-val">10</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL CANCELLATIONS</div>
-            <div class="metric-val">17</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">WEEKLY CHURN RATE</div>
-            <div class="metric-val">2.27%</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">CHURNED MRR</div>
-            <div class="metric-val">$1,759.33</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">CHURNED ARR</div>
-            <div class="metric-val">$21,112.00</div>
-            <div class="wow"></div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">⚠️ Failed Payments</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">$ AT RISK</div>
-            <div class="metric-val">$8,082.91</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">FAILED SUBS UNIQUE</div>
-            <div class="metric-val">27</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">TOTAL FAILED ATTEMPTS</div>
-            <div class="metric-val">55</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG ATTEMPTS PER SUB</div>
-            <div class="metric-val">2.04</div>
-            <div class="wow"></div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">⭐ Lifetime Value (LTV)</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY CHURN (MO)</div>
-            <div class="metric-val">9.83%</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG CUSTOMER LIFESPAN</div>
-            <div class="metric-val">10.17</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY LTV</div>
-            <div class="metric-val">$913.82</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL LTV</div>
-            <div class="metric-val">$572.57</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG LTV</div>
-            <div class="metric-val">$743.20</div>
-            <div class="wow"></div>
-          </div>
-          </div>
-        </div>
       </div>
       <div class="panel" id="p1" style="display:none">
         
+        <div class="viz-row">
+          
+          <div class="viz-card">
+            <div class="viz-title">MRR Split — Monthly vs Annual</div>
+            <canvas id="dm1" height="180"></canvas>
+            <div class="donut-legend">
+              <span class="leg-dot" style="background:#635bff"></span>Monthly
+              <span class="leg-dot" style="background:#00c48c;margin-left:1rem"></span>Annual
+            </div>
+            <script>(function(){
+              new Chart(document.getElementById('dm1').getContext('2d'),{
+                type:'doughnut',
+                data:{labels:['Monthly','Annual'],datasets:[{data:[50748.61,54983.92],backgroundColor:['#635bff','#00c48c'],borderColor:'#15151e',borderWidth:3}]},
+                options:{responsive:true,animation:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': $'+c.raw.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}}}}}
+              });
+            })();</script>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">Subscriber Mix — Monthly vs Annual</div>
+            <canvas id="ds1" height="180"></canvas>
+            <div class="donut-legend">
+              <span class="leg-dot" style="background:#635bff"></span>Monthly (565)
+              <span class="leg-dot" style="background:#00c48c;margin-left:1rem"></span>Annual (977)
+            </div>
+            <script>(function(){
+              new Chart(document.getElementById('ds1').getContext('2d'),{
+                type:'doughnut',
+                data:{labels:['Monthly','Annual'],datasets:[{data:[565,977],backgroundColor:['#635bff','#00c48c'],borderColor:'#15151e',borderWidth:3}]},
+                options:{responsive:true,animation:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': '+c.raw+' subs';}}}}}
+              });
+            })();</script>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">Key Ratios</div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Monthly subs</span><span>36.6%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:36.6%;background:#635bff"></div></div>
+            </div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Annual subs</span><span>63.4%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:63.4%;background:#00c48c"></div></div>
+            </div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Weekly churn (0–10% scale)</span><span>1.17%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:11.7%;background:#ff5c5c"></div></div>
+            </div>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">New Subs vs Cancellations</div>
+            <canvas id="bnc1" height="160"></canvas>
+            <script>(function(){
+              new Chart(document.getElementById('bnc1').getContext('2d'),{
+                type:'bar',
+                data:{labels:['New Subs','Cancellations'],datasets:[{data:[12,18],backgroundColor:['#00c48c99','#ff5c5c99'],borderColor:['#00c48c','#ff5c5c'],borderWidth:1.5,borderRadius:6}]},
+                options:{responsive:true,animation:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#555'}},y:{beginAtZero:true,ticks:{color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
+              });
+            })();</script>
+          </div>
+        </div>
         
-        <div class="section">
-          <div class="sec-title">💰 Revenue</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">TOTAL REVENUE</div>
-            <div class="metric-val">$20,983.93</div>
-            <div class="wow dn">▼ 9.3%</div>
+          <div class="section">
+            <div class="sec-title">💰 Revenue</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">TOTAL REVENUE</div>
+                <div class="metric-val">$20,983.93</div>
+                <div class="wow dn">▼ 9.3%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">RECURRING REVENUE</div>
+                <div class="metric-val">$16,289.56</div>
+                <div class="wow up">▲ 9.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUB REVENUE</div>
+                <div class="metric-val">$4,694.37</div>
+                <div class="wow dn">▼ 42.7%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY PLAN REVENUE</div>
+                <div class="metric-val">$10,071.69</div>
+                <div class="wow up">▲ 20.6%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL PLAN REVENUE</div>
+                <div class="metric-val">$10,912.24</div>
+                <div class="wow dn">▼ 26.1%</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">RECURRING REVENUE</div>
-            <div class="metric-val">$16,289.56</div>
-            <div class="wow up">▲ 9.0%</div>
+          <div class="section">
+            <div class="sec-title">📈 MRR & ARR</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">CURRENT MRR</div>
+                <div class="metric-val">$105,732.52</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MRR — MONTHLY PLANS</div>
+                <div class="metric-val">$50,748.61</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MRR — ANNUAL PLANS (÷12)</div>
+                <div class="metric-val">$54,983.92</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG MRR / SUBSCRIBER</div>
+                <div class="metric-val">$68.57</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUALIZED MRR</div>
+                <div class="metric-val">$1,268,790.30</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">COMMITTED ARR</div>
+                <div class="metric-val">data unavailable for historical snapshot</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ARR GAP</div>
+                <div class="metric-val">data unavailable for historical snapshot</div>
+                <div class="wow"></div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUB REVENUE</div>
-            <div class="metric-val">$4,694.37</div>
-            <div class="wow dn">▼ 42.7%</div>
+          <div class="section">
+            <div class="sec-title">👥 Subscriptions</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">ACTIVE SUBSCRIPTIONS</div>
+                <div class="metric-val">1,542</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUBSCRIPTIONS</div>
+                <div class="metric-val">12</div>
+                <div class="wow dn">▼ 20.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUB MRR ADDED</div>
+                <div class="metric-val">$1,230.67</div>
+                <div class="wow dn">▼ 22.3%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY SUBS COUNT</div>
+                <div class="metric-val">565</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY SUBS %</div>
+                <div class="metric-val">36.64%</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL SUBS COUNT</div>
+                <div class="metric-val">977</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL SUBS %</div>
+                <div class="metric-val">63.36%</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY PLAN REVENUE</div>
-            <div class="metric-val">$10,071.69</div>
-            <div class="wow up">▲ 20.6%</div>
+          <div class="section">
+            <div class="sec-title">📉 Churn & Cancellations</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">TOTAL CANCELLATIONS</div>
+                <div class="metric-val">18</div>
+                <div class="wow dn">▼ 48.6%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY CANCELLATIONS</div>
+                <div class="metric-val">10</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL CANCELLATIONS</div>
+                <div class="metric-val">8</div>
+                <div class="wow dn">▼ 52.9%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">WEEKLY CHURN RATE</div>
+                <div class="metric-val">1.17%</div>
+                <div class="wow dn">▼ 48.5%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">CHURNED MRR</div>
+                <div class="metric-val">$1,268.97</div>
+                <div class="wow dn">▼ 27.9%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">CHURNED ARR</div>
+                <div class="metric-val">$15,227.60</div>
+                <div class="wow dn">▼ 27.9%</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL PLAN REVENUE</div>
-            <div class="metric-val">$10,912.24</div>
-            <div class="wow dn">▼ 26.1%</div>
+          <div class="section">
+            <div class="sec-title">⚠️ Failed Payments</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">$ AT RISK</div>
+                <div class="metric-val">$19,873.00</div>
+                <div class="wow up">▲ 145.9%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">FAILED SUBS UNIQUE</div>
+                <div class="metric-val">50</div>
+                <div class="wow up">▲ 85.2%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">TOTAL FAILED ATTEMPTS</div>
+                <div class="metric-val">119</div>
+                <div class="wow up">▲ 116.4%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG ATTEMPTS PER SUB</div>
+                <div class="metric-val">2.38</div>
+                <div class="wow up">▲ 16.7%</div>
+              </div>
+            </div>
           </div>
+          <div class="section">
+            <div class="sec-title">⭐ Lifetime Value (LTV)</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY CHURN (MO)</div>
+                <div class="metric-val">5.07%</div>
+                <div class="wow dn">▼ 48.4%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG CUSTOMER LIFESPAN</div>
+                <div class="metric-val">19.73</div>
+                <div class="wow up">▲ 94.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY LTV</div>
+                <div class="metric-val">$1,772.97</div>
+                <div class="wow up">▲ 94.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL LTV</div>
+                <div class="metric-val">$1,110.88</div>
+                <div class="wow up">▲ 94.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG LTV</div>
+                <div class="metric-val">$1,441.93</div>
+                <div class="wow up">▲ 94.0%</div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">📈 MRR & ARR</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">CURRENT MRR</div>
-            <div class="metric-val">$105,732.52</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MRR — MONTHLY PLANS</div>
-            <div class="metric-val">$50,748.61</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MRR — ANNUAL PLANS (÷12)</div>
-            <div class="metric-val">$54,983.92</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG MRR / SUBSCRIBER</div>
-            <div class="metric-val">$68.57</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUALIZED MRR</div>
-            <div class="metric-val">$1,268,790.30</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">COMMITTED ARR</div>
-            <div class="metric-val">data unavailable for historical snapshot</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ARR GAP</div>
-            <div class="metric-val">data unavailable for historical snapshot</div>
-            <div class="wow"></div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">👥 Subscriptions</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">ACTIVE SUBSCRIPTIONS</div>
-            <div class="metric-val">1,542</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUBSCRIPTIONS</div>
-            <div class="metric-val">12</div>
-            <div class="wow dn">▼ 20.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUB MRR ADDED</div>
-            <div class="metric-val">$1,230.67</div>
-            <div class="wow dn">▼ 22.3%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY SUBS COUNT</div>
-            <div class="metric-val">565</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY SUBS %</div>
-            <div class="metric-val">36.64%</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL SUBS COUNT</div>
-            <div class="metric-val">977</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL SUBS %</div>
-            <div class="metric-val">63.36%</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">📉 Churn & Cancellations</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">TOTAL CANCELLATIONS</div>
-            <div class="metric-val">18</div>
-            <div class="wow dn">▼ 48.6%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY CANCELLATIONS</div>
-            <div class="metric-val">10</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL CANCELLATIONS</div>
-            <div class="metric-val">8</div>
-            <div class="wow dn">▼ 52.9%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">WEEKLY CHURN RATE</div>
-            <div class="metric-val">1.17%</div>
-            <div class="wow dn">▼ 48.5%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">CHURNED MRR</div>
-            <div class="metric-val">$1,268.97</div>
-            <div class="wow dn">▼ 27.9%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">CHURNED ARR</div>
-            <div class="metric-val">$15,227.60</div>
-            <div class="wow dn">▼ 27.9%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">⚠️ Failed Payments</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">$ AT RISK</div>
-            <div class="metric-val">$19,873.00</div>
-            <div class="wow up">▲ 145.9%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">FAILED SUBS UNIQUE</div>
-            <div class="metric-val">50</div>
-            <div class="wow up">▲ 85.2%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">TOTAL FAILED ATTEMPTS</div>
-            <div class="metric-val">119</div>
-            <div class="wow up">▲ 116.4%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG ATTEMPTS PER SUB</div>
-            <div class="metric-val">2.38</div>
-            <div class="wow up">▲ 16.7%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">⭐ Lifetime Value (LTV)</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY CHURN (MO)</div>
-            <div class="metric-val">5.07%</div>
-            <div class="wow dn">▼ 48.4%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG CUSTOMER LIFESPAN</div>
-            <div class="metric-val">19.73</div>
-            <div class="wow up">▲ 94.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY LTV</div>
-            <div class="metric-val">$1,772.97</div>
-            <div class="wow up">▲ 94.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL LTV</div>
-            <div class="metric-val">$1,110.88</div>
-            <div class="wow up">▲ 94.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG LTV</div>
-            <div class="metric-val">$1,441.93</div>
-            <div class="wow up">▲ 94.0%</div>
-          </div>
-          </div>
-        </div>
       </div>
       <div class="panel" id="p2" style="display:none">
         
+        <div class="viz-row">
+          
+          <div class="viz-card">
+            <div class="viz-title">MRR Split — Monthly vs Annual</div>
+            <canvas id="dm2" height="180"></canvas>
+            <div class="donut-legend">
+              <span class="leg-dot" style="background:#635bff"></span>Monthly
+              <span class="leg-dot" style="background:#00c48c;margin-left:1rem"></span>Annual
+            </div>
+            <script>(function(){
+              new Chart(document.getElementById('dm2').getContext('2d'),{
+                type:'doughnut',
+                data:{labels:['Monthly','Annual'],datasets:[{data:[50711.61,54983.92],backgroundColor:['#635bff','#00c48c'],borderColor:'#15151e',borderWidth:3}]},
+                options:{responsive:true,animation:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': $'+c.raw.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}}}}}
+              });
+            })();</script>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">Subscriber Mix — Monthly vs Annual</div>
+            <canvas id="ds2" height="180"></canvas>
+            <div class="donut-legend">
+              <span class="leg-dot" style="background:#635bff"></span>Monthly (564)
+              <span class="leg-dot" style="background:#00c48c;margin-left:1rem"></span>Annual (977)
+            </div>
+            <script>(function(){
+              new Chart(document.getElementById('ds2').getContext('2d'),{
+                type:'doughnut',
+                data:{labels:['Monthly','Annual'],datasets:[{data:[564,977],backgroundColor:['#635bff','#00c48c'],borderColor:'#15151e',borderWidth:3}]},
+                options:{responsive:true,animation:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': '+c.raw+' subs';}}}}}
+              });
+            })();</script>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">Key Ratios</div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Monthly subs</span><span>36.6%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:36.6%;background:#635bff"></div></div>
+            </div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Annual subs</span><span>63.4%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:63.4%;background:#00c48c"></div></div>
+            </div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Weekly churn (0–10% scale)</span><span>2.01%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:20.1%;background:#ff5c5c"></div></div>
+            </div>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">New Subs vs Cancellations</div>
+            <canvas id="bnc2" height="160"></canvas>
+            <script>(function(){
+              new Chart(document.getElementById('bnc2').getContext('2d'),{
+                type:'bar',
+                data:{labels:['New Subs','Cancellations'],datasets:[{data:[15,31],backgroundColor:['#00c48c99','#ff5c5c99'],borderColor:['#00c48c','#ff5c5c'],borderWidth:1.5,borderRadius:6}]},
+                options:{responsive:true,animation:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#555'}},y:{beginAtZero:true,ticks:{color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
+              });
+            })();</script>
+          </div>
+        </div>
         
-        <div class="section">
-          <div class="sec-title">💰 Revenue</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">TOTAL REVENUE</div>
-            <div class="metric-val">$25,378.98</div>
-            <div class="wow up">▲ 20.9%</div>
+          <div class="section">
+            <div class="sec-title">💰 Revenue</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">TOTAL REVENUE</div>
+                <div class="metric-val">$25,378.98</div>
+                <div class="wow up">▲ 20.9%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">RECURRING REVENUE</div>
+                <div class="metric-val">$20,485.60</div>
+                <div class="wow up">▲ 25.8%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUB REVENUE</div>
+                <div class="metric-val">$4,855.00</div>
+                <div class="wow up">▲ 3.4%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY PLAN REVENUE</div>
+                <div class="metric-val">$13,453.98</div>
+                <div class="wow up">▲ 33.6%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL PLAN REVENUE</div>
+                <div class="metric-val">$11,925.00</div>
+                <div class="wow up">▲ 9.3%</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">RECURRING REVENUE</div>
-            <div class="metric-val">$20,485.60</div>
-            <div class="wow up">▲ 25.8%</div>
+          <div class="section">
+            <div class="sec-title">📈 MRR & ARR</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">CURRENT MRR</div>
+                <div class="metric-val">$105,695.52</div>
+                <div class="wow dn">▼ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MRR — MONTHLY PLANS</div>
+                <div class="metric-val">$50,711.61</div>
+                <div class="wow dn">▼ 0.1%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MRR — ANNUAL PLANS (÷12)</div>
+                <div class="metric-val">$54,983.92</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG MRR / SUBSCRIBER</div>
+                <div class="metric-val">$68.59</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUALIZED MRR</div>
+                <div class="metric-val">$1,268,346.30</div>
+                <div class="wow dn">▼ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">COMMITTED ARR</div>
+                <div class="metric-val">data unavailable for historical snapshot</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ARR GAP</div>
+                <div class="metric-val">data unavailable for historical snapshot</div>
+                <div class="wow"></div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUB REVENUE</div>
-            <div class="metric-val">$4,855.00</div>
-            <div class="wow up">▲ 3.4%</div>
+          <div class="section">
+            <div class="sec-title">👥 Subscriptions</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">ACTIVE SUBSCRIPTIONS</div>
+                <div class="metric-val">1,541</div>
+                <div class="wow dn">▼ 0.1%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUBSCRIPTIONS</div>
+                <div class="metric-val">15</div>
+                <div class="wow up">▲ 25.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUB MRR ADDED</div>
+                <div class="metric-val">$1,441.33</div>
+                <div class="wow up">▲ 17.1%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY SUBS COUNT</div>
+                <div class="metric-val">564</div>
+                <div class="wow dn">▼ 0.2%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY SUBS %</div>
+                <div class="metric-val">36.60%</div>
+                <div class="wow dn">▼ 0.1%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL SUBS COUNT</div>
+                <div class="metric-val">977</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL SUBS %</div>
+                <div class="metric-val">63.40%</div>
+                <div class="wow up">▲ 0.1%</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY PLAN REVENUE</div>
-            <div class="metric-val">$13,453.98</div>
-            <div class="wow up">▲ 33.6%</div>
+          <div class="section">
+            <div class="sec-title">📉 Churn & Cancellations</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">TOTAL CANCELLATIONS</div>
+                <div class="metric-val">31</div>
+                <div class="wow up">▲ 72.2%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY CANCELLATIONS</div>
+                <div class="metric-val">20</div>
+                <div class="wow up">▲ 100.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL CANCELLATIONS</div>
+                <div class="metric-val">10</div>
+                <div class="wow up">▲ 25.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">WEEKLY CHURN RATE</div>
+                <div class="metric-val">2.01%</div>
+                <div class="wow up">▲ 71.8%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">CHURNED MRR</div>
+                <div class="metric-val">$2,376.08</div>
+                <div class="wow up">▲ 87.2%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">CHURNED ARR</div>
+                <div class="metric-val">$28,513.00</div>
+                <div class="wow up">▲ 87.2%</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL PLAN REVENUE</div>
-            <div class="metric-val">$11,925.00</div>
-            <div class="wow up">▲ 9.3%</div>
+          <div class="section">
+            <div class="sec-title">⚠️ Failed Payments</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">$ AT RISK</div>
+                <div class="metric-val">$27,544.60</div>
+                <div class="wow up">▲ 38.6%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">FAILED SUBS UNIQUE</div>
+                <div class="metric-val">66</div>
+                <div class="wow up">▲ 32.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">TOTAL FAILED ATTEMPTS</div>
+                <div class="metric-val">120</div>
+                <div class="wow up">▲ 0.8%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG ATTEMPTS PER SUB</div>
+                <div class="metric-val">1.82</div>
+                <div class="wow dn">▼ 23.5%</div>
+              </div>
+            </div>
           </div>
+          <div class="section">
+            <div class="sec-title">⭐ Lifetime Value (LTV)</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY CHURN (MO)</div>
+                <div class="metric-val">8.70%</div>
+                <div class="wow up">▲ 71.6%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG CUSTOMER LIFESPAN</div>
+                <div class="metric-val">11.49</div>
+                <div class="wow dn">▼ 41.8%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY LTV</div>
+                <div class="metric-val">$1,033.10</div>
+                <div class="wow dn">▼ 41.7%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL LTV</div>
+                <div class="metric-val">$646.63</div>
+                <div class="wow dn">▼ 41.8%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG LTV</div>
+                <div class="metric-val">$839.87</div>
+                <div class="wow dn">▼ 41.8%</div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">📈 MRR & ARR</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">CURRENT MRR</div>
-            <div class="metric-val">$105,695.52</div>
-            <div class="wow dn">▼ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MRR — MONTHLY PLANS</div>
-            <div class="metric-val">$50,711.61</div>
-            <div class="wow dn">▼ 0.1%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MRR — ANNUAL PLANS (÷12)</div>
-            <div class="metric-val">$54,983.92</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG MRR / SUBSCRIBER</div>
-            <div class="metric-val">$68.59</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUALIZED MRR</div>
-            <div class="metric-val">$1,268,346.30</div>
-            <div class="wow dn">▼ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">COMMITTED ARR</div>
-            <div class="metric-val">data unavailable for historical snapshot</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ARR GAP</div>
-            <div class="metric-val">data unavailable for historical snapshot</div>
-            <div class="wow"></div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">👥 Subscriptions</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">ACTIVE SUBSCRIPTIONS</div>
-            <div class="metric-val">1,541</div>
-            <div class="wow dn">▼ 0.1%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUBSCRIPTIONS</div>
-            <div class="metric-val">15</div>
-            <div class="wow up">▲ 25.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUB MRR ADDED</div>
-            <div class="metric-val">$1,441.33</div>
-            <div class="wow up">▲ 17.1%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY SUBS COUNT</div>
-            <div class="metric-val">564</div>
-            <div class="wow dn">▼ 0.2%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY SUBS %</div>
-            <div class="metric-val">36.60%</div>
-            <div class="wow dn">▼ 0.1%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL SUBS COUNT</div>
-            <div class="metric-val">977</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL SUBS %</div>
-            <div class="metric-val">63.40%</div>
-            <div class="wow up">▲ 0.1%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">📉 Churn & Cancellations</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">TOTAL CANCELLATIONS</div>
-            <div class="metric-val">31</div>
-            <div class="wow up">▲ 72.2%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY CANCELLATIONS</div>
-            <div class="metric-val">20</div>
-            <div class="wow up">▲ 100.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL CANCELLATIONS</div>
-            <div class="metric-val">10</div>
-            <div class="wow up">▲ 25.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">WEEKLY CHURN RATE</div>
-            <div class="metric-val">2.01%</div>
-            <div class="wow up">▲ 71.8%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">CHURNED MRR</div>
-            <div class="metric-val">$2,376.08</div>
-            <div class="wow up">▲ 87.2%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">CHURNED ARR</div>
-            <div class="metric-val">$28,513.00</div>
-            <div class="wow up">▲ 87.2%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">⚠️ Failed Payments</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">$ AT RISK</div>
-            <div class="metric-val">$27,544.60</div>
-            <div class="wow up">▲ 38.6%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">FAILED SUBS UNIQUE</div>
-            <div class="metric-val">66</div>
-            <div class="wow up">▲ 32.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">TOTAL FAILED ATTEMPTS</div>
-            <div class="metric-val">120</div>
-            <div class="wow up">▲ 0.8%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG ATTEMPTS PER SUB</div>
-            <div class="metric-val">1.82</div>
-            <div class="wow dn">▼ 23.5%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">⭐ Lifetime Value (LTV)</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY CHURN (MO)</div>
-            <div class="metric-val">8.70%</div>
-            <div class="wow up">▲ 71.6%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG CUSTOMER LIFESPAN</div>
-            <div class="metric-val">11.49</div>
-            <div class="wow dn">▼ 41.8%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY LTV</div>
-            <div class="metric-val">$1,033.10</div>
-            <div class="wow dn">▼ 41.7%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL LTV</div>
-            <div class="metric-val">$646.63</div>
-            <div class="wow dn">▼ 41.8%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG LTV</div>
-            <div class="metric-val">$839.87</div>
-            <div class="wow dn">▼ 41.8%</div>
-          </div>
-          </div>
-        </div>
       </div>
       <div class="panel" id="p3" style="display:none">
         
+        <div class="viz-row">
+          
+          <div class="viz-card">
+            <div class="viz-title">MRR Split — Monthly vs Annual</div>
+            <canvas id="dm3" height="180"></canvas>
+            <div class="donut-legend">
+              <span class="leg-dot" style="background:#635bff"></span>Monthly
+              <span class="leg-dot" style="background:#00c48c;margin-left:1rem"></span>Annual
+            </div>
+            <script>(function(){
+              new Chart(document.getElementById('dm3').getContext('2d'),{
+                type:'doughnut',
+                data:{labels:['Monthly','Annual'],datasets:[{data:[50711.61,54983.92],backgroundColor:['#635bff','#00c48c'],borderColor:'#15151e',borderWidth:3}]},
+                options:{responsive:true,animation:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': $'+c.raw.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}}}}}
+              });
+            })();</script>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">Subscriber Mix — Monthly vs Annual</div>
+            <canvas id="ds3" height="180"></canvas>
+            <div class="donut-legend">
+              <span class="leg-dot" style="background:#635bff"></span>Monthly (564)
+              <span class="leg-dot" style="background:#00c48c;margin-left:1rem"></span>Annual (977)
+            </div>
+            <script>(function(){
+              new Chart(document.getElementById('ds3').getContext('2d'),{
+                type:'doughnut',
+                data:{labels:['Monthly','Annual'],datasets:[{data:[564,977],backgroundColor:['#635bff','#00c48c'],borderColor:'#15151e',borderWidth:3}]},
+                options:{responsive:true,animation:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': '+c.raw+' subs';}}}}}
+              });
+            })();</script>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">Key Ratios</div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Monthly subs</span><span>36.6%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:36.6%;background:#635bff"></div></div>
+            </div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Annual subs</span><span>63.4%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:63.4%;background:#00c48c"></div></div>
+            </div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Weekly churn (0–10% scale)</span><span>2.08%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:20.8%;background:#ff5c5c"></div></div>
+            </div>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">New Subs vs Cancellations</div>
+            <canvas id="bnc3" height="160"></canvas>
+            <script>(function(){
+              new Chart(document.getElementById('bnc3').getContext('2d'),{
+                type:'bar',
+                data:{labels:['New Subs','Cancellations'],datasets:[{data:[8,32],backgroundColor:['#00c48c99','#ff5c5c99'],borderColor:['#00c48c','#ff5c5c'],borderWidth:1.5,borderRadius:6}]},
+                options:{responsive:true,animation:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#555'}},y:{beginAtZero:true,ticks:{color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
+              });
+            })();</script>
+          </div>
+        </div>
         
-        <div class="section">
-          <div class="sec-title">💰 Revenue</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">TOTAL REVENUE</div>
-            <div class="metric-val">$29,193.00</div>
-            <div class="wow up">▲ 15.0%</div>
+          <div class="section">
+            <div class="sec-title">💰 Revenue</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">TOTAL REVENUE</div>
+                <div class="metric-val">$29,193.00</div>
+                <div class="wow up">▲ 15.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">RECURRING REVENUE</div>
+                <div class="metric-val">$26,393.00</div>
+                <div class="wow up">▲ 28.8%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUB REVENUE</div>
+                <div class="metric-val">$2,800.00</div>
+                <div class="wow dn">▼ 42.3%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY PLAN REVENUE</div>
+                <div class="metric-val">$13,002.00</div>
+                <div class="wow dn">▼ 3.4%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL PLAN REVENUE</div>
+                <div class="metric-val">$16,191.00</div>
+                <div class="wow up">▲ 35.8%</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">RECURRING REVENUE</div>
-            <div class="metric-val">$26,393.00</div>
-            <div class="wow up">▲ 28.8%</div>
+          <div class="section">
+            <div class="sec-title">📈 MRR & ARR</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">CURRENT MRR</div>
+                <div class="metric-val">$105,695.52</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MRR — MONTHLY PLANS</div>
+                <div class="metric-val">$50,711.61</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MRR — ANNUAL PLANS (÷12)</div>
+                <div class="metric-val">$54,983.92</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG MRR / SUBSCRIBER</div>
+                <div class="metric-val">$68.59</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUALIZED MRR</div>
+                <div class="metric-val">$1,268,346.30</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">COMMITTED ARR</div>
+                <div class="metric-val">data unavailable for historical snapshot</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ARR GAP</div>
+                <div class="metric-val">data unavailable for historical snapshot</div>
+                <div class="wow"></div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUB REVENUE</div>
-            <div class="metric-val">$2,800.00</div>
-            <div class="wow dn">▼ 42.3%</div>
+          <div class="section">
+            <div class="sec-title">👥 Subscriptions</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">ACTIVE SUBSCRIPTIONS</div>
+                <div class="metric-val">1,541</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUBSCRIPTIONS</div>
+                <div class="metric-val">8</div>
+                <div class="wow dn">▼ 46.7%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUB MRR ADDED</div>
+                <div class="metric-val">$1,093.17</div>
+                <div class="wow dn">▼ 24.2%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY SUBS COUNT</div>
+                <div class="metric-val">564</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY SUBS %</div>
+                <div class="metric-val">36.60%</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL SUBS COUNT</div>
+                <div class="metric-val">977</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL SUBS %</div>
+                <div class="metric-val">63.40%</div>
+                <div class="wow up">▲ 0.0%</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY PLAN REVENUE</div>
-            <div class="metric-val">$13,002.00</div>
-            <div class="wow dn">▼ 3.4%</div>
+          <div class="section">
+            <div class="sec-title">📉 Churn & Cancellations</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">TOTAL CANCELLATIONS</div>
+                <div class="metric-val">32</div>
+                <div class="wow up">▲ 3.2%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY CANCELLATIONS</div>
+                <div class="metric-val">14</div>
+                <div class="wow dn">▼ 30.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL CANCELLATIONS</div>
+                <div class="metric-val">20</div>
+                <div class="wow up">▲ 100.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">WEEKLY CHURN RATE</div>
+                <div class="metric-val">2.08%</div>
+                <div class="wow up">▲ 3.5%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">CHURNED MRR</div>
+                <div class="metric-val">$2,189.50</div>
+                <div class="wow dn">▼ 7.9%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">CHURNED ARR</div>
+                <div class="metric-val">$26,274.00</div>
+                <div class="wow dn">▼ 7.9%</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL PLAN REVENUE</div>
-            <div class="metric-val">$16,191.00</div>
-            <div class="wow up">▲ 35.8%</div>
+          <div class="section">
+            <div class="sec-title">⚠️ Failed Payments</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">$ AT RISK</div>
+                <div class="metric-val">$4,311.00</div>
+                <div class="wow dn">▼ 84.3%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">FAILED SUBS UNIQUE</div>
+                <div class="metric-val">12</div>
+                <div class="wow dn">▼ 81.8%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">TOTAL FAILED ATTEMPTS</div>
+                <div class="metric-val">>=100 (cap)</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG ATTEMPTS PER SUB</div>
+                <div class="metric-val">8.33</div>
+                <div class="wow up">▲ 357.7%</div>
+              </div>
+            </div>
           </div>
+          <div class="section">
+            <div class="sec-title">⭐ Lifetime Value (LTV)</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY CHURN (MO)</div>
+                <div class="metric-val">9.01%</div>
+                <div class="wow up">▲ 3.6%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG CUSTOMER LIFESPAN</div>
+                <div class="metric-val">11.10</div>
+                <div class="wow dn">▼ 3.4%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY LTV</div>
+                <div class="metric-val">$998.34</div>
+                <div class="wow dn">▼ 3.4%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL LTV</div>
+                <div class="metric-val">$624.87</div>
+                <div class="wow dn">▼ 3.4%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG LTV</div>
+                <div class="metric-val">$811.61</div>
+                <div class="wow dn">▼ 3.4%</div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">📈 MRR & ARR</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">CURRENT MRR</div>
-            <div class="metric-val">$105,695.52</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MRR — MONTHLY PLANS</div>
-            <div class="metric-val">$50,711.61</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MRR — ANNUAL PLANS (÷12)</div>
-            <div class="metric-val">$54,983.92</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG MRR / SUBSCRIBER</div>
-            <div class="metric-val">$68.59</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUALIZED MRR</div>
-            <div class="metric-val">$1,268,346.30</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">COMMITTED ARR</div>
-            <div class="metric-val">data unavailable for historical snapshot</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ARR GAP</div>
-            <div class="metric-val">data unavailable for historical snapshot</div>
-            <div class="wow"></div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">👥 Subscriptions</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">ACTIVE SUBSCRIPTIONS</div>
-            <div class="metric-val">1,541</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUBSCRIPTIONS</div>
-            <div class="metric-val">8</div>
-            <div class="wow dn">▼ 46.7%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUB MRR ADDED</div>
-            <div class="metric-val">$1,093.17</div>
-            <div class="wow dn">▼ 24.2%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY SUBS COUNT</div>
-            <div class="metric-val">564</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY SUBS %</div>
-            <div class="metric-val">36.60%</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL SUBS COUNT</div>
-            <div class="metric-val">977</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL SUBS %</div>
-            <div class="metric-val">63.40%</div>
-            <div class="wow up">▲ 0.0%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">📉 Churn & Cancellations</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">TOTAL CANCELLATIONS</div>
-            <div class="metric-val">32</div>
-            <div class="wow up">▲ 3.2%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY CANCELLATIONS</div>
-            <div class="metric-val">14</div>
-            <div class="wow dn">▼ 30.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL CANCELLATIONS</div>
-            <div class="metric-val">20</div>
-            <div class="wow up">▲ 100.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">WEEKLY CHURN RATE</div>
-            <div class="metric-val">2.08%</div>
-            <div class="wow up">▲ 3.5%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">CHURNED MRR</div>
-            <div class="metric-val">$2,189.50</div>
-            <div class="wow dn">▼ 7.9%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">CHURNED ARR</div>
-            <div class="metric-val">$26,274.00</div>
-            <div class="wow dn">▼ 7.9%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">⚠️ Failed Payments</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">$ AT RISK</div>
-            <div class="metric-val">$4,311.00</div>
-            <div class="wow dn">▼ 84.3%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">FAILED SUBS UNIQUE</div>
-            <div class="metric-val">12</div>
-            <div class="wow dn">▼ 81.8%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">TOTAL FAILED ATTEMPTS</div>
-            <div class="metric-val">>=100 (cap)</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG ATTEMPTS PER SUB</div>
-            <div class="metric-val">8.33</div>
-            <div class="wow up">▲ 357.7%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">⭐ Lifetime Value (LTV)</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY CHURN (MO)</div>
-            <div class="metric-val">9.01%</div>
-            <div class="wow up">▲ 3.6%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG CUSTOMER LIFESPAN</div>
-            <div class="metric-val">11.10</div>
-            <div class="wow dn">▼ 3.4%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY LTV</div>
-            <div class="metric-val">$998.34</div>
-            <div class="wow dn">▼ 3.4%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL LTV</div>
-            <div class="metric-val">$624.87</div>
-            <div class="wow dn">▼ 3.4%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG LTV</div>
-            <div class="metric-val">$811.61</div>
-            <div class="wow dn">▼ 3.4%</div>
-          </div>
-          </div>
-        </div>
       </div>
       <div class="panel" id="p4" style="display:none">
         
+        <div class="viz-row">
+          
+          <div class="viz-card">
+            <div class="viz-title">MRR Split — Monthly vs Annual</div>
+            <canvas id="dm4" height="180"></canvas>
+            <div class="donut-legend">
+              <span class="leg-dot" style="background:#635bff"></span>Monthly
+              <span class="leg-dot" style="background:#00c48c;margin-left:1rem"></span>Annual
+            </div>
+            <script>(function(){
+              new Chart(document.getElementById('dm4').getContext('2d'),{
+                type:'doughnut',
+                data:{labels:['Monthly','Annual'],datasets:[{data:[51785.61,54212.42],backgroundColor:['#635bff','#00c48c'],borderColor:'#15151e',borderWidth:3}]},
+                options:{responsive:true,animation:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': $'+c.raw.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}}}}}
+              });
+            })();</script>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">Subscriber Mix — Monthly vs Annual</div>
+            <canvas id="ds4" height="180"></canvas>
+            <div class="donut-legend">
+              <span class="leg-dot" style="background:#635bff"></span>Monthly (565)
+              <span class="leg-dot" style="background:#00c48c;margin-left:1rem"></span>Annual (956)
+            </div>
+            <script>(function(){
+              new Chart(document.getElementById('ds4').getContext('2d'),{
+                type:'doughnut',
+                data:{labels:['Monthly','Annual'],datasets:[{data:[565,956],backgroundColor:['#635bff','#00c48c'],borderColor:'#15151e',borderWidth:3}]},
+                options:{responsive:true,animation:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': '+c.raw+' subs';}}}}}
+              });
+            })();</script>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">Key Ratios</div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Monthly subs</span><span>37.1%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:37.1%;background:#635bff"></div></div>
+            </div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Annual subs</span><span>62.9%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:62.9%;background:#00c48c"></div></div>
+            </div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Weekly churn (0–10% scale)</span><span>1.64%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:16.4%;background:#ff5c5c"></div></div>
+            </div>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">New Subs vs Cancellations</div>
+            <canvas id="bnc4" height="160"></canvas>
+            <script>(function(){
+              new Chart(document.getElementById('bnc4').getContext('2d'),{
+                type:'bar',
+                data:{labels:['New Subs','Cancellations'],datasets:[{data:[15,25],backgroundColor:['#00c48c99','#ff5c5c99'],borderColor:['#00c48c','#ff5c5c'],borderWidth:1.5,borderRadius:6}]},
+                options:{responsive:true,animation:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#555'}},y:{beginAtZero:true,ticks:{color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
+              });
+            })();</script>
+          </div>
+        </div>
         
-        <div class="section">
-          <div class="sec-title">💰 Revenue</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">TOTAL REVENUE</div>
-            <div class="metric-val">$32,347.86</div>
-            <div class="wow up">▲ 10.8%</div>
+          <div class="section">
+            <div class="sec-title">💰 Revenue</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">TOTAL REVENUE</div>
+                <div class="metric-val">$32,347.86</div>
+                <div class="wow up">▲ 10.8%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">RECURRING REVENUE</div>
+                <div class="metric-val">$22,280.80</div>
+                <div class="wow dn">▼ 15.6%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUB REVENUE</div>
+                <div class="metric-val">$10,040.00</div>
+                <div class="wow up">▲ 258.6%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY PLAN REVENUE</div>
+                <div class="metric-val">see note</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL PLAN REVENUE</div>
+                <div class="metric-val">see note</div>
+                <div class="wow"></div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">RECURRING REVENUE</div>
-            <div class="metric-val">$22,280.80</div>
-            <div class="wow dn">▼ 15.6%</div>
+          <div class="section">
+            <div class="sec-title">📈 MRR & ARR</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">CURRENT MRR</div>
+                <div class="metric-val">$105,998.02</div>
+                <div class="wow up">▲ 0.3%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MRR — MONTHLY PLANS</div>
+                <div class="metric-val">$51,785.61</div>
+                <div class="wow up">▲ 2.1%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MRR — ANNUAL PLANS (÷12)</div>
+                <div class="metric-val">$54,212.42</div>
+                <div class="wow dn">▼ 1.4%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG MRR / SUBSCRIBER</div>
+                <div class="metric-val">$69.69</div>
+                <div class="wow up">▲ 1.6%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUALIZED MRR</div>
+                <div class="metric-val">$1,271,976.24</div>
+                <div class="wow up">▲ 0.3%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">COMMITTED ARR</div>
+                <div class="metric-val">data unavailable for historical snapshot</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ARR GAP</div>
+                <div class="metric-val">data unavailable for historical snapshot</div>
+                <div class="wow"></div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUB REVENUE</div>
-            <div class="metric-val">$10,040.00</div>
-            <div class="wow up">▲ 258.6%</div>
+          <div class="section">
+            <div class="sec-title">👥 Subscriptions</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">ACTIVE SUBSCRIPTIONS</div>
+                <div class="metric-val">1,521</div>
+                <div class="wow dn">▼ 1.3%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUBSCRIPTIONS</div>
+                <div class="metric-val">15</div>
+                <div class="wow up">▲ 87.5%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUB MRR ADDED</div>
+                <div class="metric-val">—</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY SUBS COUNT</div>
+                <div class="metric-val">565</div>
+                <div class="wow up">▲ 0.2%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY SUBS %</div>
+                <div class="metric-val">37.15%</div>
+                <div class="wow up">▲ 1.5%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL SUBS COUNT</div>
+                <div class="metric-val">956</div>
+                <div class="wow dn">▼ 2.1%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL SUBS %</div>
+                <div class="metric-val">62.85%</div>
+                <div class="wow dn">▼ 0.9%</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY PLAN REVENUE</div>
-            <div class="metric-val">see note</div>
-            <div class="wow"></div>
+          <div class="section">
+            <div class="sec-title">📉 Churn & Cancellations</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">TOTAL CANCELLATIONS</div>
+                <div class="metric-val">25</div>
+                <div class="wow dn">▼ 21.9%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY CANCELLATIONS</div>
+                <div class="metric-val">12</div>
+                <div class="wow dn">▼ 14.3%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL CANCELLATIONS</div>
+                <div class="metric-val">13</div>
+                <div class="wow dn">▼ 35.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">WEEKLY CHURN RATE</div>
+                <div class="metric-val">1.64%</div>
+                <div class="wow dn">▼ 21.2%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">CHURNED MRR</div>
+                <div class="metric-val">$1,742.24</div>
+                <div class="wow dn">▼ 20.4%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">CHURNED ARR</div>
+                <div class="metric-val">$20,906.91</div>
+                <div class="wow dn">▼ 20.4%</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL PLAN REVENUE</div>
-            <div class="metric-val">see note</div>
-            <div class="wow"></div>
+          <div class="section">
+            <div class="sec-title">⚠️ Failed Payments</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">$ AT RISK</div>
+                <div class="metric-val">$16,606.13</div>
+                <div class="wow up">▲ 285.2%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">FAILED SUBS UNIQUE</div>
+                <div class="metric-val">—</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">TOTAL FAILED ATTEMPTS</div>
+                <div class="metric-val">105</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG ATTEMPTS PER SUB</div>
+                <div class="metric-val">2.10</div>
+                <div class="wow dn">▼ 74.8%</div>
+              </div>
+            </div>
           </div>
+          <div class="section">
+            <div class="sec-title">⭐ Lifetime Value (LTV)</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY CHURN (MO)</div>
+                <div class="metric-val">7.10%</div>
+                <div class="wow dn">▼ 21.2%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG CUSTOMER LIFESPAN</div>
+                <div class="metric-val">14.08</div>
+                <div class="wow up">▲ 26.8%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY LTV</div>
+                <div class="metric-val">$1,290.71</div>
+                <div class="wow up">▲ 29.3%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL LTV</div>
+                <div class="metric-val">$798.56</div>
+                <div class="wow up">▲ 27.8%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG LTV</div>
+                <div class="metric-val">$1,044.63</div>
+                <div class="wow up">▲ 28.7%</div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">📈 MRR & ARR</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">CURRENT MRR</div>
-            <div class="metric-val">$105,998.02</div>
-            <div class="wow up">▲ 0.3%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MRR — MONTHLY PLANS</div>
-            <div class="metric-val">$51,785.61</div>
-            <div class="wow up">▲ 2.1%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MRR — ANNUAL PLANS (÷12)</div>
-            <div class="metric-val">$54,212.42</div>
-            <div class="wow dn">▼ 1.4%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG MRR / SUBSCRIBER</div>
-            <div class="metric-val">$69.69</div>
-            <div class="wow up">▲ 1.6%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUALIZED MRR</div>
-            <div class="metric-val">$1,271,976.24</div>
-            <div class="wow up">▲ 0.3%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">COMMITTED ARR</div>
-            <div class="metric-val">data unavailable for historical snapshot</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ARR GAP</div>
-            <div class="metric-val">data unavailable for historical snapshot</div>
-            <div class="wow"></div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">👥 Subscriptions</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">ACTIVE SUBSCRIPTIONS</div>
-            <div class="metric-val">1,521</div>
-            <div class="wow dn">▼ 1.3%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUBSCRIPTIONS</div>
-            <div class="metric-val">15</div>
-            <div class="wow up">▲ 87.5%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUB MRR ADDED</div>
-            <div class="metric-val">—</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY SUBS COUNT</div>
-            <div class="metric-val">565</div>
-            <div class="wow up">▲ 0.2%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY SUBS %</div>
-            <div class="metric-val">37.15%</div>
-            <div class="wow up">▲ 1.5%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL SUBS COUNT</div>
-            <div class="metric-val">956</div>
-            <div class="wow dn">▼ 2.1%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL SUBS %</div>
-            <div class="metric-val">62.85%</div>
-            <div class="wow dn">▼ 0.9%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">📉 Churn & Cancellations</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">TOTAL CANCELLATIONS</div>
-            <div class="metric-val">25</div>
-            <div class="wow dn">▼ 21.9%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY CANCELLATIONS</div>
-            <div class="metric-val">12</div>
-            <div class="wow dn">▼ 14.3%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL CANCELLATIONS</div>
-            <div class="metric-val">13</div>
-            <div class="wow dn">▼ 35.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">WEEKLY CHURN RATE</div>
-            <div class="metric-val">1.64%</div>
-            <div class="wow dn">▼ 21.2%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">CHURNED MRR</div>
-            <div class="metric-val">$1,742.24</div>
-            <div class="wow dn">▼ 20.4%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">CHURNED ARR</div>
-            <div class="metric-val">$20,906.91</div>
-            <div class="wow dn">▼ 20.4%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">⚠️ Failed Payments</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">$ AT RISK</div>
-            <div class="metric-val">$16,606.13</div>
-            <div class="wow up">▲ 285.2%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">FAILED SUBS UNIQUE</div>
-            <div class="metric-val">—</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">TOTAL FAILED ATTEMPTS</div>
-            <div class="metric-val">105</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG ATTEMPTS PER SUB</div>
-            <div class="metric-val">2.10</div>
-            <div class="wow dn">▼ 74.8%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">⭐ Lifetime Value (LTV)</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY CHURN (MO)</div>
-            <div class="metric-val">7.10%</div>
-            <div class="wow dn">▼ 21.2%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG CUSTOMER LIFESPAN</div>
-            <div class="metric-val">14.08</div>
-            <div class="wow up">▲ 26.8%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY LTV</div>
-            <div class="metric-val">$1,290.71</div>
-            <div class="wow up">▲ 29.3%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL LTV</div>
-            <div class="metric-val">$798.56</div>
-            <div class="wow up">▲ 27.8%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG LTV</div>
-            <div class="metric-val">$1,044.63</div>
-            <div class="wow up">▲ 28.7%</div>
-          </div>
-          </div>
-        </div>
       </div>
       <div class="panel" id="p5" style="display:none">
         
+        <div class="viz-row">
+          
+          <div class="viz-card">
+            <div class="viz-title">MRR Split — Monthly vs Annual</div>
+            <canvas id="dm5" height="180"></canvas>
+            <div class="donut-legend">
+              <span class="leg-dot" style="background:#635bff"></span>Monthly
+              <span class="leg-dot" style="background:#00c48c;margin-left:1rem"></span>Annual
+            </div>
+            <script>(function(){
+              new Chart(document.getElementById('dm5').getContext('2d'),{
+                type:'doughnut',
+                data:{labels:['Monthly','Annual'],datasets:[{data:[50705.61,53641.33],backgroundColor:['#635bff','#00c48c'],borderColor:'#15151e',borderWidth:3}]},
+                options:{responsive:true,animation:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': $'+c.raw.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}}}}}
+              });
+            })();</script>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">Subscriber Mix — Monthly vs Annual</div>
+            <canvas id="ds5" height="180"></canvas>
+            <div class="donut-legend">
+              <span class="leg-dot" style="background:#635bff"></span>Monthly (552)
+              <span class="leg-dot" style="background:#00c48c;margin-left:1rem"></span>Annual (948)
+            </div>
+            <script>(function(){
+              new Chart(document.getElementById('ds5').getContext('2d'),{
+                type:'doughnut',
+                data:{labels:['Monthly','Annual'],datasets:[{data:[552,948],backgroundColor:['#635bff','#00c48c'],borderColor:'#15151e',borderWidth:3}]},
+                options:{responsive:true,animation:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': '+c.raw+' subs';}}}}}
+              });
+            })();</script>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">Key Ratios</div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Monthly subs</span><span>36.2%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:36.2%;background:#635bff"></div></div>
+            </div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Annual subs</span><span>62.1%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:62.1%;background:#00c48c"></div></div>
+            </div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Weekly churn (0–10% scale)</span><span>1.83%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:18.3%;background:#ff5c5c"></div></div>
+            </div>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">New Subs vs Cancellations</div>
+            <canvas id="bnc5" height="160"></canvas>
+            <script>(function(){
+              new Chart(document.getElementById('bnc5').getContext('2d'),{
+                type:'bar',
+                data:{labels:['New Subs','Cancellations'],datasets:[{data:[26,28],backgroundColor:['#00c48c99','#ff5c5c99'],borderColor:['#00c48c','#ff5c5c'],borderWidth:1.5,borderRadius:6}]},
+                options:{responsive:true,animation:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#555'}},y:{beginAtZero:true,ticks:{color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
+              });
+            })();</script>
+          </div>
+        </div>
         
-        <div class="section">
-          <div class="sec-title">💰 Revenue</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">TOTAL REVENUE</div>
-            <div class="metric-val">$38,583.80</div>
-            <div class="wow up">▲ 19.3%</div>
+          <div class="section">
+            <div class="sec-title">💰 Revenue</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">TOTAL REVENUE</div>
+                <div class="metric-val">$38,583.80</div>
+                <div class="wow up">▲ 19.3%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">RECURRING REVENUE</div>
+                <div class="metric-val">$22,769.80</div>
+                <div class="wow up">▲ 2.2%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUB REVENUE</div>
+                <div class="metric-val">$15,814.00</div>
+                <div class="wow up">▲ 57.5%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY PLAN REVENUE</div>
+                <div class="metric-val">$11,679.00</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL PLAN REVENUE</div>
+                <div class="metric-val">$26,904.80</div>
+                <div class="wow"></div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">RECURRING REVENUE</div>
-            <div class="metric-val">$22,769.80</div>
-            <div class="wow up">▲ 2.2%</div>
+          <div class="section">
+            <div class="sec-title">📈 MRR & ARR</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">CURRENT MRR</div>
+                <div class="metric-val">$104,346.94</div>
+                <div class="wow dn">▼ 1.6%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MRR — MONTHLY PLANS</div>
+                <div class="metric-val">$50,705.61</div>
+                <div class="wow dn">▼ 2.1%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MRR — ANNUAL PLANS (÷12)</div>
+                <div class="metric-val">$53,641.33</div>
+                <div class="wow dn">▼ 1.1%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG MRR / SUBSCRIBER</div>
+                <div class="metric-val">$68.38</div>
+                <div class="wow dn">▼ 1.9%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUALIZED MRR</div>
+                <div class="metric-val">$1,252,163.30</div>
+                <div class="wow dn">▼ 1.6%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">COMMITTED ARR</div>
+                <div class="metric-val">$643,695.98</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ARR GAP</div>
+                <div class="metric-val">$-608,467.32</div>
+                <div class="wow"></div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUB REVENUE</div>
-            <div class="metric-val">$15,814.00</div>
-            <div class="wow up">▲ 57.5%</div>
+          <div class="section">
+            <div class="sec-title">👥 Subscriptions</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">ACTIVE SUBSCRIPTIONS</div>
+                <div class="metric-val">1,526</div>
+                <div class="wow up">▲ 0.3%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUBSCRIPTIONS</div>
+                <div class="metric-val">26</div>
+                <div class="wow up">▲ 73.3%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUB MRR ADDED</div>
+                <div class="metric-val">$2,758.83</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY SUBS COUNT</div>
+                <div class="metric-val">552</div>
+                <div class="wow dn">▼ 2.3%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY SUBS %</div>
+                <div class="metric-val">36.17%</div>
+                <div class="wow dn">▼ 2.6%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL SUBS COUNT</div>
+                <div class="metric-val">948</div>
+                <div class="wow dn">▼ 0.8%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL SUBS %</div>
+                <div class="metric-val">62.12%</div>
+                <div class="wow dn">▼ 1.2%</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY PLAN REVENUE</div>
-            <div class="metric-val">$11,679.00</div>
-            <div class="wow"></div>
+          <div class="section">
+            <div class="sec-title">📉 Churn & Cancellations</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">TOTAL CANCELLATIONS</div>
+                <div class="metric-val">28</div>
+                <div class="wow up">▲ 12.0%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY CANCELLATIONS</div>
+                <div class="metric-val">13</div>
+                <div class="wow up">▲ 8.3%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL CANCELLATIONS</div>
+                <div class="metric-val">8</div>
+                <div class="wow dn">▼ 38.5%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">WEEKLY CHURN RATE</div>
+                <div class="metric-val">1.83%</div>
+                <div class="wow up">▲ 11.6%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">CHURNED MRR</div>
+                <div class="metric-val">$1,651.08</div>
+                <div class="wow dn">▼ 5.2%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">CHURNED ARR</div>
+                <div class="metric-val">$6,853.00</div>
+                <div class="wow dn">▼ 67.2%</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL PLAN REVENUE</div>
-            <div class="metric-val">$26,904.80</div>
-            <div class="wow"></div>
+          <div class="section">
+            <div class="sec-title">⚠️ Failed Payments</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">$ AT RISK</div>
+                <div class="metric-val">$18,237.20</div>
+                <div class="wow up">▲ 9.8%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">FAILED SUBS UNIQUE</div>
+                <div class="metric-val">49</div>
+                <div class="wow"></div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">TOTAL FAILED ATTEMPTS</div>
+                <div class="metric-val">124</div>
+                <div class="wow up">▲ 18.1%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG ATTEMPTS PER SUB</div>
+                <div class="metric-val">2.53</div>
+                <div class="wow up">▲ 20.5%</div>
+              </div>
+            </div>
           </div>
+          <div class="section">
+            <div class="sec-title">⭐ Lifetime Value (LTV)</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY CHURN (MO)</div>
+                <div class="metric-val">7.94%</div>
+                <div class="wow up">▲ 11.8%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG CUSTOMER LIFESPAN</div>
+                <div class="metric-val">12.60</div>
+                <div class="wow dn">▼ 10.5%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY LTV</div>
+                <div class="metric-val">$1,156.18</div>
+                <div class="wow dn">▼ 10.4%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL LTV</div>
+                <div class="metric-val">$712.20</div>
+                <div class="wow dn">▼ 10.8%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG LTV</div>
+                <div class="metric-val">$934.19</div>
+                <div class="wow dn">▼ 10.6%</div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">📈 MRR & ARR</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">CURRENT MRR</div>
-            <div class="metric-val">$104,346.94</div>
-            <div class="wow dn">▼ 1.6%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MRR — MONTHLY PLANS</div>
-            <div class="metric-val">$50,705.61</div>
-            <div class="wow dn">▼ 2.1%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MRR — ANNUAL PLANS (÷12)</div>
-            <div class="metric-val">$53,641.33</div>
-            <div class="wow dn">▼ 1.1%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG MRR / SUBSCRIBER</div>
-            <div class="metric-val">$68.38</div>
-            <div class="wow dn">▼ 1.9%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUALIZED MRR</div>
-            <div class="metric-val">$1,252,163.30</div>
-            <div class="wow dn">▼ 1.6%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">COMMITTED ARR</div>
-            <div class="metric-val">$643,695.98</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ARR GAP</div>
-            <div class="metric-val">$-608,467.32</div>
-            <div class="wow"></div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">👥 Subscriptions</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">ACTIVE SUBSCRIPTIONS</div>
-            <div class="metric-val">1,526</div>
-            <div class="wow up">▲ 0.3%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUBSCRIPTIONS</div>
-            <div class="metric-val">26</div>
-            <div class="wow up">▲ 73.3%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUB MRR ADDED</div>
-            <div class="metric-val">$2,758.83</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY SUBS COUNT</div>
-            <div class="metric-val">552</div>
-            <div class="wow dn">▼ 2.3%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY SUBS %</div>
-            <div class="metric-val">36.17%</div>
-            <div class="wow dn">▼ 2.6%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL SUBS COUNT</div>
-            <div class="metric-val">948</div>
-            <div class="wow dn">▼ 0.8%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL SUBS %</div>
-            <div class="metric-val">62.12%</div>
-            <div class="wow dn">▼ 1.2%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">📉 Churn & Cancellations</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">TOTAL CANCELLATIONS</div>
-            <div class="metric-val">28</div>
-            <div class="wow up">▲ 12.0%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY CANCELLATIONS</div>
-            <div class="metric-val">13</div>
-            <div class="wow up">▲ 8.3%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL CANCELLATIONS</div>
-            <div class="metric-val">8</div>
-            <div class="wow dn">▼ 38.5%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">WEEKLY CHURN RATE</div>
-            <div class="metric-val">1.83%</div>
-            <div class="wow up">▲ 11.6%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">CHURNED MRR</div>
-            <div class="metric-val">$1,651.08</div>
-            <div class="wow dn">▼ 5.2%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">CHURNED ARR</div>
-            <div class="metric-val">$6,853.00</div>
-            <div class="wow dn">▼ 67.2%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">⚠️ Failed Payments</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">$ AT RISK</div>
-            <div class="metric-val">$18,237.20</div>
-            <div class="wow up">▲ 9.8%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">FAILED SUBS UNIQUE</div>
-            <div class="metric-val">49</div>
-            <div class="wow"></div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">TOTAL FAILED ATTEMPTS</div>
-            <div class="metric-val">124</div>
-            <div class="wow up">▲ 18.1%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG ATTEMPTS PER SUB</div>
-            <div class="metric-val">2.53</div>
-            <div class="wow up">▲ 20.5%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">⭐ Lifetime Value (LTV)</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY CHURN (MO)</div>
-            <div class="metric-val">7.94%</div>
-            <div class="wow up">▲ 11.8%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG CUSTOMER LIFESPAN</div>
-            <div class="metric-val">12.60</div>
-            <div class="wow dn">▼ 10.5%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY LTV</div>
-            <div class="metric-val">$1,156.18</div>
-            <div class="wow dn">▼ 10.4%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL LTV</div>
-            <div class="metric-val">$712.20</div>
-            <div class="wow dn">▼ 10.8%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG LTV</div>
-            <div class="metric-val">$934.19</div>
-            <div class="wow dn">▼ 10.6%</div>
-          </div>
-          </div>
-        </div>
       </div>
       <div class="panel" id="p6" style="display:block">
         
+        <div class="viz-row">
+          
+          <div class="viz-card">
+            <div class="viz-title">MRR Split — Monthly vs Annual</div>
+            <canvas id="dm6" height="180"></canvas>
+            <div class="donut-legend">
+              <span class="leg-dot" style="background:#635bff"></span>Monthly
+              <span class="leg-dot" style="background:#00c48c;margin-left:1rem"></span>Annual
+            </div>
+            <script>(function(){
+              new Chart(document.getElementById('dm6').getContext('2d'),{
+                type:'doughnut',
+                data:{labels:['Monthly','Annual'],datasets:[{data:[52294.61,53938.58],backgroundColor:['#635bff','#00c48c'],borderColor:'#15151e',borderWidth:3}]},
+                options:{responsive:true,animation:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': $'+c.raw.toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});}}}}}
+              });
+            })();</script>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">Subscriber Mix — Monthly vs Annual</div>
+            <canvas id="ds6" height="180"></canvas>
+            <div class="donut-legend">
+              <span class="leg-dot" style="background:#635bff"></span>Monthly (567)
+              <span class="leg-dot" style="background:#00c48c;margin-left:1rem"></span>Annual (954)
+            </div>
+            <script>(function(){
+              new Chart(document.getElementById('ds6').getContext('2d'),{
+                type:'doughnut',
+                data:{labels:['Monthly','Annual'],datasets:[{data:[567,954],backgroundColor:['#635bff','#00c48c'],borderColor:'#15151e',borderWidth:3}]},
+                options:{responsive:true,animation:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label+': '+c.raw+' subs';}}}}}
+              });
+            })();</script>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">Key Ratios</div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Monthly subs</span><span>37.3%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:37.3%;background:#635bff"></div></div>
+            </div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Annual subs</span><span>62.7%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:62.7%;background:#00c48c"></div></div>
+            </div>
+            <div class="prog-row">
+              <div class="prog-label"><span>Weekly churn (0–10% scale)</span><span>1.25%</span></div>
+              <div class="prog-track"><div class="prog-bar" style="width:12.5%;background:#ff5c5c"></div></div>
+            </div>
+          </div>
+          
+          <div class="viz-card">
+            <div class="viz-title">New Subs vs Cancellations</div>
+            <canvas id="bnc6" height="160"></canvas>
+            <script>(function(){
+              new Chart(document.getElementById('bnc6').getContext('2d'),{
+                type:'bar',
+                data:{labels:['New Subs','Cancellations'],datasets:[{data:[19,19],backgroundColor:['#00c48c99','#ff5c5c99'],borderColor:['#00c48c','#ff5c5c'],borderWidth:1.5,borderRadius:6}]},
+                options:{responsive:true,animation:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#555'}},y:{beginAtZero:true,ticks:{color:'#555'},grid:{color:'rgba(255,255,255,0.05)'}}}}
+              });
+            })();</script>
+          </div>
+        </div>
         
-        <div class="section">
-          <div class="sec-title">💰 Revenue</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">TOTAL REVENUE</div>
-            <div class="metric-val">$31,161.43</div>
-            <div class="wow dn">▼ 19.2%</div>
+          <div class="section">
+            <div class="sec-title">💰 Revenue</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">TOTAL REVENUE</div>
+                <div class="metric-val">$31,161.43</div>
+                <div class="wow dn">▼ 19.2%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">RECURRING REVENUE</div>
+                <div class="metric-val">$25,395.43</div>
+                <div class="wow up">▲ 11.5%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUB REVENUE</div>
+                <div class="metric-val">$5,766.00</div>
+                <div class="wow dn">▼ 63.5%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY PLAN REVENUE</div>
+                <div class="metric-val">$13,952.67</div>
+                <div class="wow up">▲ 19.5%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL PLAN REVENUE</div>
+                <div class="metric-val">$17,208.77</div>
+                <div class="wow dn">▼ 36.0%</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">RECURRING REVENUE</div>
-            <div class="metric-val">$25,395.43</div>
-            <div class="wow up">▲ 11.5%</div>
+          <div class="section">
+            <div class="sec-title">📈 MRR & ARR</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">CURRENT MRR</div>
+                <div class="metric-val">$106,233.19</div>
+                <div class="wow up">▲ 1.8%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MRR — MONTHLY PLANS</div>
+                <div class="metric-val">$52,294.61</div>
+                <div class="wow up">▲ 3.1%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MRR — ANNUAL PLANS (÷12)</div>
+                <div class="metric-val">$53,938.58</div>
+                <div class="wow up">▲ 0.6%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG MRR / SUBSCRIBER</div>
+                <div class="metric-val">$69.84</div>
+                <div class="wow up">▲ 2.1%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUALIZED MRR</div>
+                <div class="metric-val">$1,274,798.30</div>
+                <div class="wow up">▲ 1.8%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">COMMITTED ARR</div>
+                <div class="metric-val">$647,262.98</div>
+                <div class="wow up">▲ 0.6%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ARR GAP</div>
+                <div class="metric-val">$-627,535.32</div>
+                <div class="wow dn">▼ 3.1%</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUB REVENUE</div>
-            <div class="metric-val">$5,766.00</div>
-            <div class="wow dn">▼ 63.5%</div>
+          <div class="section">
+            <div class="sec-title">👥 Subscriptions</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">ACTIVE SUBSCRIPTIONS</div>
+                <div class="metric-val">1,521</div>
+                <div class="wow dn">▼ 0.3%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUBSCRIPTIONS</div>
+                <div class="metric-val">19</div>
+                <div class="wow dn">▼ 26.9%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">NEW SUB MRR ADDED</div>
+                <div class="metric-val">$1,747.33</div>
+                <div class="wow dn">▼ 36.7%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY SUBS COUNT</div>
+                <div class="metric-val">567</div>
+                <div class="wow up">▲ 2.7%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY SUBS %</div>
+                <div class="metric-val">37.28%</div>
+                <div class="wow up">▲ 3.1%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL SUBS COUNT</div>
+                <div class="metric-val">954</div>
+                <div class="wow up">▲ 0.6%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL SUBS %</div>
+                <div class="metric-val">62.72%</div>
+                <div class="wow up">▲ 1.0%</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY PLAN REVENUE</div>
-            <div class="metric-val">$13,952.67</div>
-            <div class="wow up">▲ 19.5%</div>
+          <div class="section">
+            <div class="sec-title">📉 Churn & Cancellations</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">TOTAL CANCELLATIONS</div>
+                <div class="metric-val">19</div>
+                <div class="wow dn">▼ 32.1%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY CANCELLATIONS</div>
+                <div class="metric-val">16</div>
+                <div class="wow up">▲ 23.1%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL CANCELLATIONS</div>
+                <div class="metric-val">3</div>
+                <div class="wow dn">▼ 62.5%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">WEEKLY CHURN RATE</div>
+                <div class="metric-val">1.25%</div>
+                <div class="wow dn">▼ 31.7%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">CHURNED MRR</div>
+                <div class="metric-val">$2,380.33</div>
+                <div class="wow up">▲ 44.2%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">CHURNED ARR</div>
+                <div class="metric-val">$3,292.00</div>
+                <div class="wow dn">▼ 52.0%</div>
+              </div>
+            </div>
           </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL PLAN REVENUE</div>
-            <div class="metric-val">$17,208.77</div>
-            <div class="wow dn">▼ 36.0%</div>
+          <div class="section">
+            <div class="sec-title">⚠️ Failed Payments</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">$ AT RISK</div>
+                <div class="metric-val">$11,017.41</div>
+                <div class="wow dn">▼ 39.6%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">FAILED SUBS UNIQUE</div>
+                <div class="metric-val">41</div>
+                <div class="wow dn">▼ 16.3%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">TOTAL FAILED ATTEMPTS</div>
+                <div class="metric-val">100</div>
+                <div class="wow dn">▼ 19.4%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG ATTEMPTS PER SUB</div>
+                <div class="metric-val">2.44</div>
+                <div class="wow dn">▼ 3.6%</div>
+              </div>
+            </div>
           </div>
+          <div class="section">
+            <div class="sec-title">⭐ Lifetime Value (LTV)</div>
+            <div class="cards-grid">
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY CHURN (MO)</div>
+                <div class="metric-val">5.41%</div>
+                <div class="wow dn">▼ 31.9%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG CUSTOMER LIFESPAN</div>
+                <div class="metric-val">18.49</div>
+                <div class="wow up">▲ 46.7%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">MONTHLY LTV</div>
+                <div class="metric-val">$1,291.27</div>
+                <div class="wow up">▲ 11.7%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">ANNUAL LTV</div>
+                <div class="metric-val">$1,085.43</div>
+                <div class="wow up">▲ 52.4%</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-name">AVG LTV</div>
+                <div class="metric-val">$1,188.35</div>
+                <div class="wow up">▲ 27.2%</div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">📈 MRR & ARR</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">CURRENT MRR</div>
-            <div class="metric-val">$106,233.19</div>
-            <div class="wow up">▲ 1.8%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MRR — MONTHLY PLANS</div>
-            <div class="metric-val">$52,294.61</div>
-            <div class="wow up">▲ 3.1%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MRR — ANNUAL PLANS (÷12)</div>
-            <div class="metric-val">$53,938.58</div>
-            <div class="wow up">▲ 0.6%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG MRR / SUBSCRIBER</div>
-            <div class="metric-val">$69.84</div>
-            <div class="wow up">▲ 2.1%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUALIZED MRR</div>
-            <div class="metric-val">$1,274,798.30</div>
-            <div class="wow up">▲ 1.8%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">COMMITTED ARR</div>
-            <div class="metric-val">$647,262.98</div>
-            <div class="wow up">▲ 0.6%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ARR GAP</div>
-            <div class="metric-val">$-627,535.32</div>
-            <div class="wow dn">▼ 3.1%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">👥 Subscriptions</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">ACTIVE SUBSCRIPTIONS</div>
-            <div class="metric-val">1,521</div>
-            <div class="wow dn">▼ 0.3%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUBSCRIPTIONS</div>
-            <div class="metric-val">19</div>
-            <div class="wow dn">▼ 26.9%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">NEW SUB MRR ADDED</div>
-            <div class="metric-val">$1,747.33</div>
-            <div class="wow dn">▼ 36.7%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY SUBS COUNT</div>
-            <div class="metric-val">567</div>
-            <div class="wow up">▲ 2.7%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY SUBS %</div>
-            <div class="metric-val">37.28%</div>
-            <div class="wow up">▲ 3.1%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL SUBS COUNT</div>
-            <div class="metric-val">954</div>
-            <div class="wow up">▲ 0.6%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL SUBS %</div>
-            <div class="metric-val">62.72%</div>
-            <div class="wow up">▲ 1.0%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">📉 Churn & Cancellations</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">TOTAL CANCELLATIONS</div>
-            <div class="metric-val">19</div>
-            <div class="wow dn">▼ 32.1%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY CANCELLATIONS</div>
-            <div class="metric-val">16</div>
-            <div class="wow up">▲ 23.1%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL CANCELLATIONS</div>
-            <div class="metric-val">3</div>
-            <div class="wow dn">▼ 62.5%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">WEEKLY CHURN RATE</div>
-            <div class="metric-val">1.25%</div>
-            <div class="wow dn">▼ 31.7%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">CHURNED MRR</div>
-            <div class="metric-val">$2,380.33</div>
-            <div class="wow up">▲ 44.2%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">CHURNED ARR</div>
-            <div class="metric-val">$3,292.00</div>
-            <div class="wow dn">▼ 52.0%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">⚠️ Failed Payments</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">$ AT RISK</div>
-            <div class="metric-val">$11,017.41</div>
-            <div class="wow dn">▼ 39.6%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">FAILED SUBS UNIQUE</div>
-            <div class="metric-val">41</div>
-            <div class="wow dn">▼ 16.3%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">TOTAL FAILED ATTEMPTS</div>
-            <div class="metric-val">100</div>
-            <div class="wow dn">▼ 19.4%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG ATTEMPTS PER SUB</div>
-            <div class="metric-val">2.44</div>
-            <div class="wow dn">▼ 3.6%</div>
-          </div>
-          </div>
-        </div>
-        <div class="section">
-          <div class="sec-title">⭐ Lifetime Value (LTV)</div>
-          <div class="cards-grid">
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY CHURN (MO)</div>
-            <div class="metric-val">5.41%</div>
-            <div class="wow dn">▼ 31.9%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG CUSTOMER LIFESPAN</div>
-            <div class="metric-val">18.49</div>
-            <div class="wow up">▲ 46.7%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">MONTHLY LTV</div>
-            <div class="metric-val">$1,291.27</div>
-            <div class="wow up">▲ 11.7%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">ANNUAL LTV</div>
-            <div class="metric-val">$1,085.43</div>
-            <div class="wow up">▲ 52.4%</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-name">AVG LTV</div>
-            <div class="metric-val">$1,188.35</div>
-            <div class="wow up">▲ 27.2%</div>
-          </div>
-          </div>
-        </div>
       </div>
 
   <div class="footer">
@@ -2069,7 +2102,6 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
     LTV = Avg Customer Lifespan × Avg MRR/sub. CAC not yet tracked; LTV:CAC ratio coming soon.
   </div>
 </div>
-
 <script>
 function showTab(n){
   document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
